@@ -1,0 +1,31 @@
+<HTML lang ="en">
+	<HEAD>
+		<script src="../../index.html"></script>
+		<SCRIPT>
+			class main{
+				constructor(){
+					this.txt = document.getElementById("info");
+					this.txt.innerText = 'Vishing can come in many forms. Pick one to start to learn how to identify them!';
+					//document.appendChild(txt);
+				}
+			}
+		</SCRIPT>
+		<link rel="stylesheet" href="../../styles.css">
+	</HEAD>
+	<BODY>
+	    <div class="menu">
+			<h1>Vishing Tutorial</h1>
+
+			<h3 id = "info" style = "height:100px">
+			</h3>
+			<BUTTON class = "selection" onclick = "window.location.href = 'Call_Intro.html'" style = "font-size:18px; margin-bottom:13px">Call Transcripts</BUTTON>
+			<BUTTON class = "selection" onclick = "window.location.href = 'Voicemail_Intro.html'" style = "font-size:18px">Voicemails</BUTTON><br>
+			<BUTTON class = "selection" onclick = "window.location.href = '../menu.html'">Return to Level Screen</BUTTON>
+			<BUTTON class = "selection" onclick = "window.location.href = '../../Home/home.html'">Return to Home Screen</BUTTON>
+
+		</div>
+		<SCRIPT>
+			var m = new main();
+		</SCRIPT>
+	</BODY>
+</HTML>

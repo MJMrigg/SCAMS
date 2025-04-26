@@ -1,0 +1,224 @@
+<HTML lang ="en">
+	<HEAD>
+		<script src = "Call_classes.js"></script>
+		<script src="../../index.html"></script>
+		<link rel="stylesheet" href="../../styles.css">
+
+		<SCRIPT>
+		class main{
+			constructor(){
+				this.gameFinish = false; //checks if all levels are completed
+				this.playerAns = [null, null, null]; //player's answers to given selections
+				this.correctAnsNum = 0; //total correct answers player got
+				
+				//make array for all calls 
+				this.calls = [];
+				this.callCurrentIndex = 0; //checks and increments array index
+				
+				for(var i = 0; i<4;i++){
+					this.calls.push(new Call_Gen(i))
+				}
+				//this.calls.push(new Call_Gen(0));
+				//this.calls.push(new Call_Gen(1));
+				
+				console.log(this.calls);
+				
+				//sets default call
+				this.currentCall = this.calls[this.callCurrentIndex];
+				this.maxScore = 0;
+				
+				//set variables for call class
+				this.callID = document.getElementById("callerID");
+				this.callScript_Line1 = document.getElementById("transcript_Line1");
+				this.callScript_Line2 = document.getElementById("transcript_Line2");
+				this.callScript_Line3 = document.getElementById("transcript_Line3");
+				this.callScript_Line4 = document.getElementById("transcript_Line4");
+				this.callScript_Line5 = document.getElementById("transcript_Line5");
+
+				//set variables for bottom of screen for results, submission, and return
+				this.ansResult = document.getElementById("results");
+				this.goButton = document.getElementById("button");
+				this.score = document.getElementById("score");
+				
+				this.callID.innerText = "Caller ID: " + this.currentCall.callID;
+				
+				//start transcript
+				this.callScript_Line1.innerText = this.currentCall.transcript_Line1;
+				this.callScript_Line2.innerText = this.currentCall.transcript_Line2;
+				this.callScript_Line3.innerText = this.currentCall.transcript_Line3;
+				this.callScript_Line4.innerText = this.currentCall.transcript_Line4;
+				this.callScript_Line5.innerText = this.currentCall.transcript_Line5;
+				
+			}
+			
+			changeVal(type, val){
+				if(type == 0){//personal info questions
+					if(val == 1){
+						this.playerAns[0] = true;
+					}else{
+						this.playerAns[0] = false;
+					}
+				}else if(type==1){//payment questions
+					if(val == 1){
+						this.playerAns[1] = true;
+					}else{
+						this.playerAns[1] = false;
+					}
+				}else{//yes and no questions
+					if(val == 1){
+						this.playerAns[2] = true;
+					}else{
+						this.playerAns[2] = false;
+					}
+				}
+			}
+			
+			submitAnswers(){
+				console.log("Pressed");
+				console.log("Yes and No value: " + this.playerAns);
+				console.log(this.correctAnsNum);
+				var allAns = true;
+				for(var i = 0; i<3;i++){
+					if(this.playerAns[i]==null){
+						allAns = false;
+					}
+				}
+				if(!allAns){
+					this.ansResult.innerText = "Please answer all questions before submitting!";
+				}else{
+					var check = this.checkAllAns();//check answers to display proper result message
+					var nextIndex = this.callCurrentIndex + 1;//makes next index a temporary variable
+					console.log("next index: "+nextIndex);
+					if(check){
+						this.ansResult.innerText = "Fantastic!";
+						this.ansResult.innerText += " "+this.calls[this.callCurrentIndex].reasonAnswers[3];
+					}else{
+						this.ansResult.innerText = "Not Quite!";
+						for(var i = 0; i<3;i++){
+						if(this.playerAns[i]!=this.calls[this.callCurrentIndex].correctAnswers[i]){
+							this.ansResult.innerText += " "+this.calls[this.callCurrentIndex].reasonAnswers[i];
+							}
+						}
+					}
+					if(nextIndex == this.calls.length){
+						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
+						var currentScore = JSON.parse(sessionStorage.getItem("currentScore")); //Get player's current score
+						sessionStorage.setItem("currentScore",JSON.stringify(currentScore+this.correctAnsNum)); //Set it to their final score
+						this.goButton.innerText = "You finished all the levels!";
+						this.goButton.onclick = "";
+						this.gameFinish = true;
+					}else if (!this.gameFinish){
+						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
+						this.goButton.innerText = "Next level";
+						this.goButton.onclick = () => this.goNextLevel();
+					}
+				}
+			}
+			
+			checkAllAns(){
+				console.log(this.playerAns);
+				console.log(this.calls[this.callCurrentIndex].correctAnswers);
+				var allCor = false;
+				var levelCor = 0;
+				for(var i = 0; i<3;i++){
+					if(this.calls[this.callCurrentIndex].checkCorrect(i, this.playerAns[i])){
+						this.correctAnsNum++;
+						levelCor++;
+					}
+				}
+				console.log(this.correctAnsNum);
+				
+				//if all correct
+				if(levelCor==3){
+					allCor = true;
+				}
+				this.maxScore +=3;
+				return allCor;
+			}
+			
+			goNextLevel(){
+				console.log("Successful?");
+				this.callCurrentIndex+= 1;
+				//this.maxScore +=3;
+				this.currentCall = this.calls[this.callCurrentIndex];
+				for(var i = 0;i<3;i++){
+					//clears player's current answer array
+					this.playerAns[i] = null;
+				}
+				//clear radio/checkbox visible selections
+				var rad = document.querySelectorAll('input[type="radio"]');
+				for(var i = 0;i<rad.length;i++){
+					rad[i].checked = false;
+				}
+				
+				this.updateScreen();
+			}
+			
+			updateScreen(){
+				console.log("updateScreen runs");
+				this.goButton.innerText = "Submit Answers";
+				this.goButton.onclick = () => this.submitAnswers();
+				this.currentCall = this.calls[this.callCurrentIndex];
+				this.ansResult.innerText = " ";
+				//displays new call transcript
+				this.callID.innerText = "Caller ID: " + this.currentCall.callID;
+				this.callScript_Line1.innerText = this.currentCall.transcript_Line1;
+				this.callScript_Line1.innerText = this.currentCall.transcript_Line1;
+				this.callScript_Line2.innerText = this.currentCall.transcript_Line2;
+				this.callScript_Line3.innerText = this.currentCall.transcript_Line3;
+				this.callScript_Line4.innerText = this.currentCall.transcript_Line4;
+				this.callScript_Line5.innerText = this.currentCall.transcript_Line5;
+				
+				//lists current score
+				this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
+
+			}
+		}
+		</SCRIPT>
+	</HEAD>
+	<BODY>
+
+		<div style = "width: 500px; height: 450px; border: 10px solid #000; background: lightgrey;">
+			<div id = "callerID" style = "border: 1px solid #000; font-size:30px;text-align:center"></div>
+			<div id = "transcript" style = "width: 498px; height: 500px; border: 1px solid #000; font-size:25px;">
+				<div id = "transcript_Line1" style="padding-bottom:10px"></div>
+				<div id = "transcript_Line2" style="padding-bottom:10px"></div>
+				<div id = "transcript_Line3" style="padding-bottom:10px"></div>
+				<div id = "transcript_Line4"style="padding-bottom:10px"></div>
+				<div id = "transcript_Line5"style="padding-bottom:10px"></div>
+			</div>
+		</div>
+		<!-- Answer selections below -->
+		<div style = "width: 500px; border: 10px solid #000; background: white;">
+			<div style = "border: 1px solid #000;">
+				<input type = "radio" id = "OptionSel1" name = "personalInfo" onClick = "m.changeVal(0,1)">
+				<label for = "OptionSel1">Asks for personal information</label>
+				<input type = "radio" id = "OptionSel1" name ="personalInfo" onClick = "m.changeVal(0,0)">
+				<label for = "OptionSel1">Nothing Wrong</label>
+			</div>
+			<div style = "border: 1px solid #000;">
+				<input type = "radio" id = "OptionSel1" name = "payment" onClick = "m.changeVal(1,1)">
+				<label for = "OptionSel1">Asks for odd payment method</label>
+				<input type = "radio" id = "OptionSel1" name = "payment" onClick = "m.changeVal(1,0)">
+				<label for = "OptionSel1">Nothing Wrong</label>
+			</div>
+			<div style = "border: 1px solid #000;">
+				<input type = "radio" id = "OptionSel1" name = "yesNo"onClick = "m.changeVal(2,1)">
+				<label for = "OptionSel1">Asks only yes and no questions</label>
+				<input type = "radio" id = "OptionSel1" name = "yesNo"onClick = "m.changeVal(2,0)">
+				<label for = "OptionSel1">Nothing Wrong</label>
+			</div>
+			<div style = "border: 1px solid #000;">
+				<div id = "results" style = "height:auto;"><br></div>
+				<button id = "button" class = "selection" onClick = "m.submitAnswers()">Submit Answers</button><br>
+				<BUTTON class = "selection" onclick = "window.location.href = '../menu.html'">Return to Level Screen</BUTTON>
+			</div>
+			<div id = "score" style = "height:auto; border: 1px solid #000;"></div>
+		</div>
+		
+		<SCRIPT>
+			var m = new main();
+
+		</SCRIPT>
+	</BODY>
+</HTML>

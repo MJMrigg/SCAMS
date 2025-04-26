@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script id="2dVertexShader" type="notjs">
+            attribute vec4 a_position;
+            attribute vec3 a_color;
+            varying vec3 fragColor;
+            void main(){
+                gl_Position = a_position;
+                fragColor = a_color;
+                gl_PointSize = 10.0;
+            }
+        </script>
+        <script id="2dFragmentShader" type="notjs">
+            precision mediump float;
+            varying vec3 fragColor;
+            void main(){
+                gl_FragColor = vec4(fragColor,1);
+            }
+        </script>
+        <script src="../../index.html"></script>
+        <script src="classes.js"></script>
+        <link rel="stylesheet" href="../../styles.css">
+    </head>
+    <body>
+        <div class="menu" style="height: 875px">
+            <h1 id="stage"></h1>
+            <p id="score"></p>
+            <p>Click on the parts of the message that look suspicious.</p>
+            <canvas id="canvas" class="forSmishing" width="300" height="649" style="background: url('srcimgs/stage6.png');">
+                YOUR BROWSER DOES NOT SUPPORT CANVAS
+            </canvas><br>
+            <script>
+                var canvas = document.getElementById("canvas");
+                var gl = canvas.getContext("webgl");
+                var mymain = new main(
+                    [
+                        -0.0013334147135416474, 0.7376476693410536, 0, 0.3, 0.01, 0, //Unknown number
+                        -0.1680000813802084, -0.1098099577775905, 0, 0.6, 0.01, 0, //Wierd Link
+                        -0.574666748046875, 0.3247046801268778, 0, 0.24, 0.01, 0, //That's a really high number
+                        -0.5680000813802084, 0.3764766463880731, 0, 0.3, 0.01, 0, //Wierd name
+                        -0.5880000813802083, -0.43091934744859883, 0, 0.25, 0.01, 0, //Making it more personal for the user
+                        -0.24800008138020835, 0.025783262561392517, 0, 0.6, 0.1, 0, //Asking the user to download something
+                        0.005333251953125062, 0.20945041462526492, 0, 0.16, 0.01, 0, //Targetting the user specifically
+                        0.2919999186197917, 0.2680020324989165, 0, 0.1, 0.02, 0 //Targetting the user specifically
+                    ],
+                    "You did not find any correct things. Remember to look for big names telling you to do something that may be strange or unsual.",
+                    "Tip for future: Apple would just automatically update your phone. They wouldn't ask you to download their software. Also NEVER EVER EVER download software from an unknown number."
+                );
+
+                canvas.addEventListener("click", main.leftClick);
+                canvas.addEventListener("contextmenu",main.rightClick);
+            </script>
+            <button class="submit" onclick="mymain.submit(6)">Submit</button><br>
+            <button class="selection" onclick="window.location.href='../menu.html'">Save and Quit</button>
+        </div>
+    </body>
+</html>

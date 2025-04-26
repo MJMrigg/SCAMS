@@ -1,0 +1,225 @@
+<HTML lang ="en">
+	<HEAD>
+		<script src = "Voicemail_classes.js"></script>
+		<script src="../../index.html"></script>
+		<link rel="stylesheet" href="../../styles.css">
+		
+		<SCRIPT>
+		class main{
+			constructor(){
+				this.gameFinish = false; //checks if all levels are completed
+				this.playerAns = [null, null, null]; //player's answers to given selections
+				this.correctAnsNum = 0; //total correct answers player got
+				this.maxScore = 0;
+				
+				//make array for all calls 
+				this.mail = [];
+
+				for(var i = 0; i<4;i++){
+					this.mail.push(new Voicemail_Gen(i));
+				}
+				this.mailCurrentIndex = 0; //checks and increments array index
+				this.currentVoiceMail = this.mail[this.mailCurrentIndex];
+				
+				this.ansResult = document.getElementById("results");
+				this.goButton = document.getElementById("button");
+				this.score = document.getElementById("score");
+				this.callID = document.getElementById("callerID");
+				this.transcript = document.getElementById("transcript");
+
+				
+				this.callID.innerText = "Caller ID: " + this.currentVoiceMail.callerID;
+				this.transcript.innerText = this.currentVoiceMail.transcript;
+				
+			}
+			
+			changeVal(type, val){
+				if(type == 0){//suspicious company claim
+					if(val == 1){
+						this.playerAns[0] = true;
+					}else{
+						this.playerAns[0] = false;
+					}
+				}else if(type==1){//request personal info
+					if(val == 1){
+						this.playerAns[1] = true;
+					}else{
+						this.playerAns[1] = false;
+					}
+				}else{//makes it sound urgent to call back
+					if(val == 1){
+						this.playerAns[2] = true;
+					}else{
+						this.playerAns[2] = false;
+					}
+				}
+			}
+			
+			
+			submitAnswers(){
+				console.log("Pressed");
+				console.log("Yes and No value: " + this.playerAns);
+				console.log(this.correctAnsNum);
+				var allAns = true;
+				for(var i = 0; i<3;i++){
+					if(this.playerAns[i]==null){
+						allAns = false;
+					}
+				}
+				if(!allAns){
+					this.ansResult.innerText = "Please answer all questions before submitting!";
+				}else{
+					var check = this.checkAllAns();//check answers to display proper result message
+					var nextIndex = this.mailCurrentIndex + 1;//makes next index a temporary variable
+					console.log("next index: "+nextIndex);
+					if(check){
+						this.ansResult.innerText = "Fantastic!";
+						this.ansResult.innerText += " "+this.mail[this.mailCurrentIndex].ansReasons[3];
+					}else{
+						this.ansResult.innerText = "Not Quite!";
+						for(var i = 0; i<3;i++){
+							if(this.playerAns[i]!=this.mail[this.mailCurrentIndex].correctAnswers[i]){
+								this.ansResult.innerText += " "+ this.mail[this.mailCurrentIndex].ansReasons[i];
+							}
+						}
+					}
+					if(nextIndex == this.mail.length){
+						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
+						this.goButton.innerText = "You finished all the levels!";
+						this.goButton.onclick = "";
+						document.getElementById("button").style.display = "none";
+						document.getElementById("finishedDisplay").innerText = "You finished all the levels!";
+						this.gameFinish = true;
+					}else if (!this.gameFinish){
+						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
+						this.goButton.innerText = "Next level";
+						this.goButton.onclick = () => this.goNextLevel();
+					}
+				}
+			}
+			
+			checkAllAns(){
+				console.log(this.playerAns);
+				console.log(this.mail[this.mailCurrentIndex].correctAnswers);
+				var allCor = false;
+				var levelCor = 0;
+				for(var i = 0; i<3;i++){
+					if(this.mail[this.mailCurrentIndex].checkCorrect(i, this.playerAns[i])){
+						this.correctAnsNum++;
+						levelCor++;
+						if(i==0){
+							document.getElementById("companyClaim").style.color = "green";
+						}else if(i==1){
+							document.getElementById("personalInfo").style.color = "green";
+						}else{
+							document.getElementById("urgentClaim").style.color = "green";
+						}
+					}else{
+						if(i==0){
+							document.getElementById("companyClaim").style.color = "red";
+						}else if(i==1){
+							document.getElementById("personalInfo").style.color = "red";
+						}else{
+							document.getElementById("urgentClaim").style.color = "red";
+						}
+					}
+				}
+				console.log(this.correctAnsNum);
+				
+				//if all correct
+				if(levelCor==3){
+					allCor = true;
+				}
+				this.maxScore +=3;
+				return allCor;
+			}
+			
+			goNextLevel(){
+				console.log("Successful?");
+				this.mailCurrentIndex+= 1;
+				//this.maxScore +=3;
+				this.currentVoiceMail = this.mail[this.mailCurrentIndex];
+				for(var i = 0;i<3;i++){
+					//clears player's current answer array
+					this.playerAns[i] = null;
+				}
+				//clear radio/checkbox visible selections
+				var rad = document.querySelectorAll('input[type="radio"]');
+				for(var i = 0;i<rad.length;i++){
+					rad[i].checked = false;
+				}
+				this.updateScreen();
+			}
+			
+			updateScreen(){
+				console.log("updateScreen runs");
+				document.getElementById("companyClaim").style.color = "black";
+				document.getElementById("personalInfo").style.color = "black";
+				document.getElementById("urgentClaim").style.color = "black";
+				this.goButton.innerText = "Submit Answers";
+				this.goButton.onclick = () => this.submitAnswers();
+				this.currentCall = this.mail[this.mailCurrentIndex];
+				this.ansResult.innerText = " ";
+				//displays new call transcript
+				this.callID.innerText = "Caller ID: " + this.currentVoiceMail.callerID;
+				this.transcript.innerText = this.currentVoiceMail.transcript;
+				
+				//lists current score
+				this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
+
+			}
+			
+		}
+		</SCRIPT>
+	
+	</HEAD>
+	<BODY>		
+		<center>
+		<div style = "width: 500px; height: 450px; border: 10px solid #000; background: lightgrey;">
+			<div id = "callerID" style = "border: 1px solid #000; font-size:30px;text-align:center"></div>
+			<div id = "transcript" style = "width: 498px; height: 500px; border: 2px solid #000; font-size:25px;">
+				
+			</div>
+		</div></center>
+		<!-- Answer selections below -->
+		<center>
+		<div style = "width: 500px; border: 10px solid #000; background: white;">
+			<div id = "companyClaim" style = "border: 1px solid #000;">
+				<center><b>Suspicious claim to be a company</b><br>
+				<input type = "radio" id = "OptionSel1" name = "company" onClick = "m.changeVal(0,1)">
+				<label for = "OptionSel1">Yes</label>
+				<input type = "radio" id = "OptionSel1" name ="company" onClick = "m.changeVal(0,0)">
+				<label for = "OptionSel1">No</label>
+				</center>
+			</div>
+			<div id = "personalInfo" style = "border: 1px solid #000;">
+				<center><b>Asks for personal information</b><br>
+				<input type = "radio" id = "OptionSel1" name = "personalInfo" onClick = "m.changeVal(1,1)">
+				<label for = "OptionSel1">Yes</label>
+				<input type = "radio" id = "OptionSel1" name = "personalInfo" onClick = "m.changeVal(1,0)">
+				<label for = "OptionSel1">No</label>
+				</center>
+			</div>
+			<div id = "urgentClaim" style = "border: 1px solid #000;">
+				<center><b>Details it as an urgent matter</b><br>
+				<input type = "radio" id = "OptionSel1" name = "urgent"onClick = "m.changeVal(2,1)">
+				<label for = "OptionSel1">Yes</label>
+				<input type = "radio" id = "OptionSel1" name = "urgent"onClick = "m.changeVal(2,0)">
+				<label for = "OptionSel1">No</label>
+				</center>
+			</div>
+			<div style = "border: 1px solid #000;">
+				<div id = "results" style = "height:auto;"><br></div>
+				<div id = "finishedDisplay" style = "font-size:25px;text-align:center"></div>
+				<button id = "button" class = "selection" onClick = "m.submitAnswers()">Submit Answers</button><br>
+				<BUTTON class = "selection" onclick = "window.location.href = 'Vishing.html'">Return to Selection Screen</BUTTON>
+			</div>
+			<div id = "score" style = "height:auto; border: 1px solid #000;"></div>
+		</div></center>
+		
+		<SCRIPT>
+			var m = new main();
+
+		</SCRIPT>
+	</BODY>
+</HTML>

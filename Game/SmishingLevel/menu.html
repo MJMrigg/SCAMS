@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+    <title>Smishing Main Menu</title>
+    <head>
+        <script src="../../index.html"></script>
+        <script>
+            function next(){
+                //Get the textbox
+                var textBox = document.getElementById("textBox");
+                var button = document.getElementById("changeSlide");
+                //Figure out what to print in that text box
+                switch(currentSlide){
+                    case 0:
+                        textBox.innerText = "Smishing is like phishing, only it's done through SMS Text Messaging apps instead of email.";
+                        button.innerText = "Tell me more";
+                        break;
+                    case 1:
+                        textBox.innerText = "The way it works is that an attacker sends deceptive texts to make users send them valuable information, go to malicious links, or download malware.";
+                        button.innerText = "Oh no!";
+                        break;
+                    case 2:
+                        textBox.innerText = "Attackers will often claim to be someone from a trusted source and use social engineering tactics to convey a sense of urgency to make users tap before thinking.";
+                        button.innerText = "How do I know if I'm being smished? Are there signs?";
+                        break;
+                    case 3:
+                        textBox.innerText = "The most obvious sign is that it's an unkown number. If it's also a number that looks strange, it's likely a bot. There are other signs too though.";
+                        button.innerText = "What are they?";
+                        break;
+                    case 4:
+                        textBox.innerText = "Another sign is in the link itself. It may often be very short with random sequences of characters, formatted strangely, or have a strange domain suffix.";
+                        button.innerText = "Is that it?";
+                        break;
+                    case 5:
+                        textBox.innerText = "The final big sign is that they use big brand names, whether it be a company or a government organization.";
+                        button.innerText = "Can I get an example?";
+                        break;
+                    case 6:
+                        textBox.innerText = "Common smishing attacks often are Account Verification Scams, Tax Scams, Prize/Lottery Scams, Bank Scams, Tech Support Scams, Charity Scams, and Service Cancelation Scams";
+                        button.innerText = "Okay, but I thought this was a game, not a reading assignment.";
+                        break;
+                    case 7:
+                        textBox.innerText = "Yes, this is in fact a game. In this game, you will be provided with a message and you must identify the suspicious parts of the message that prove it is a smishing attack.";
+                        button.innerText = "Ooh! How does it work?";
+                        break;
+                    case 8:
+                        textBox.innerText = "You must click on the parts you think are suspicous about it. A red dot will then appear on what you clicked. Right click to remove your last dot. When you are confident with your answers, press submit and all of the correct parts will be revealed using green dots. There are nine messages in total and you can save and quit any time you like.";
+                        button.innerText = "How do I score?";
+                        break;
+                    case 9:
+                        textBox.innerText = "For each suspicious thing you correctly click, you will get a point towards your total score.";
+                        button.innerText = "Okay. Can I start now?";
+                        break;
+                    case 10:
+                        textBox.innerText = "Yes, you may start.";
+                        button.innerText = "Start";
+                        break;
+                    case 11:
+                        //Update session stage and go to stage 1
+                        sessionStorage.setItem("level1Stage",JSON.stringify(1));
+                        window.location.href = "stage1.html";
+                }
+                currentSlide++;
+            }
+        </script>
+        <link rel="stylesheet" href="../../styles.css">
+    </head>
+    <body>
+        <div class="menu" style="height: 405px">
+            <div style="height: 300px;">
+                <h1 id="title">Smishing Level Tutorial</h1>
+                <h2 id="textBox"></h2>
+            </div>
+            <button id="changeSlide" class="selection" onclick="next()">Begin</button>
+            <button class="selection" onclick= "window.location.href = 'stage1.html'">Skip Tutorial</button>
+        </div>
+        <script>
+            var currentSlide = 0;
+        </script>
+    </body>
+</html>

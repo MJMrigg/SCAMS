@@ -1,0 +1,28 @@
+<HTML lang ="en">
+	<HEAD>
+	<script src="../../index.html"></script>
+    <link rel="stylesheet" href="../../styles.css">
+	<SCRIPT>
+		class main{
+			constructor(){
+				this.txt = document.getElementById("info");
+				this.txt.innerText = 'Scam calls are possibly one of the most common types of vishing attacks.';
+				this.txt.innerText += ' These come from an unknown number with the caller claiming to be someone of importance.';
+				this.txt.innerText += ' This made out to be an urgent matter that needs their information to resolve.';
+				this.txt.innerText += ' This game will help you identify these calls before you fall victim to one of these attacks.';
+			}
+		}
+	</SCRIPT>
+	</HEAD>
+	<BODY>
+        <div class="menu">
+			<h1>Scam Calls</h1>
+			<h3 id = "info" style = "height:125px"></h3>
+			<BUTTON class = "selection" onclick = "window.location.href='Call_Level.html'">Start!</BUTTON><br>
+			<BUTTON class = "selection" onclick = "window.location.href='Vishing.html'">Back to Selection</BUTTON>
+		</div>
+		<SCRIPT>
+			var m = new main();
+		</SCRIPT>
+	</BODY>
+</HTML>

@@ -1,0 +1,55 @@
+div.menu{
+    width: 500px;
+    height: 300px;
+    text-align: center;
+    border: 10px solid black;
+    margin: auto;
+    float: center;
+    background-color: white;
+}
+div.form{
+    width: 200px;
+    height: 300px;
+    text-align: left;
+    margin: auto;
+    float: center;
+}
+button.selection{
+    width: 140px;
+    padding: 1%;
+    background-color: lime;
+    border: 2px solid black;
+    margin: 2px;
+}
+button.function{
+    background-color: lime;
+    border: 2px solid black;
+    margin: 2px; 
+}
+input.submit{
+    background-color: lime;
+    border: 2px solid black;
+    margin: 2px; 
+}
+div.score{
+    float: left;
+}
+body{
+    background-color: blue;
+}
+canvas.forSmishing{
+    border: 1px solid black;
+    background-color: white;
+}
+button.submit{
+    width: 55px;
+    padding: 1%;
+    background-color: lime;
+    border: 2px solid black;
+    margin: 2px;
+}
+div.column{
+    width: 55px;
+    float: left;
+    text-align: center;
+}

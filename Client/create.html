@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            //Get the inputed information, make sure it satisfies the requirements, and then add an entry to the database
+            async function createAccount(event){
+                event.preventDefault();
+                //Check to make sure the user filled out all required sections
+                //Get data from the form
+                var information = document.getElementById("information");
+                for(let i = 0; i < 3; i++){
+                    if(information.elements[i].value.length <= 0){ //If they missed a section
+                        alert("Error: Missing "+information.elements[i].name);
+                        return;
+                    }
+                    if(information.elements[i].value.length > 25){ //If they went over the character limit
+                        alert("Error: Too many characters in field "+information.elements[i].name);
+                        return;
+                    }
+                }
+                //If all was well, try to make sure the user doesn't already have an account using the email
+                var data = { //Create mongo document
+                    email: information.elements[1].value,
+                };
+                try{
+                    //Send a query along a post request to the backend
+                    var query = await fetch("/checkEmail",{
+                        method:"POST",
+                        headers:{
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    //Get response
+                    var response = await query.json();
+                    if(response.result == true){ //If they already have an account
+                        throw "Error: Account already exisits";
+                    }
+                }catch(Error){
+                    //Stop running since the user already has an account
+                    alert(Error);
+                    return;
+                }
+                //Try to see if the username is already taken
+                data = { //Update mongo document
+                    username: information.elements[0].value,
+                };
+                try{
+                    //Send a query along a post request to the backend
+                    var query = await fetch("/checkUsername",{
+                        method:"POST",
+                        headers:{
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    //Get response
+                    var response = await query.json();
+                    if(response.result == true){ //If the username is already taken
+                        throw "Error: Username already taken";
+                    }
+                }catch(Error){
+                    //Stop running since the username already exists
+                    alert(Error);
+                    return;
+                }
+                //Make sure the password is long enough
+                if(information.elements[2].value.length < 10){
+                    alert("Error: Password is too short.");
+                    return;
+                }
+                //Try to insert the data into mongo
+                data = { //Update mongo document
+                    username: information.elements[0].value,
+                    email: information.elements[1].value,
+                    password: information.elements[2].value
+                };
+                try{
+                    //Send a query along a post request to the backend
+                    var query = await fetch("/createAccount",{
+                        method:"POST",
+                        headers:{
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(data),
+                    });
+                    //Get response from post request that contains all the data that was posted
+                    var response = await query.json();
+                    //Update session data(Prevents program from having to constantly query mongo)
+                    sessionStorage.setItem("userId",JSON.stringify(response.user_id));
+                    //The username, email, and password being an array makes editing the profile easier
+                    sessionStorage.setItem("userData",JSON.stringify([response.username,response.email,response.password]));
+                    sessionStorage.setItem("highScore",JSON.stringify(response.highScore));
+                    sessionStorage.setItem("scores",JSON.stringify(response.scores));
+                    sessionStorage.setItem("loggedIn",JSON.stringify(true)); //Mark user as logged in
+                    alert("Account succesfully created!");
+                    window.location.href = "home.html";
+                }catch(Error){
+                    alert(Error);
+                }
+            }
+        </script>
+        <link rel="stylesheet" href="../styles.css">
+    </head>
+    <body>
+        <div class="menu" style="height: 350px">
+            <h1>Create Account</h1>
+            <div class="form">
+                <form id="information" name="information">
+                    <p>Username</p>
+                    <input type="text" id="username" name="Username">
+                    <p>Email</p>
+                    <input type="text" id="email" name="Email">
+                    <p>Password</p>
+                    <input type="password" id="password" name="Password">
+                    <br><br>
+                    <button class="function" onclick="createAccount(event)">Submit</button>
+                    <button class="function" type="button" onclick="window.location.href = 'home.html'">Return Home</button>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

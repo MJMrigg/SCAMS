@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script>
+            //Start the smishing level either at the start or where the user last left off
+            function startSmishingLevel(){
+                var level1Stage = JSON.parse(sessionStorage.getItem("level1Stage"));
+                if(level1Stage == 0){ //If this is the user's first time playing the level, go to the beginning
+                    window.location.href = "SmishingLevel/menu.html";
+                }else{ //If it is not, go back to where they left off
+                    window.location.href = "SmishingLevel/stage"+level1Stage+".html";
+                }
+            }
+            //If the player was logged in, add their score to their account and return home
+            async function returnHome(){
+                //Check to see if the user's score was 0. If it was, don't do anything, as it probably means they didn't play the game
+                var currentScore = JSON.parse(sessionStorage.getItem("currentScore"));
+                if(currentScore <= 0){
+                    window.location.href = "../Client/home.html";
+                }
+                //Check to see if the user was logged in
+                var loggedIn = JSON.parse(sessionStorage.getItem("loggedIn"));
+                if(!loggedIn){ //If they weren't, tell them that they should if they wish to save their score
+                    alert("Tip: If you wish to save your current score, you should login or create an account.");
+                    window.location.href = "../Client/home.html";
+                    return;
+                }
+                //If they were, save their score to their account
+                //Get their highest score
+                var highScore = JSON.parse(sessionStorage.getItem("highScore"));
+                //If they got a new high score, update it on their account
+                var data = {}; //Create document containing data to be updated
+                if(currentScore > highScore){
+                    data = { //Update the document
+                        user_id: JSON.parse(sessionStorage.getItem("userId")),
+                        username: JSON.parse(sessionStorage.getItem("userData"))[0],
+                        email: JSON.parse(sessionStorage.getItem("userData"))[1],
+                        password: JSON.parse(sessionStorage.getItem("userData"))[2],
+                        highScore: currentScore,
+                        scores: JSON.parse(sessionStorage.getItem("scores"))
+                    };
+                    try{
+                        //Send a query along a post request to the backend
+                        var query = await fetch("/update",{
+                            method: "POST",
+                            headers:{
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify(data)
+                        });
+                        //Get result and update session data
+                        var result = query.json();
+                        sessionStorage.setItem("highScore",JSON.stringify(result.highScore));
+                    }catch(Error){
+                        alert(Error+" Please try again.");
+                    }
+                }
+                //Try to add their current score onto their account(not as a highscore, in the array storing all their scores)
+                //First add their current score into the their scores
+                var scoreList = JSON.parse(sessionStorage.getItem("scores"));
+                scoreList.push(currentScore);
+                data = {
+                    user_id: JSON.parse(sessionStorage.getItem("userId")),
+                    username: JSON.parse(sessionStorage.getItem("userData"))[0],
+                    email: JSON.parse(sessionStorage.getItem("userData"))[1],
+                    password: JSON.parse(sessionStorage.getItem("userData"))[2],
+                    highScore: JSON.parse(sessionStorage.getItem("highScore")),
+                    scores: scoreList
+                }
+                try{
+                    //Send a query along a post request to the backend
+                    var query = await fetch("/update",{
+                        method: "POST",
+                        headers:{
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    //Get result and update session data
+                    var result = await query.json(); 
+                    sessionStorage.setItem("scores",JSON.stringify(result.scores));
+                    //Say a different message if the player beat their high score or not
+                    if(currentScore > highScore){
+                        alert("Woah! A new high score! It was saved sucessfully to your account!")
+                    }else{
+                        alert("Your current score was save sucessfully to your account!");
+                    }
+                    window.location.href = '../Client/home.html';
+                }catch(Error){
+                    alert(Error+" Please try again.");
+                }
+            }
+            //Add the current score to the screen
+            function addCurrentScore(){
+                var currentScore = JSON.parse(sessionStorage.getItem("currentScore"));
+                var score = document.getElementById("currentScore");
+                score.innerText = "Current Score: "+currentScore;
+            }
+        </script>
+        <link rel="stylesheet" href="../styles.css">
+    </head>
+    <body>
+        <div class="menu" style="height: 360px;">
+            <h1>Level Select</h1>
+            <h3 id="currentScore"></h3>
+            <button class="selection" onclick="window.location.href = 'PermissionsLevel.html'">App Permissions Level</button><br>
+            <button class="selection" onclick="window.location.href = 'VishingLevel/Vishing.html'">Vishing Level</button><br>
+			<button class="selection" onclick="window.location.href = 'BadPacketsLevel/BadPacketsLevel.html'">Bad Packets Level</button><br>
+            <button class="selection" onclick="window.location.href = 'JuiceJLevel.html'">Juice Jacking Level</button><br>
+            <button class="selection" onclick="startSmishingLevel()">Smishing Level</button><br>
+            <button class="selection" onclick="returnHome()">Return Home</button>
+        </div>
+        <script>addCurrentScore()</script>
+    </body>
+</html>

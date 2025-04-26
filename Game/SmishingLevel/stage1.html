@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script id="2dVertexShader" type="notjs">
+            attribute vec4 a_position;
+            attribute vec3 a_color;
+            varying vec3 fragColor;
+            void main(){
+                gl_Position = a_position;
+                fragColor = a_color;
+                gl_PointSize = 10.0;
+            }
+        </script>
+        <script id="2dFragmentShader" type="notjs">
+            precision mediump float;
+            varying vec3 fragColor;
+            void main(){
+                gl_FragColor = vec4(fragColor,1);
+            }
+        </script>
+        <script src="../../index.html"></script>
+        <script src="classes.js"></script>
+        <link rel="stylesheet" href="../../styles.css">
+    </head>
+    <body>
+        <div class="menu" style="height: 875px">
+            <h1 id="stage"></h1>
+            <p id="score"></p>
+            <p>Click on the parts of the message that look suspicious.</p>
+            <canvas id="canvas" class="forSmishing" width="300" height="649" style="background: url('srcimgs/stage1.png');">
+                YOUR BROWSER DOES NOT SUPPORT CANVAS
+            </canvas><br>
+            <script>
+                var canvas = document.getElementById("canvas");
+                var gl = canvas.getContext("webgl");
+                var mymain = new main(
+                    [
+                        -0.00666666666666671, 0.7351823286576704, 0, 0.28, 0.01, 0, //Unknown number
+                        -0.7333333333333334, 0.5379558263464224, 0, 0.2, 0.01, 0, //USPS?
+                        -0.19999999999999996, 0.051052898765528765, 0, 0.5, 0.01, 0, //Weird link
+                        -0.26800008138020837, 0.3203903221753419, 0, 0.5, 0.1, 0, //UPS would never send a text for this reason
+                        -0.21466674804687502, -0.27437084885701557, 0, 0.6, 0.3, 0 //Weird instructions
+                    ],
+                    "You did not find any correct things. Remember to look out for unknown numbers, strange phone numbers, short links, and big names being dropped.",
+                    "Tip for Future: UPS doesn't do this. If something is wrong with a package, they just return to sender."
+                );
+    
+                canvas.addEventListener("click", main.leftClick);
+                canvas.addEventListener("contextmenu",main.rightClick);
+            </script>
+            <button class="submit" onclick="mymain.submit(1)">Submit</button><br>
+            <button class="selection" onclick="window.location.href='../menu.html'">Save and Quit</button>
+        </div>
+    </body>
+</html>
+<!--
+    References:
+    https://www.proofpoint.com/us/threat-reference/smishing
+    https://digital.va.gov/cyber-spot/smish-smish-dont-get-phished/
+    https://business.bofa.com/en-us/content/what-is-smishing-how-to-prevent-it.html
+    https://www.fcc.gov/avoid-temptation-smishing-scams
+-->

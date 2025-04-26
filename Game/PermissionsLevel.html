@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobile Security Game: Permissions Level</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #0000ff;
+    }
+    .app-container {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    h2 {
+      margin-top: 0;
+    }
+    .permission-group {
+      margin-bottom: 10px;
+    }
+    button {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="title"></div>
+  <div id="apps"></div>
+  <button onclick="submitChoices()">Confirm Settings</button>
+  <div id="results"></div>
+
+  <script>
+	// Whole code creates the basics of the game, but later will be updated to allow player to move to next level after 5/6 or higher score and stopwatch time saved for level onto their account
+	// Easy to add more apps to be tested on or change the number of apps tested at a time
+  
+	// Array of all apps with app name, correct choices, image link, and a brief explanation for their answer
+    const allApps = [
+      {
+        name: "Maps",
+        correctPermissions: { location: true, camera: false, microphone: false, photos: false, contacts: false },
+		image: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3fada8ae-cf13-4956-813d-15e430538649/djkovwb-5ef0ad13-552e-40ae-9e0a-32872743c95d.png/v1/fit/w_400,h_400,q_70,strp/map_icon_by_rgrant3734_djkovwb-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDAwIiwicGF0aCI6IlwvZlwvM2ZhZGE4YWUtY2YxMy00OTU2LTgxM2QtMTVlNDMwNTM4NjQ5XC9kamtvdndiLTVlZjBhZDEzLTU1MmUtNDBhZS05ZTBhLTMyODcyNzQzYzk1ZC5wbmciLCJ3aWR0aCI6Ijw9NDAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.0qPSN91C9EQlkRMb85V1m4d_4sF55I-cdgvAdg7F-r4",
+		explanation: "A map app typically requires your location so it can show you where you are, but it does not rely on any other information to do so."
+	  },
+      {
+        name: "Calculator",
+        correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+		image: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3fada8ae-cf13-4956-813d-15e430538649/djkovv9-c6b1ef40-170e-4354-a6bd-bf0451b9f662.png/v1/fit/w_400,h_400,q_70,strp/calculator_icon_by_rgrant3734_djkovv9-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDAwIiwicGF0aCI6IlwvZlwvM2ZhZGE4YWUtY2YxMy00OTU2LTgxM2QtMTVlNDMwNTM4NjQ5XC9kamtvdnY5LWM2YjFlZjQwLTE3MGUtNDM1NC1hNmJkLWJmMDQ1MWI5ZjY2Mi5wbmciLCJ3aWR0aCI6Ijw9NDAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.Z0mZXun3iBDOw7f7C1dohwbKXspB8fVOwBKO5yFkh3w",
+		explanation: "A calculator app does not use any extra information to complete it's tasks."
+	  },
+      {
+        name: "Contacts",
+        correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: true },
+		image: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3fada8ae-cf13-4956-813d-15e430538649/djkovvq-c031f99f-2bb9-4406-80df-c00c0e6f5157.png/v1/fit/w_400,h_400,q_70,strp/contacts_icon_by_rgrant3734_djkovvq-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDAwIiwicGF0aCI6IlwvZlwvM2ZhZGE4YWUtY2YxMy00OTU2LTgxM2QtMTVlNDMwNTM4NjQ5XC9kamtvdnZxLWMwMzFmOTlmLTJiYjktNDQwNi04MGRmLWMwMGMwZTZmNTE1Ny5wbmciLCJ3aWR0aCI6Ijw9NDAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.msrBwCW0pZeui8BnoX44qo9YNKLqQISSIQEaTds41pw",
+		explanation: "A contacts app holds information about your contacts, nothing more."
+	  },
+      {
+        name: "Mail",
+        correctPermissions: { location: false, camera: false, microphone: false, photos: true, contacts: true },
+		image: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3fada8ae-cf13-4956-813d-15e430538649/djkovv1-00b3e3c2-18d8-46dd-a128-2e454ad3dba4.png/v1/fit/w_400,h_400,q_70,strp/mail_icon_by_rgrant3734_djkovv1-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDAwIiwicGF0aCI6IlwvZlwvM2ZhZGE4YWUtY2YxMy00OTU2LTgxM2QtMTVlNDMwNTM4NjQ5XC9kamtvdnYxLTAwYjNlM2MyLTE4ZDgtNDZkZC1hMTI4LTJlNDU0YWQzZGJhNC5wbmciLCJ3aWR0aCI6Ijw9NDAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.GE3k0iBrOxj17-IanRevIga_cNgecx7ASdXQvsJ0lKI",
+		explanation: "A mail app can send photos and email your contacts easier if you have their email saved."
+	  },
+      {
+        name: "Messages",
+        correctPermissions: { location: false, camera: false, microphone: false, photos: true, contacts: true },
+		image: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3fada8ae-cf13-4956-813d-15e430538649/djkovvi-62fd76ce-c523-4d20-b0dd-9858581a9144.png/v1/fit/w_400,h_400,q_70,strp/messages_icon_by_rgrant3734_djkovvi-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDAwIiwicGF0aCI6IlwvZlwvM2ZhZGE4YWUtY2YxMy00OTU2LTgxM2QtMTVlNDMwNTM4NjQ5XC9kamtvdnZpLTYyZmQ3NmNlLWM1MjMtNGQyMC1iMGRkLTk4NTg1ODFhOTE0NC5wbmciLCJ3aWR0aCI6Ijw9NDAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.rE26I14DnOn3ckpld25_psvZ8Wxhm868GKSj7mVpwjs",
+		explanation: "Having access to your contacts allows for you to find the person you want to talk to easier, and allowing photos will allow you to share your photos in your messages."
+	  },
+      {
+        name: "Phone",
+        correctPermissions: { location: false, camera: false, microphone: true, photos: false, contacts: true },
+		image: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3fada8ae-cf13-4956-813d-15e430538649/djkovvv-0565036e-c38f-4e14-a7a6-5878b4108ea7.png/v1/fit/w_400,h_400,q_70,strp/phone_icon_by_rgrant3734_djkovvv-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDAwIiwicGF0aCI6IlwvZlwvM2ZhZGE4YWUtY2YxMy00OTU2LTgxM2QtMTVlNDMwNTM4NjQ5XC9kamtvdnZ2LTA1NjUwMzZlLWMzOGYtNGUxNC1hN2E2LTU4NzhiNDEwOGVhNy5wbmciLCJ3aWR0aCI6Ijw9NDAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.1_U9BG4Ttv2IZnb0FyNQqsOWEzLCohc6mw-vIP_CQcI",
+		explanation: "Contacts allows you to find the person you want to call, and you need the microphone to talk to the other person."
+	  },
+      {
+        name: "Music",
+        correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+		image: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3fada8ae-cf13-4956-813d-15e430538649/djkovw4-88c44db9-c06d-4c8b-81cf-e5b5a19f8320.png/v1/fit/w_400,h_400,q_70,strp/music_icon_by_rgrant3734_djkovw4-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDAwIiwicGF0aCI6IlwvZlwvM2ZhZGE4YWUtY2YxMy00OTU2LTgxM2QtMTVlNDMwNTM4NjQ5XC9kamtvdnc0LTg4YzQ0ZGI5LWMwNmQtNGM4Yi04MWNmLWU1YjVhMTlmODMyMC5wbmciLCJ3aWR0aCI6Ijw9NDAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.12P_FXt1CZF-JaEyBrU6YzK-N983IYgHQ1QxYo2LaAY",
+		explanation: "Music appications generally only play audio for you and do not require any other permissions."
+	  },
+	  {
+        name: "Calendar",
+        correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+		image: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3fada8ae-cf13-4956-813d-15e430538649/djkpofk-377c2262-4fc7-4414-b39b-13002120fcbf.png/v1/fit/w_400,h_400,q_70,strp/calendar_by_rgrant3734_djkpofk-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDAwIiwicGF0aCI6IlwvZlwvM2ZhZGE4YWUtY2YxMy00OTU2LTgxM2QtMTVlNDMwNTM4NjQ5XC9kamtwb2ZrLTM3N2MyMjYyLTRmYzctNDQxNC1iMzliLTEzMDAyMTIwZmNiZi5wbmciLCJ3aWR0aCI6Ijw9NDAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.mFPsOk_3iiAxBP210oC6tuxX-owQadwBrNg9omTo1Yg",
+		explanation: "A calendar app does not require other permissions to run."
+	  },
+	  {
+        name: "Clock",
+        correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+		image: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3fada8ae-cf13-4956-813d-15e430538649/djkpofx-b6c3e1b2-18e8-4d9e-9291-80555ce144e1.png/v1/fit/w_400,h_400,q_70,strp/clock_by_rgrant3734_djkpofx-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDAwIiwicGF0aCI6IlwvZlwvM2ZhZGE4YWUtY2YxMy00OTU2LTgxM2QtMTVlNDMwNTM4NjQ5XC9kamtwb2Z4LWI2YzNlMWIyLTE4ZTgtNGQ5ZS05MjkxLTgwNTU1Y2UxNDRlMS5wbmciLCJ3aWR0aCI6Ijw9NDAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.i2xb1B4wz6u63G6kIkn9uCfIdZ6cRJdWxayI9CdwgNc",
+		explanation: "The clock app does not need any permissions to operate."
+	  },
+	  {
+        name: "Camera",
+        correctPermissions: { location: false, camera: true, microphone: true, photos: false, contacts: false },
+		image: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3fada8ae-cf13-4956-813d-15e430538649/djkpof3-c2bd819d-ccbc-4661-95be-e355b524cc1e.png/v1/fit/w_400,h_400,q_70,strp/camera_by_rgrant3734_djkpof3-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDAwIiwicGF0aCI6IlwvZlwvM2ZhZGE4YWUtY2YxMy00OTU2LTgxM2QtMTVlNDMwNTM4NjQ5XC9kamtwb2YzLWMyYmQ4MTlkLWNjYmMtNDY2MS05NWJlLWUzNTViNTI0Y2MxZS5wbmciLCJ3aWR0aCI6Ijw9NDAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.b3bKUAJvfwIelboiqWQeg9t2SLEhcbqq8wNgE-f-MJY",
+		explanation: "A camera app needs the camera to take pictures, and microphone for videos. While the camera app takes photos, it does not access them directly."
+	  },
+	  {
+        name: "Gallery",
+        correctPermissions: { location: false, camera: false, microphone: false, photos: true, contacts: false },
+		image: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3fada8ae-cf13-4956-813d-15e430538649/djkpoga-99eb60fa-3f08-41d5-8c33-1f5454a49c6b.png/v1/fit/w_400,h_400,q_70,strp/gallery_by_rgrant3734_djkpoga-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDAwIiwicGF0aCI6IlwvZlwvM2ZhZGE4YWUtY2YxMy00OTU2LTgxM2QtMTVlNDMwNTM4NjQ5XC9kamtwb2dhLTk5ZWI2MGZhLTNmMDgtNDFkNS04YzMzLTFmNTQ1NGE0OWM2Yi5wbmciLCJ3aWR0aCI6Ijw9NDAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.dDDYjojov6pCcgWNA1Bg0AjoyvyTE1Isr7z1Iitjl8I",
+		explanation: "The gallery keeps track of photos, but it does not require access to any other permissions to operate."
+	  }
+    ];
+	
+	// Randomly selects 6 apps from the 11 to display
+    const selectedApps = allApps.sort(() => 0.5 - Math.random()).slice(0, 6); // 6 is the number of apps tested, can be changed by changing the number
+	// Creates the container that the different app sections reside in
+    function createAppUI() {
+	//Title and Description into white box
+	const titleContainer = document.getElementById("title");
+	const title = document.createElement("div");
+    title.className = "app-container";
+    title.innerHTML = `<h1>Settings/General/App Permissions</h1>
+  <h5>Whenever you open a new app on your phone, you have probably been given an alert box that asks you for 
+permissions on your location, camera, etc. Giving these permissions tends to be easy by pressing 1 button, 
+but have you ever thought about what the app was and how it relates to the permissions that you are giving them? 
+For this level, you are tasked to give only the correct permissions to the apps that are displayed.</h5>`;
+	  titleContainer.appendChild(title);
+	
+      const appsContainer = document.getElementById("apps");
+      selectedApps.forEach((app, index) => {
+        const div = document.createElement("div");
+        div.className = "app-container";
+        div.innerHTML = `<img src="${app.image}" width="70" height="70"></img>
+		  <h1 style='display:inline;'>${app.name}</h1>
+          ${checkbox("camera", index)}
+          ${checkbox("location", index)}
+          ${checkbox("microphone", index)}
+          ${checkbox("photos", index)}
+          ${checkbox("contacts", index)}`;
+        appsContainer.appendChild(div);
+      });
+    }
+	// Creates the checkboxes that are used for selecting permissions
+    function checkbox(permission, appIndex) {
+      return `<div class="permission-group">
+        <label>
+          <input type="checkbox" data-app="${appIndex}" data-permission="${permission}" />
+          Allow ${permission.charAt(0).toUpperCase() + permission.slice(1)}
+        </label>
+      </div>`;
+    }
+	// Gets the users choices and compares them to the correct answers and displays the ones they got right/wrong along with an explanation for that app
+    function submitChoices() {
+	  document.querySelector("button").style.display = "none";
+      const checkboxes = document.querySelectorAll("input[type=checkbox]");
+      const userChoices = {};
+      checkboxes.forEach(cb => {
+        const appIndex = cb.dataset.app;
+        const perm = cb.dataset.permission;
+        if (!userChoices[appIndex]) userChoices[appIndex] = {};
+        userChoices[appIndex][perm] = cb.checked;
+      });
+
+      let score = 0;
+      let total = selectedApps.length * 5;
+      let feedback = "<h2>Results:</h2>";
+
+      selectedApps.forEach((app, i) => {
+        feedback += `<li><strong>${app.name}</strong>:`;
+        Object.entries(app.correctPermissions).forEach(([perm, correct]) => {
+          const userValue = userChoices[i]?.[perm] || false;
+          if (userValue === correct) {
+            score++;
+            feedback += ` <span style="color: green">✓ ${perm}</span>`;
+          } else {
+            feedback += ` <span style="color: red">✗ ${perm}</span>`;
+          }
+        });
+		feedback += `</ul><p>${app.explanation}</p></li>`;
+      });
+	        feedback += `</ul><p>Your Score: ${score}/${total}</p>
+	  <p>It is important to make sure that you know what information you are giving to your apps. Limit what you want to share to certain apps to better protect your data.</p>
+	  <button class="selection" onclick="window.location.href='menu.html'">Save and Quit</button>`;
+	  const resultsContainer = document.getElementById("results");
+	  	const results = document.createElement("div");
+	    results.className = "app-container";
+		results.innerHTML = feedback;
+	    resultsContainer.appendChild(results);
+		var currentScore = JSON.parse(sessionStorage.getItem("currentScore")) + score;
+        sessionStorage.setItem("currentScore", JSON.stringify(currentScore));
+    }
+	
+    createAppUI();
+  </script>
+</body>
+</html>

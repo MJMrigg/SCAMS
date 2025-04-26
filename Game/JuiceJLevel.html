@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mobile Security Game: Juice Jacking Level</title>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          padding: 20px;
+          background: #0000ff;
+        }
+        .main-container {
+          background: #ffffff;
+          padding: 75px;
+          border-radius: 10px;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+          margin-bottom: 20px;
+        }
+        h2 {
+          margin-top: 0;
+        }
+        button {
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+        #feedback{
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+
+    <div class="question-container">
+        <h2 id="scenario"></h2>
+        <p id="question" style="font-size:1.2rem; font-weight:bold;"></p>
+        <button id="yesButton">Yes</button>
+        <button id="noButton">No</button>
+      </div>
+
+      <p id="feedback" style="font-weight: 100;"></p>
+
+    <div id="follow-up" class="follow-up" style="display: none;">
+        <p id="question2" style="font-size:1.2rem; font-weight:bold;"> Which of these can be the result of a Juice Jacking attack?</p>
+        <p id="instruction" style="font-size:1.0rem; font-weight:100;"> (For every correct choice +1 point and for every incorrect choice -1 point)</p>
+        <label><input type="checkbox" name="attack" value="DataTheft"> Data Theft</label><br>
+        <label><input type="checkbox" name="attack" value="MalwareInstalation"> Malware Instalation</label><br>
+        <label><input type="checkbox" name="attack" value="ImpactWirelessConn"> Impact Wireless Connections</label><br>
+        <label><input type="checkbox" name="attack" value="BypassBioSec"> Bypass Biometric Security</label><br>
+        <label><input type="checkbox" name="attack" value="MultiDeviceAttack"> Multi-Device Attack</label><br>
+        <label><input type="checkbox" name="attack" value="DisablingAttack"> Disabling Attack</label><br>
+        <label><input type="checkbox" name="attack" value="ModifySett"> Modify System Settings</label><br>
+        <button id="submit" onclick="submit()">Submit</button>
+    </div>
+
+    <p id="feedback2" style="font-weight:100";></p>
+
+    <div id="follow-upAnswers" style="display:none;">
+        <p id="explanation1"></p>
+        <p id="explanation2"></p>
+        <p id="explanation3"></p>
+        <p id="explanation4"></p>
+        <p id="explanation5"></p>
+        <p id="explanation6"></p> 
+    </div>
+
+    <p id="totalScore" style="font-weight:bolder";></p>
+    </div>
+
+    <script>
+        let score = 0;
+        const firstQuestion = {
+            scenario: "Your phone is at 5% battery charge and you are stuck at a train station with no personal charger.",
+            question: "Do you want to charge your phone at a public USB charging station?",
+            choices: {
+            Yes: false,
+            No: true
+        },
+        explanation: "Attackers can use public charging stations to tamper with USB ports, leave malicious USB cables, or even modify the charging kiosk internally. This is known as a Juice Jacking attack."
+        };
+
+        const follow_upQ = {
+            name: "Which of these can be the result of a Juice Jacking attack?",
+            choices: {
+                DataTheft: true,
+                MalwareInstalation: true,
+                ImpactWirelessConn: false,
+                BypassBioSec: false,
+                MultiDeviceAttack: true,
+                DisablingAttack: true,
+                ModifySett: false
+            },
+            explanation1: " Juice Jacking is a form of a hardware based Man in the Middle attack that can result in data theft, malware instalation, multi-device attacks, and disabling attacks through the used cable.",
+            explanation2: "What are these attacks:",
+            explanation3: " -   Data theft is when personal information located on the device is stolen. The longer the device is plugged into the attacking USB, the more data is stolen. ",
+            explanation4: " -   Malware Instalation is when applications such as Spyware is downloaded onto the device to allow the attacker to continue alterations or inspection even after the device is unplugged. ",
+            explanation5: " -   Multi-Device Attacks occur when a device that is a victim of Juice Jacking can spread the malicious impact to other USB cables, which in turn, can infect further devices that use that newly affected cable. ",
+            explanation6: " -   Disabling Attacks lock the user out of their own device, giving the attackers the ability to fully operate the device. "
+        }
+
+        function displayQuestion1(q) {
+
+            document.getElementById("scenario").textContent = q.scenario
+            document.getElementById("question").textContent = q.question;
+
+            //buttons
+            document.getElementById("yesButton").onclick = function(){
+                checkAnswer(q, 'Yes');
+            };
+            document.getElementById("noButton").onclick = function(){
+                checkAnswer(q, 'No');
+            };
+        }
+            
+        // Function to check the answer and show feedback
+        function checkAnswer(question, choice) {
+            const isCorrect = question.choices[choice];
+            const feedback = isCorrect ? "✅ Correct! (+1 Point)" : "❌ Incorrect.";
+            if (isCorrect == true){
+                score++;
+            }
+            
+            document.getElementById("feedback").innerHTML = `${feedback}<br><br>${question.explanation}`;
+
+            document.getElementById("follow-up").style.display = "block";
+        }
+
+        function submit(){
+            //gathering chosen answers
+            const checkboxes = document.querySelectorAll('input[name="attack"]:checked');
+            const selectedAttacks = Array.from(checkboxes).map(checkbox => checkbox.value);
+
+            //containing correct answers in an array
+            const correctAttacks = ['DataTheft','MalwareInstalation', 'MultiDeviceAttack', 'DisablingAttack'];
+            
+            let correctCount = 0;
+            let currentScore = 0;
+            selectedAttacks.forEach(attack => {
+                if (correctAttacks.includes(attack)){
+                    currentScore++;
+                    correctCount++;
+                }
+                else{
+                    currentScore--;
+                }
+            })
+
+            score += currentScore;
+                    
+            let feedbackMsg = `You got ${correctCount} out of 4 answers correct! You earned ${currentScore} point(s).`;
+
+            document.getElementById("feedback2").innerHTML = feedbackMsg;
+
+            //show explainations
+            document.getElementById("explanation1").innerText = follow_upQ.explanation1;
+            document.getElementById("explanation2").innerText = follow_upQ.explanation2;
+            document.getElementById("explanation3").innerText = follow_upQ.explanation3;
+            document.getElementById("explanation4").innerText = follow_upQ.explanation4;
+            document.getElementById("explanation5").innerText = follow_upQ.explanation5;
+            document.getElementById("explanation6").innerText = follow_upQ.explanation6;
+
+            document.getElementById("follow-upAnswers").style.display = "block";
+
+            //display total score
+            let totalScoreMsg = `Total Score: ${score}<br>
+			<button class="selection" onclick="window.location.href='menu.html'">Save and Quit</button>`;;
+            document.getElementById("totalScore").innerHTML = totalScoreMsg;
+			var playerCurrentScore = JSON.parse(sessionStorage.getItem("currentScore"));
+			playerCurrentScore += score;
+			sessionStorage.setItem("currentScore",JSON.stringify(playerCurrentScore));
+        }
+        
+        displayQuestion1(firstQuestion);
+
+
+    </script>
+
+</body>
+</html>
