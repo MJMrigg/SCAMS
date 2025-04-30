@@ -38,7 +38,7 @@
                     }
                 }catch(Error){
                     //Stop running since the user already has an account
-                    alert(Error);
+                    alert("Email Error: "+Error);
                     return;
                 }
                 //Try to see if the username is already taken
@@ -61,7 +61,7 @@
                     }
                 }catch(Error){
                     //Stop running since the username already exists
-                    alert(Error);
+                    alert("Username Error: "+Error);
                     return;
                 }
                 //Make sure the password is long enough
