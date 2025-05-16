@@ -78,6 +78,7 @@ app.post("/createAccount", async(request, response) => {
 //Retrieve data via a post request based on the parameters in the request and send the retrieved data back via a response
 app.post("/login", async(request, response) =>{
   var data = request.body;
+  console.log("T");
   //Connect to MongoDB
   const client = new MongoClient(uri);
   await client.connect();
