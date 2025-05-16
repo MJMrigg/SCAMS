@@ -19,7 +19,8 @@ app.get("/", (request, response) => {
 });
 
 //Mongo information
-const uri = "mongodb+srv://SSEconnection:RememberThis@cluster0.3jlg2.mongodb.net/";
+//const uri = "mongodb+srv://SSEconnection:RememberThis@cluster0.3jlg2.mongodb.net/?authSource=admin";
+const uri = "mongodb+srv://evanhambre:R0SEBID25@cluster0.zlbvlpq.mongodb.net/"
 const options = {
   ssl: true,
   sslValidate: false,
