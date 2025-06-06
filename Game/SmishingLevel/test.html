@@ -1,0 +1,39 @@
+<DOCTYPE = "html">
+<html land="en">
+	<head>
+		<title>Smishing Test Environment</title>
+		<script id="2dVertexShader" type="notjs">
+            		attribute vec4 a_position;
+            		attribute vec3 a_color;
+            		varying vec3 fragColor;
+            		void main(){
+                		gl_Position = a_position;
+                		fragColor = a_color;
+                		gl_PointSize = 10.0;
+            		}
+        	</script>
+        	<script id="2dFragmentShader" type="notjs">
+            		precision mediump float;
+            		varying vec3 fragColor;
+            		void main(){
+                		gl_FragColor = vec4(fragColor,1);
+            		}
+       		</script>
+        	<script src="main.js"></script>
+        	<link rel="stylesheet" href="../../styles.css">
+	</head>
+	<body>
+		<canvas id="canvas" class="forSmishing" width="300" height="649">
+			YOUR BROWSWER DOES NOT SUPPORT CANVAS
+		</canvas>
+		<script>
+			var canvas = document.getElementById("canvas");
+                	var gl = canvas.getContext("webgl");
+                	var mymain = new main([-0.5,0.5,0.5,	0.5,-0.5,0.5],"TEST","TEST");
+    
+                	canvas.addEventListener("click", main.leftClick);
+                	canvas.addEventListener("contextmenu", main.rightClick);
+			canvas.addEventListener("mousemove", main.mouseMove);
+		</script>
+	</body>
+</html>
