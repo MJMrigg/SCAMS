@@ -29,11 +29,18 @@
 		<script>
 			var canvas = document.getElementById("canvas");
                 	var gl = canvas.getContext("webgl");
-                	var mymain = new main([-0.5,0.5,0.5,	0.5,-0.5,0.5],"TEST","TEST");
+                	var mymain = new main([
+				-0.5,0.5,0.5,	0.5,-0.5,0.5
+				],[
+				0.1,0.1,0.1
+				],"You're a loser!","Tippy"
+			);
     
                 	canvas.addEventListener("click", main.leftClick);
                 	canvas.addEventListener("contextmenu", main.rightClick);
 			canvas.addEventListener("mousemove", main.mouseMove);
+			
 		</script>
+		<button class="submit" onclick="mymain.submit(0)">Submit</button>
 	</body>
 </html>
