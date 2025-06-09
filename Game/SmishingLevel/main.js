@@ -49,8 +49,6 @@ class webgl{
 class box {
     constructor() {
         this.prefab; //Object type
-        //Collision Radii - Determine if a player placed a player box near part of the image that is suspicous
-        this.collisionRadii = [];
 	this.centralPoint = []; //Center of the box(used for collisions)
         this.vertices = []; //First 3 numbers are (x,y,z) and next 3 are rgb values
         this.buffer = gl.createBuffer(); //Create buffer used to send data to GPU
@@ -87,15 +85,7 @@ class box {
 		this.bindBuffer();
 	}
 	finishBox(x,y,z){
-		//Add the final point
-		this.addPoint(x,y,z);
-		//Use the top left and bottom right corners to find the central point and collision radii
-		for(let i = 0; i < 3; i++){
-			//Find the ith dimension of the central point using the ith dimension of top left and bottom right corners
-			this.centralPoint.push((this.vertices[i] + this.vertices[18+i]) / 2);
-			//Get the distance between the top left and bottom right corners in the ith dimension to find the ith dimension's collision raii
-			this.collisionRadii[i] = (Math.abs(this.vertices[18+i] - this.vertices[i]) / 2) + 0.05;
-		}		
+		this.addPoint(x,y,z); //Add the final point		
 		this.isFinished = true; //Finish the box
 	}
 	//Bind the vertices to the buffer
@@ -141,7 +131,17 @@ class realPoint extends box{
         super();
 	this.color = [0.0, 1.0, 0.0]; //rgb values
         this.found = false; //Start off assuming that the Real Point has not been found
+        //Collision Limit - Determine how big a box can before it no longer qualifies as finding the real point(that way the player can't just box the whole screen
+        this.collisionLimits = [];
     }
+	finishBox(x,y,z){
+		super.finishBox(x,y,z);
+		//Use the top left and bottom right corners to find the central point in all 3 dimensions
+		for(let i = 0; i < 3; i++){
+			//Find the ith dimension of the central point using the ith dimension of top left and bottom right corners
+			this.centralPoint.push((this.vertices[i] + this.vertices[18+i]) / 2);
+		}
+	}
 }
 //Player points - points that players place on the screen
 class playerPoint extends box {
@@ -153,7 +153,7 @@ class playerPoint extends box {
 
 //Class that will serve as the main function
 class main{
-    constructor(points,text,tip){ //Takes in coordinates for Real Points, losing text, and takeway tip for this level
+    constructor(points,limits,text,tip){ //Takes in coordinates for Real Points, their collision limits, losing text, and takeway tip for this level
    	this.webgl = new webgl();
         this.realPoints = []; //Parts of the message that are suspicious
         this.playerPoints = []; //Places where the player clicks on the canvas
@@ -163,13 +163,16 @@ class main{
         //Update the stage number and add the player's current score to the screen
         //document.getElementById("score").innerText = "Current Score: "+JSON.parse(sessionStorage.getItem("currentScore"));
         //document.getElementById("stage").innerText = "Message "+JSON.parse(sessionStorage.getItem("level1Stage"))+"/9";
-        //Add Real Points to Real Points array
+        //Add Real Points to Real Points array and set their collision limits
         for(let i = 0; i < points.length; i += 6){
-            this.addObject(0,realPoint,[points[i],points[i+1],points[i+2]]);
-		this.realPoints[this.realPoints.length-1].finishBox(points[i+3],points[i+4],points[i+5]);
+            this.addObject(0,realPoint,[points[i], points[i+1], points[i+2]]);
+		this.realPoints[this.realPoints.length-1].finishBox(points[i+3], points[i+4], points[i+5]);
+		this.realPoints[this.realPoints.length-1].collisionLimits.push(limits[(i/2)], limits[(i/2)+1], limits[(i/2)+2]);
         }
         this.losingText = text;
         this.takeaway = tip;
+
+	this.renderAll();
     }
     addObject(type,prefab,coordinates){
         //Take in object type, its prefab code, and vertex coordinates, create the object, render, and return it
@@ -240,19 +243,25 @@ class main{
         for(let i = 0; i < this.playerPoints.length; i++){
             this.playerPoints[i].render(this.webgl.program);
         }
-    }
-    checkCollision(object1,object2){
-        //Take in two objects, calculate their distances from each other, and return true if they are close enough to touch
-        //This is used to determine if a Player Point is touching a real point
+    }	
+	//Take in two 2d points and calculate the distance between the two
+	distance2d(x1,y1,x2,y2){
+		return Math.sqrt(((y2-y1)*(y2-y1)) + ((x2-x1)*(x2-x1)));
+	}
+    checkCollision(player,real){
+        //Take in a playerPoint and a realPoint and use the distances to caculate if the realPoint was boxed by the playerPoint
+	
+	//Calculate distances between the real point's center and the top left and bottom right corners of the real point and player point
+	var realTopLeft = this.distance2d(real.centralPoint[0], real.centralPoint[1], real.vertices[0], real.vertices[1]); //Distance from real point's center to its top left corner
+	var realBottomRight = this.distance2d(real.centralPoint[0], real.centralPoint[1], real.vertices[12], real.vertices[13]); //Distance from real point's center to its bottom right corner
+	var playerTopLeft = this.distance2d(real.centralPoint[0], real.centralPoint[1], player.vertices[0], player.vertices[1]); //Distance from real point's center to player's top left corner
+	var playerBottomRight = this.distance2d(real.centralPoint[0], real.centralPoint[1], player.vertices[12], player.vertices[13]); //Distance from real point's center to player's bottom right corner
+	var realTopLeftLimit = this.distance2d(real.centralPoint[0], real.centralPoint[1], real.vertices[0]+collisionLimits[0], real.vertices[1]+collisionLimits[1]); //Distance from real point's center to its collision limit towards the top left corner
+	var realBottomRightLimit = this.distance2d(real.centralPoint[0], real.centralPoint[1], real.vertices[12]+collisionLimits[0], real.vertices[13]+collisionLimits[1]); //Distance from real point's center to its collision limit towards the bottom right corner
 
-        //Total ranges the objects can be from each other on the x and y axes without a collision(no z since they all have the same z coordinate)
-        var xRange = object1.collisionRadii[0]+object2.collisionRadii[0];
-        var yRange = object1.collisionRadii[1]+object2.collisionRadii[1];
-        //Distances between the objects on the x and y axes
-        var xDistance = Math.abs(object1.vertex[0]-object2.vertex[0]);
-        var yDistance = Math.abs(object1.vertex[1]-object2.vertex[1]);
-        //If the distances are less than the ranges on all axes, return true(there is a collision)
-        return (xDistance < xRange && yDistance < yRange);
+	//Use those distances to determine if the player fully boxed in a real point
+	//If the distance from the center of the realPoint is to each corner of the playerPoint, and the playerPoint is within the bounds of the realPoints collision radius, return true
+	return ((realTopLeft <= playerTopLeft && playerTopLeft <= realTopLeftLimit) && (realBottomRight <= playerBottomRight && playerBottomRight <= realBottomRightLimit));
     }
     async submit(stage){ //Takes in the stage number
         //See if the player clicked on all the suspicious parts of the message, calculate their score, end the stage, and move on to the next one
@@ -266,7 +275,7 @@ class main{
             }
             for (let j = 0; j < this.realPoints.length; j++) {
                 if(this.realPoints[j].found){ //If this point was already found, skip it
-                    continue; //This prevents players from getting points for clicking on the same suspicious part of the messeage twice
+                    continue; //This prevents players from getting points for clicking on the same suspicious part of the message twice
                 }
                 //If there is a collision with the point and player point...
                 if (this.checkCollision(this.playerPoints[i], this.realPoints[j])) {
@@ -290,6 +299,7 @@ class main{
             text = "You found "+this.pointsFound+" correct things, earning you "+this.pointsFound+" points towards your total score!";
         }
         alert(text+"\n"+this.takeaway);
+/*
         //Update the player's score
         var currentScore = JSON.parse(sessionStorage.getItem("currentScore")) + this.pointsFound;
         sessionStorage.setItem("currentScore", JSON.stringify(currentScore));
@@ -302,7 +312,7 @@ class main{
             var level1Stage = stage + 1;
             sessionStorage.setItem("level1Stage", JSON.stringify(level1Stage));
             window.location.href = 'stage'+level1Stage+'.html';   
-        }
+        }*/
     }
 
     //Static functions for handling when the player left clicks and right clicks
