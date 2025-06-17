@@ -19,7 +19,7 @@
             }
         </script>
         <script src="../../index.html"></script>
-        <script src="classes.js"></script>
+        <script src="main.js"></script>
         <link rel="stylesheet" href="../../styles.css">
     </head>
     <body>
@@ -35,18 +35,27 @@
                 var gl = canvas.getContext("webgl");
                 var mymain = new main(
                     [
-                        0.01866658528645826, 0.7394966395867439, 0, 0.28, 0.01, 0, //This is from an unkown number
-                        -0.22133341471354162, 0.406676916936513, 0, 0.6, 0.01, 0, //Banks would never text you about this
-                        -0.6213334147135416, 0.21253207872387803, 0, 0.37, 0.01, 0, //Asking for your social security number
-                        -0.4613334147135416, 0.1570621249488395, 0, 0.5, 0.01, 0, //Weird link
-                        -0.1680000813802084, 0.2661530622532262, 0, 0.3, 0.01, 0, //Bank asking you to go to their website
-                    ],
+                        -0.22666666666666668, 0.7486517719568566, 0.5, 0.21999999999999997, 0.7239984591679507, 0.5, //This is from an unkown number
+                        -0.8520001220703125, 0.5021186440677967, 0.5, 0.32799987792968754, 0.41583204930662565, 0.5, //Banks would never text you about this
+                        -0.8520001220703125, 0.16929892141756553, 0.5, -0.29866678873697916, 0.14464560862865938, 0.5, //Asking for your social security number
+                        -0.8506669108072917, 0.23093220338983045, 0.5, -0.23733357747395833, 0.19703389830508478, 0.5, //Weird link
+                        -0.4920001220703125, 0.2771571648690292, 0.5, 0.17466654459635422, 0.24942218798150995, 0.5, //Bank asking you to go to their website
+			-0.8453334554036458, 0.5514252696456086, 0.5, 0.1679998779296874, 0.47438366718027725, 0.5 //"This is your bank"
+                    ],[
+				-0.3586666870117188, 1.0013482280431432, 0.40133331298828123, 0.6993451463790448,
+				-1.005333455403646, 0.5945685670261942, 0.49466654459635406, 0.2925654853620956,
+				-0.9453334554036459, 0.19395223420647145, 0.06133321126302094, 0.12307395993836678,
+				-0.9586667887369792, 0.24942218798150995, -0.20533345540364578, 0.17854391371340528,
+				-0.9520001220703125, 0.36036209553158716, 0.5146665445963541, 0.23093220338983045,
+				-0.9186667887369792, 0.5914869029275809, 0.46799987792968745, 0.4404853620955316
+			],
                     "You did not find any correct things. Remember to look out for big names asking for valuable information.",
                     "Tip for Future: Banks don't settle important stuff like this over text. In fact, they usually call you about this."
                 );
 
                 canvas.addEventListener("click", main.leftClick);
-                canvas.addEventListener("contextmenu",main.rightClick);
+                canvas.addEventListener("contextmenu", main.rightClick);
+		canvas.addEventListener("mousemove", main.mouseMove);
             </script>
             <button class="submit" onclick="mymain.submit(3)">Submit</button><br>
             <button class="selection" onclick="window.location.href='../menu.html'">Save and Quit</button>

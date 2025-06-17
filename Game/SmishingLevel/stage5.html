@@ -19,7 +19,7 @@
             }
         </script>
         <script src="../../index.html"></script>
-        <script src="classes.js"></script>
+        <script src="main.js"></script>
         <link rel="stylesheet" href="../../styles.css">
     </head>
     <body>
@@ -35,18 +35,25 @@
                 var gl = canvas.getContext("webgl");
                 var mymain = new main(
                     [
-                        -0.0013334147135416474, 0.7376476693410536, 0, 0.3, 0.01, 0, //Unknown number
-                        -0.7280000813802083, 0.5404211670298054, 0, 0.1, 0.01, 0, //Odd greeting for a charity
-                        -0.47466674804687503, 0.16137648290037565, 0, 0.1, 0.05, 0, //Specifically targetting the user
-                        -0.2813334147135417, -0.13754493466510975, 0, 0.6, 0.3, 0, //Language designed specifically to evoke an emotional response
-                        -0.3013334147135417, -0.005033378424739943, 0, 0.6, 0.01, 0, //Wierd link
-                    ],
+                        -0.22666666666666668, 0.7486517719568566, 0.5, 0.21999999999999997, 0.7239984591679507, 0.5, //Unknown number
+                        -0.8520001220703125, 0.5545069337442219, 0.5, -0.6386667887369792, 0.5236902927580893, 0.5, //Odd greeting for a charity
+                        -0.5720001220703125, 0.17546224961479195, 0.5, -0.41200012207031245, 0.1477272727272727, 0.5, //Specifically targetting the user
+                        -0.8520001220703125, -0.0402542372881356, 0.5, 0.33466654459635414, -0.2837057010785824, 0.5, //Language designed specifically to evoke an emotional response
+                        -0.8520001220703125, 0.005970724191063148, 0.5, 0.2746665445963541, -0.015600924499229563, 0.5 //Wierd link
+                    ],[
+				-0.3586666870117188, 1.0013482280431432, 0.40133331298828123, 0.6993451463790448,
+				-0.9253334554036459, 0.5822419106317411, -0.5853334554036458, 0.49595531587057007,
+				-0.9586667887369792, 0.20627889060092452, 0.3213332112630207, 0.06760400616332829,
+				-0.9653334554036458, -0.009437596302003026, 0.5479998779296875, -0.3268489984591679,
+				-0.9386667887369792, 0.042950693374422144, 0.5213332112630209, -0.04641756548536213
+			],
                     "You did not find any correct things. Remember to look for language that evokes emotion.",
                     "Tip for future: A charity would not reach out to you unless you are associated with them."
                 );
 
                 canvas.addEventListener("click", main.leftClick);
-                canvas.addEventListener("contextmenu",main.rightClick);
+                canvas.addEventListener("contextmenu", main.rightClick);
+		canvas.addEventListener("mousemove", main.mouseMove);
             </script>
             <button class="submit" onclick="mymain.submit(5)">Submit</button><br>
             <button class="selection" onclick="window.location.href='../menu.html'">Save and Quit</button>

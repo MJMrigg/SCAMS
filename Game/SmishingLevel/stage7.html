@@ -19,7 +19,7 @@
             }
         </script>
         <script src="../../index.html"></script>
-        <script src="classes.js"></script>
+        <script src="main.js"></script>
         <link rel="stylesheet" href="../../styles.css">
     </head>
     <body>
@@ -35,15 +35,19 @@
                 var gl = canvas.getContext("webgl");
                 var mymain = new main(
                     [
-                        -0.0013334147135416474, 0.7376476693410536, 0, 0.3, 0.01, 0, //Unknown number
-                        -0.20133341471354171, 0.4898818475990707, 0, 0.7, 0.1, 0 //It's literally a file from an unknown number
-                    ],
+                        -0.22666666666666668, 0.7486517719568566, 0.5, 0.21999999999999997, 0.7239984591679507, 0.5, //Unknown Number
+                        -0.48400024414062504, 0.5421802773497688, 0.5, 0.25599975585937496, 0.4651386748844375, 0.5 //It's literally a file from an unknown number
+                    ],[
+			-0.9786667887369792, 0.6931818181818181, 0.9946665445963541, -0.9931047906860916,
+			0.9546665445963542, -0.9585901386748844, -0.9786667887369792, 0.6870184899845917
+			],
                     "You did not find any correct things.",
                     "Tip for future: DO NOT OPEN UNKNOWN FILES FROM UNKNOWN NUMBERS!"
                 );
 
                 canvas.addEventListener("click", main.leftClick);
-                canvas.addEventListener("contextmenu",main.rightClick);
+                canvas.addEventListener("contextmenu", main.rightClick);
+		canvas.addEventListener("mousemove", main.mouseMove);
             </script>
             <button class="submit" onclick="mymain.submit(7)">Submit</button><br>
             <button class="selection" onclick="window.location.href='../menu.html'">Save and Quit</button>

@@ -131,8 +131,8 @@ class realPoint extends box{
         super();
 	this.color = [0.0, 1.0, 0.0]; //rgb values
         this.found = false; //Start off assuming that the Real Point has not been found
-        //Collision Limit - Determine how big a box can before it no longer qualifies as finding the real point(that way the player can't just box the whole screen
-        this.collisionLimits = [];
+        //bounds - Determine how big a box can before it no longer qualifies as finding the real point(that way the player can't just box the whole screen)
+        this.bounds = [];
     }
 	finishBox(x,y,z){
 		super.finishBox(x,y,z);
@@ -153,7 +153,7 @@ class playerPoint extends box {
 
 //Class that will serve as the main function
 class main{
-    constructor(points,limits,text,tip){ //Takes in coordinates for Real Points, their collision limits, losing text, and takeway tip for this level
+    constructor(points,bounds,text,tip){ //Takes in coordinates for Real Points, their bounds' coordinates, losing text, and takeway tip for this level
    	this.webgl = new webgl();
         this.realPoints = []; //Parts of the message that are suspicious
         this.playerPoints = []; //Places where the player clicks on the canvas
@@ -161,13 +161,18 @@ class main{
         this.pointsFound = 0; //Number of suspicious parts of the message found
         this.end = false; //This stage has not ended
         //Update the stage number and add the player's current score to the screen
-        //document.getElementById("score").innerText = "Current Score: "+JSON.parse(sessionStorage.getItem("currentScore"));
-        //document.getElementById("stage").innerText = "Message "+JSON.parse(sessionStorage.getItem("level1Stage"))+"/9";
-        //Add Real Points to Real Points array and set their collision limits
+        document.getElementById("score").innerText = "Current Score: "+JSON.parse(sessionStorage.getItem("currentScore"));
+        document.getElementById("stage").innerText = "Message "+JSON.parse(sessionStorage.getItem("level1Stage"))+"/9";
+        //Add Real Points to Real Points array and set their bounds
         for(let i = 0; i < points.length; i += 6){
             this.addObject(0,realPoint,[points[i], points[i+1], points[i+2]]);
 		this.realPoints[this.realPoints.length-1].finishBox(points[i+3], points[i+4], points[i+5]);
-		this.realPoints[this.realPoints.length-1].collisionLimits.push(limits[(i/2)], limits[(i/2)+1], limits[(i/2)+2]);
+		this.realPoints[this.realPoints.length-1].bounds.push(
+			Math.abs(this.realPoints[this.realPoints.length-1].centralPoint[0] - bounds[i*(4/6)]), //Left Bound
+			Math.abs(this.realPoints[this.realPoints.length-1].centralPoint[1] - bounds[i*(4/6)+1]), //Up Bound
+			Math.abs(this.realPoints[this.realPoints.length-1].centralPoint[0] - bounds[i*(4/6)+2]), //Right Bound
+			Math.abs(this.realPoints[this.realPoints.length-1].centralPoint[1] - bounds[i*(4/6)+3]), //Down Bound
+		);
         }
         this.losingText = text;
         this.takeaway = tip;
@@ -213,6 +218,7 @@ class main{
 		this.addObject(1,playerPoint,[canvasCoordinates[0],canvasCoordinates[1],0]);
 	}else{ //If it's not, finish it
 		this.playerPoints[this.playerPoints.length-1].finishBox(canvasCoordinates[0], canvasCoordinates[1], 0);
+		console.log(this.playerPoints[this.playerPoints.length-1].vertices);
 	}
 	this.renderAll();
     }
@@ -235,33 +241,39 @@ class main{
     renderAll(){
         //Clear the screen and then render all objects
         gl.clear(gl.CLEAR_BUFFER_BIT);
-        //if(this.end){ //Only render the Real Points at the end of the game, since they're the answers
+        if(this.end){ //Only render the Real Points at the end of the game, since they're the answers
             for(var i in this.realPoints){
 		this.realPoints[i].render(this.webgl.program);
             }
-        //}
+        }
         for(let i = 0; i < this.playerPoints.length; i++){
             this.playerPoints[i].render(this.webgl.program);
         }
     }	
-	//Take in two 2d points and calculate the distance between the two
-	distance2d(x1,y1,x2,y2){
-		return Math.sqrt(((y2-y1)*(y2-y1)) + ((x2-x1)*(x2-x1)));
+    checkCollision(player, real){
+        //Take in a playerPoint and a realPoint and use their distances to caculate if the realPoint was boxed by the playerPoint
+	var realDistances = [ //Distances from the realPoint's central point to its edges
+		Math.abs(real.centralPoint[0] - real.vertices[0]), //Left edge
+		Math.abs(real.centralPoint[1] - real.vertices[1]), //Top edge
+		Math.abs(real.centralPoint[0] - real.vertices[12]), //Right edge
+		Math.abs(real.centralPoint[1] - real.vertices[13]) //Bottom edge
+	];
+	var playerDistances = [ //Distances from the realPoint's central point to the playerPoint's edges
+		Math.abs(real.centralPoint[0] - player.vertices[0]), //Left edge
+		Math.abs(real.centralPoint[1] - player.vertices[1]), //Top edge
+		Math.abs(real.centralPoint[0] - player.vertices[12]), //Right edge
+		Math.abs(real.centralPoint[1] - player.vertices[13]) //Bottom edge
+	];
+	//Caculate if the entire playerPoint box is within the bounds of the realPoint
+	for(let i = 0; i < 4; i++){
+		//If the player didn't box part of the message
+		//Or if part of the player point is not within the real's bounds, return false
+		if(realDistances[i] > playerDistances[i] || playerDistances[i] > real.bounds[i]){
+			return false;
+		}
 	}
-    checkCollision(player,real){
-        //Take in a playerPoint and a realPoint and use the distances to caculate if the realPoint was boxed by the playerPoint
-	
-	//Calculate distances between the real point's center and the top left and bottom right corners of the real point and player point
-	var realTopLeft = this.distance2d(real.centralPoint[0], real.centralPoint[1], real.vertices[0], real.vertices[1]); //Distance from real point's center to its top left corner
-	var realBottomRight = this.distance2d(real.centralPoint[0], real.centralPoint[1], real.vertices[12], real.vertices[13]); //Distance from real point's center to its bottom right corner
-	var playerTopLeft = this.distance2d(real.centralPoint[0], real.centralPoint[1], player.vertices[0], player.vertices[1]); //Distance from real point's center to player's top left corner
-	var playerBottomRight = this.distance2d(real.centralPoint[0], real.centralPoint[1], player.vertices[12], player.vertices[13]); //Distance from real point's center to player's bottom right corner
-	var realTopLeftLimit = this.distance2d(real.centralPoint[0], real.centralPoint[1], real.vertices[0]+collisionLimits[0], real.vertices[1]+collisionLimits[1]); //Distance from real point's center to its collision limit towards the top left corner
-	var realBottomRightLimit = this.distance2d(real.centralPoint[0], real.centralPoint[1], real.vertices[12]+collisionLimits[0], real.vertices[13]+collisionLimits[1]); //Distance from real point's center to its collision limit towards the bottom right corner
-
-	//Use those distances to determine if the player fully boxed in a real point
-	//If the distance from the center of the realPoint is to each corner of the playerPoint, and the playerPoint is within the bounds of the realPoints collision radius, return true
-	return ((realTopLeft <= playerTopLeft && playerTopLeft <= realTopLeftLimit) && (realBottomRight <= playerBottomRight && playerBottomRight <= realBottomRightLimit));
+	//If all four distances from the real's central point to the player point's edges encompassed the whole real point and didn't go beyond the bounds, return true
+	return true;
     }
     async submit(stage){ //Takes in the stage number
         //See if the player clicked on all the suspicious parts of the message, calculate their score, end the stage, and move on to the next one
@@ -299,7 +311,7 @@ class main{
             text = "You found "+this.pointsFound+" correct things, earning you "+this.pointsFound+" points towards your total score!";
         }
         alert(text+"\n"+this.takeaway);
-/*
+
         //Update the player's score
         var currentScore = JSON.parse(sessionStorage.getItem("currentScore")) + this.pointsFound;
         sessionStorage.setItem("currentScore", JSON.stringify(currentScore));
@@ -312,7 +324,7 @@ class main{
             var level1Stage = stage + 1;
             sessionStorage.setItem("level1Stage", JSON.stringify(level1Stage));
             window.location.href = 'stage'+level1Stage+'.html';   
-        }*/
+        }
     }
 
     //Static functions for handling when the player left clicks and right clicks

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script>
+            //Take the user to their profile if they are logged in
+            function viewProfile(){
+                var loggedIn = JSON.parse(sessionStorage.getItem("loggedIn"));
+                if(!loggedIn){ //If the player is not logged in tell them and return
+                    alert("You must be logged in to view your profile.");
+                    return;
+                }
+                //If they are, take them to their profile
+                window.location.href = "profile.html";
+            }
+        </script>
+        <link rel="stylesheet" href="../styles.css">
+    </head>
+    <body>
+        <div class="menu">
+            <h1>Spoof Call and Malware Simulator<br>(SCAMS)</h1>
+            <button class="selection" onclick="window.location.href = '../Game/menu.html'">Play</button><br>
+            <button class="selection" onclick="window.location.href = 'login.html'">Login</button><br>
+            <button class="selection" onclick="window.location.href = 'create.html'">Create Account</button><br>
+            <button class="selection" onclick="window.location.href = 'scores.html'">View Scoreboard</button><br>
+            <button class="selection" onclick="viewProfile()">View Profile</button><br>
+        </div>
+    </body>
+    <!--TEST-->
+</html>

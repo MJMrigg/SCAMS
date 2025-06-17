@@ -19,7 +19,7 @@
             }
         </script>
         <script src="../../index.html"></script>
-        <script src="classes.js"></script>
+        <script src="main.js"></script>
         <link rel="stylesheet" href="../../styles.css">
     </head>
     <body>
@@ -35,17 +35,23 @@
                 var gl = canvas.getContext("webgl");
                 var mymain = new main(
                     [
-                        -0.0013334147135416474, 0.7376476693410536, 0, 0.3, 0.01, 0, //Unknown number
-                        0.26533325195312507, 0.4898818475990707, 0, 0.11, 0.01, 0, //The IRS would never send a message like this
-                        -0.5213334147135417, 0.3203903221753419, 0, 0.12, 0.01, 0, //iris.info? The IRIS is a government organization
-                        -0.26133341471354166, 0.15706212494883953, 0, 0.18, 0.14, 0 //Language clearly written to invoke fear
-                    ],
+			-0.22666666666666668, 0.7486517719568566, 0.5, 0.21999999999999997, 0.7239984591679507, 0.5, //Unknown Number
+                       	0.19466654459635424, 0.5021186440677967, 0.5, 0.36133321126302076, 0.47130200308166414, 0.5, //The IRS would never send a message like this
+                       -0.6386667887369792, 0.33879044684129433, 0.5, -0.38533345540364583, 0.30797380585516176, 0.5, //iris.info? The IRIS is a government organization
+                        -0.8520001220703125, 0.2771571648690292, 0.5,0.4213332112630208, -0.018682588597842886, 0.5 //Language clearly written to invoke fear
+                    ],[
+			-0.3586666870117188, 1.0013482280431432, 0.40133331298828123, 0.6993451463790448,
+			-0.03200012207031255, 0.5390986132511557, 0.6346665445963542, 0.4312403697996918,
+			-0.9653334554036458, 0.4035053929121726, 0.7679998779296875, 0.27099383667180277,
+			-1.005333455403646, 0.32338212634822794, 0.9213332112630208, -0.07415254237288138
+			],
                     "You did not find any correct things. Remember to look out for big names trying to invoke emotion.",
                     "Tip for future: The IRIS would come to your house about this, not text you. Also, iris.info? The IRIS is a government organization."
                 );
 
                 canvas.addEventListener("click", main.leftClick);
-                canvas.addEventListener("contextmenu",main.rightClick);
+                canvas.addEventListener("contextmenu", main.rightClick);
+		canvas.addEventListener("mousemove", main.mouseMove);
             </script>
             <button class="submit" onclick="mymain.submit(9)">Submit</button><br>
             <button class="selection" onclick="window.location.href='../menu.html'">Save and Quit</button>
