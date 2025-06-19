@@ -46,7 +46,7 @@
         <p id="question2" style="font-size:1.2rem; font-weight:bold;"> Which of these can be the result of a Juice Jacking attack?</p>
         <p id="instruction" style="font-size:1.0rem; font-weight:100;"> (For every correct choice +1 point and for every incorrect choice -1 point)</p>
         <label><input type="checkbox" name="attack" value="DataTheft"> Data Theft</label><br>
-        <label><input type="checkbox" name="attack" value="MalwareInstalation"> Malware Instalation</label><br>
+        <label><input type="checkbox" name="attack" value="MalwareInstallation"> Malware Installation</label><br>
         <label><input type="checkbox" name="attack" value="ImpactWirelessConn"> Impact Wireless Connections</label><br>
         <label><input type="checkbox" name="attack" value="BypassBioSec"> Bypass Biometric Security</label><br>
         <label><input type="checkbox" name="attack" value="MultiDeviceAttack"> Multi-Device Attack</label><br>
@@ -85,14 +85,14 @@
             name: "Which of these can be the result of a Juice Jacking attack?",
             choices: {
                 DataTheft: true,
-                MalwareInstalation: true,
+                MalwareInstallation: true,
                 ImpactWirelessConn: false,
                 BypassBioSec: false,
                 MultiDeviceAttack: true,
                 DisablingAttack: true,
                 ModifySett: false
             },
-            explanation1: " Juice Jacking is a form of a hardware based Man in the Middle attack that can result in data theft, malware instalation, multi-device attacks, and disabling attacks through the used cable.",
+            explanation1: " Juice Jacking is a form of a hardware based Man in the Middle attack that can result in data theft, malware installation, multi-device attacks, and disabling attacks through the used cable.",
             explanation2: "What are these attacks:",
             explanation3: " -   Data theft is when personal information located on the device is stolen. The longer the device is plugged into the attacking USB, the more data is stolen. ",
             explanation4: " -   Malware Installation is when applications such as Spyware is downloaded onto the device to allow the attacker to continue alterations or inspection even after the device is unplugged. ",
@@ -133,7 +133,7 @@
             const selectedAttacks = Array.from(checkboxes).map(checkbox => checkbox.value);
 
             //containing correct answers in an array
-            const correctAttacks = ['DataTheft','MalwareInstalation', 'MultiDeviceAttack', 'DisablingAttack'];
+            const correctAttacks = ['DataTheft','MalwareInstallation', 'MultiDeviceAttack', 'DisablingAttack'];
             
             let correctCount = 0;
             let currentScore = 0;
