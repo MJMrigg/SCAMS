@@ -5,7 +5,7 @@
             //Start the smishing level either at the start or where the user last left off
             function startSmishingLevel(){
                 var level1Stage = JSON.parse(sessionStorage.getItem("level1Stage"));
-                if(level1Stage == 0){ //If this is the user's first time playing the level, go to the beginning
+                if(level1Stage == 0 || level1Stage == null){ //If this is the user's first time playing the level, go to the beginning
                     window.location.href = "SmishingLevel/menu.html";
                 }else{ //If it is not, go back to where they left off
                     window.location.href = "SmishingLevel/stage"+level1Stage+".html";
