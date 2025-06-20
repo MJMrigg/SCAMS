@@ -131,6 +131,8 @@
 					allCor = true;
 				}
 				this.maxScore +=3;
+				var currentScore = JSON.parse(sessionStorage.getItem("currentScore")) + levelCor;
+				sessionStorage.setItem("currentScore", JSON.stringify(currentScore));
 				return allCor;
 			}
 			
