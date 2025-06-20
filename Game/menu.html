@@ -49,7 +49,7 @@
                             body: JSON.stringify(data)
                         });
                         //Get result and update session data
-                        var result = query.json();
+                        var result = await query.json();
                         sessionStorage.setItem("highScore",JSON.stringify(result.highScore));
                     }catch(Error){
                         alert(Error+" Please try again.");

@@ -44,7 +44,6 @@
                         var currentScore = JSON.parse(sessionStorage.getItem("currentScore"));
                         sessionStorage.setItem("highScore",JSON.stringify(Math.max(response.highScore,currentScore)));
                         sessionStorage.setItem("scores",JSON.stringify(response.scores));
-                        console.log(response.scores);
                         sessionStorage.setItem("loggedIn",JSON.stringify(true)); //Mark user as logged in
                         alert("Sucessfully logged in! Welcome back "+response.username+"!");
                         window.location.href = "home.html";

@@ -78,7 +78,6 @@ app.post("/createAccount", async(request, response) => {
 //Retrieve data via a post request based on the parameters in the request and send the retrieved data back via a response
 app.post("/login", async(request, response) =>{
   var data = request.body;
-  alert("T");
   //Connect to MongoDB
   const client = new MongoClient(uri);
   await client.connect();
@@ -139,15 +138,16 @@ app.post("/update", async(request,response) =>{
 
     //Create document to be sent to mongo
     var document = {
-      $set: {username: data.username},
-      $set: {email: data.email},
-      $set: {password: data.password},
-      $set: {highScore: data.highScore},
-      $set: {scores: data.scores},
+      $set: {username: data.username, 
+		email: data.email, 
+		password: data.password, 
+		highScore: data.highScore,
+		scores: data.scores
+	}
     };
     //Filter to know which document to update in mongo
     var filter = {
-      user_id: {$eq: data.user_id}
+      user_id: data.user_id
     };
     //Send document to mongo and store result
     var result = await collection.updateOne(filter,document);
