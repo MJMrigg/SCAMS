@@ -49,7 +49,7 @@ button.submit{
     margin: 2px;
 }
 div.column{
-    width: 55px;
+    width: 50px;
     float: left;
-    text-align: center;
+    text-align: left;
 }

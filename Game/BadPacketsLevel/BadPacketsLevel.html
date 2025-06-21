@@ -3,19 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <title>Bad Packets Defense</title>
+  <script>
+    function saveAndQuit(){
+      var playerCurrentScore = JSON.parse(sessionStorage.getItem("currentScore"));
+      playerCurrentScore += score;
+      sessionStorage.setItem("currentScore", JSON.stringify(playerCurrentScore));
+      window.location.href = '../menu.html';
+    }
+  </script>
   <link rel="stylesheet" href="../styles.css">
-  
   <style>
     body, html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #1a1a1a;
-}
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #1a1a1a;
+    }
     canvas { display: block; background: #1a1a1a; }
     #score { position: absolute; top: 10px; left: 10px; color: white; font-size: 20px; }
   </style>
@@ -23,7 +30,7 @@
 <body>
   <div id="score">Score: 0</div>
   <canvas id="gameCanvas" width="800" height="600"></canvas><ul>
-  <button class="selection" onclick="window.location.href='../menu.html'">Save and Quit</button>
+  <button class="selection" onclick=saveAndQuit()>Save and Quit</button>
 
 <script>
 const canvas = document.getElementById("gameCanvas");
@@ -36,6 +43,9 @@ let gameStarted = false;
 let gameOver = false;
 
 function updateScore(change) {
+  if(score <= 0){ //Don't allow for negative scores
+    return;
+  }
   score += change;
   document.getElementById("score").textContent = "Score: " + score + " | Lives: " + lives;
 }

@@ -12,7 +12,7 @@
                 document.getElementById("username").innerText = "Username: "+userData[0];
                 document.getElementById("email").innerText = "Email: "+userData[1];
                 document.getElementById("highScore").innerText = "High Score: "+highScore;
-                document.getElementById("scores").innerText = scores;
+                document.getElementById("scores").innerText = "Your Scores: "+scores;
             }
             //Return back to the home screen. The user can also be logging out.
             function returnHome(loggingOut){
@@ -31,15 +31,14 @@
         <link rel="stylesheet" href="../styles.css">
     </head>
     <body>
-        <div class="menu">
+        <div class="menu" style="height:310px">
             <h1>Your Profile</h1>
             <!--Only a form for the aesthetic of form style. No inputs here.-->
             <div class="form">
                 <p id="username"></p>
                 <p id="email"></p>
                 <p id="highScore"></p>
-                <p>Your Scores</p>
-                <div id="scores"></div>
+                <p id="scores"></p>
                 <button class="function" onclick="window.location.href = 'edit.html'">Edit</button><br>
                 <button class="function" onclick="returnHome(true)">Logout</button>
                 <button class="function" onclick="returnHome(false)">Return Home</button>

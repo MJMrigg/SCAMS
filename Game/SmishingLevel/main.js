@@ -49,15 +49,14 @@ class webgl{
 class box {
     constructor() {
         this.prefab; //Object type
-	this.centralPoint = []; //Center of the box(used for collisions)
+	    this.centralPoint = []; //Center of the box(used for collisions)
         this.vertices = []; //First 3 numbers are (x,y,z) and next 3 are rgb values
         this.buffer = gl.createBuffer(); //Create buffer used to send data to GPU
-	this.isFinished = false; //If the square is finished
-	this.color = null; //Store what the color is(Different for each type of box)
+	    this.isFinished = false; //If the square is finished
+	    this.color = null; //Store what the color is(Different for each type of box)
     }
     //Add the starting point x, y, and z values to the vertex
-    startBox(x, y, z) {
-        	//Take in x,y,z coordinates, add it to the vertex, and add vertex to buffer
+    startBox(x, y, z) { //Take in x,y,z coordinates, add it to the vertex, and add vertex to buffer
 		this.vertices.push(x, y, z, this.color[0], this.color[1], this.color[2]);
 		this.bindBuffer();
 	}
@@ -91,7 +90,7 @@ class box {
 	//Bind the vertices to the buffer
 	bindBuffer(){
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer); //Assign buffer type
-        	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW); //Place vertices in buffer
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW); //Place vertices in buffer
 	}
     //Render the player point. This places it on the screen
     render(program) {
@@ -147,7 +146,7 @@ class realPoint extends box{
 class playerPoint extends box {
     constructor() {
         super();
-	this.color = [1.0, 0.0, 0.0]; //rgb values
+	    this.color = [1.0, 0.0, 0.0]; //rgb values
     }
 }
 
@@ -166,18 +165,17 @@ class main{
         //Add Real Points to Real Points array and set their bounds
         for(let i = 0; i < points.length; i += 6){
             this.addObject(0,realPoint,[points[i], points[i+1], points[i+2]]);
-		this.realPoints[this.realPoints.length-1].finishBox(points[i+3], points[i+4], points[i+5]);
-		this.realPoints[this.realPoints.length-1].bounds.push(
-			Math.abs(this.realPoints[this.realPoints.length-1].centralPoint[0] - bounds[i*(4/6)]), //Left Bound
-			Math.abs(this.realPoints[this.realPoints.length-1].centralPoint[1] - bounds[i*(4/6)+1]), //Up Bound
-			Math.abs(this.realPoints[this.realPoints.length-1].centralPoint[0] - bounds[i*(4/6)+2]), //Right Bound
-			Math.abs(this.realPoints[this.realPoints.length-1].centralPoint[1] - bounds[i*(4/6)+3]), //Down Bound
-		);
+		    this.realPoints[this.realPoints.length-1].finishBox(points[i+3], points[i+4], points[i+5]);
+		    this.realPoints[this.realPoints.length-1].bounds.push(
+                Math.abs(this.realPoints[this.realPoints.length-1].centralPoint[0] - bounds[i*(4/6)]), //Left Bound
+                Math.abs(this.realPoints[this.realPoints.length-1].centralPoint[1] - bounds[i*(4/6)+1]), //Up Bound
+                Math.abs(this.realPoints[this.realPoints.length-1].centralPoint[0] - bounds[i*(4/6)+2]), //Right Bound
+                Math.abs(this.realPoints[this.realPoints.length-1].centralPoint[1] - bounds[i*(4/6)+3]), //Down Bound
+		    );
         }
         this.losingText = text;
         this.takeaway = tip;
-
-	this.renderAll();
+	    this.renderAll();
     }
     addObject(type,prefab,coordinates){
         //Take in object type, its prefab code, and vertex coordinates, create the object, render, and return it
@@ -201,31 +199,31 @@ class main{
     }
 	convert(event){ //Convert window coordinates to canvas coordinates
 		var clickX = event.clientX;
-        	var clickY = event.clientY;
-        	var rect = canvas.getBoundingClientRect();
-        	var realX = clickX - rect.left;
-        	var realY = clickY - rect.top;
-        	var x = -1 + 2*(realX/canvas.width);
-        	var y = -1 + 2*((canvas.height - realY)/canvas.height);
+        var clickY = event.clientY;
+    	var rect = canvas.getBoundingClientRect();
+    	var realX = clickX - rect.left;
+       	var realY = clickY - rect.top;
+    	var x = -1 + 2*(realX/canvas.width);
+    	var y = -1 + 2*((canvas.height - realY)/canvas.height);
 		return [x,y];
 	}
     addPlayerPoint(event){
         //Take in mouse click, convert window coordinates to canvas coordinates, and add a Player Point to the canvas
         //Calculate point on canvas where click happened
-	var canvasCoordinates = this.convert(event);
+	    var canvasCoordinates = this.convert(event);
         //Add Box, set coordinates, and render all objects
-	if(this.playerPoints.length == 0 || this.playerPoints[this.playerPoints.length-1].isFinished){ //If the last placed box is finished, add a new Player Point
-		this.addObject(1,playerPoint,[canvasCoordinates[0],canvasCoordinates[1],0]);
-	}else{ //If it's not, finish it
-		this.playerPoints[this.playerPoints.length-1].finishBox(canvasCoordinates[0], canvasCoordinates[1], 0);
-		console.log(this.playerPoints[this.playerPoints.length-1].vertices);
-	}
-	this.renderAll();
+        if(this.playerPoints.length == 0 || this.playerPoints[this.playerPoints.length-1].isFinished){ //If the last placed box is finished, add a new Player Point
+            this.addObject(1,playerPoint,[canvasCoordinates[0],canvasCoordinates[1],0]);
+        }else{ //If it's not, finish it
+            this.playerPoints[this.playerPoints.length-1].finishBox(canvasCoordinates[0], canvasCoordinates[1], 0);
+            console.log(this.playerPoints[this.playerPoints.length-1].vertices);
+        }
+        this.renderAll();
     }
     removePlayerPoint(){
         //Remove the latest Player Point and render
         if(this.playerPoints.length >= 0){
-		delete this.playerPoints[this.playerPoints.length-1];
+		    delete this.playerPoints[this.playerPoints.length-1];
             this.playerPoints.pop();
             this.renderAll();
         }
@@ -243,7 +241,7 @@ class main{
         gl.clear(gl.CLEAR_BUFFER_BIT);
         if(this.end){ //Only render the Real Points at the end of the game, since they're the answers
             for(var i in this.realPoints){
-		this.realPoints[i].render(this.webgl.program);
+                this.realPoints[i].render(this.webgl.program);
             }
         }
         for(let i = 0; i < this.playerPoints.length; i++){
@@ -252,28 +250,28 @@ class main{
     }	
     checkCollision(player, real){
         //Take in a playerPoint and a realPoint and use their distances to caculate if the realPoint was boxed by the playerPoint
-	var realDistances = [ //Distances from the realPoint's central point to its edges
-		Math.abs(real.centralPoint[0] - real.vertices[0]), //Left edge
-		Math.abs(real.centralPoint[1] - real.vertices[1]), //Top edge
-		Math.abs(real.centralPoint[0] - real.vertices[12]), //Right edge
-		Math.abs(real.centralPoint[1] - real.vertices[13]) //Bottom edge
-	];
-	var playerDistances = [ //Distances from the realPoint's central point to the playerPoint's edges
-		Math.abs(real.centralPoint[0] - player.vertices[0]), //Left edge
-		Math.abs(real.centralPoint[1] - player.vertices[1]), //Top edge
-		Math.abs(real.centralPoint[0] - player.vertices[12]), //Right edge
-		Math.abs(real.centralPoint[1] - player.vertices[13]) //Bottom edge
-	];
-	//Caculate if the entire playerPoint box is within the bounds of the realPoint
-	for(let i = 0; i < 4; i++){
-		//If the player didn't box part of the message
-		//Or if part of the player point is not within the real's bounds, return false
-		if(realDistances[i] > playerDistances[i] || playerDistances[i] > real.bounds[i]){
-			return false;
-		}
-	}
-	//If all four distances from the real's central point to the player point's edges encompassed the whole real point and didn't go beyond the bounds, return true
-	return true;
+        var realDistances = [ //Distances from the realPoint's central point to its edges
+            Math.abs(real.centralPoint[0] - real.vertices[0]), //Left edge
+            Math.abs(real.centralPoint[1] - real.vertices[1]), //Top edge
+            Math.abs(real.centralPoint[0] - real.vertices[12]), //Right edge
+            Math.abs(real.centralPoint[1] - real.vertices[13]) //Bottom edge
+        ];
+        var playerDistances = [ //Distances from the realPoint's central point to the playerPoint's edges
+            Math.abs(real.centralPoint[0] - player.vertices[0]), //Left edge
+            Math.abs(real.centralPoint[1] - player.vertices[1]), //Top edge
+            Math.abs(real.centralPoint[0] - player.vertices[12]), //Right edge
+            Math.abs(real.centralPoint[1] - player.vertices[13]) //Bottom edge
+        ];
+        //Caculate if the entire playerPoint box is within the bounds of the realPoint
+        for(let i = 0; i < 4; i++){
+            //If the player didn't box part of the message
+            //Or if part of the player point is not within the real's bounds, return false
+            if(realDistances[i] > playerDistances[i] || playerDistances[i] > real.bounds[i]){
+                return false;
+            }
+        }
+        //If all four distances from the real's central point to the player point's edges encompassed the whole real point and didn't go beyond the bounds, return true
+        return true;
     }
     async submit(stage){ //Takes in the stage number
         //See if the player clicked on all the suspicious parts of the message, calculate their score, end the stage, and move on to the next one
