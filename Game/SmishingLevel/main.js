@@ -316,7 +316,10 @@ class main{
 
         //If that was the final stage, send them back the menu
         if(stage == 9){
-            window.location.href='../menu.html';
+		//Reset the stage number so that they can play the game again.
+		var level1Stage = 0;
+            sessionStorage.setItem("level1Stage", JSON.stringify(level1Stage));
+            window.location.href='../menu.html'; //Return to menue
         }else{
             //Else, send them to the next stage
             var level1Stage = stage + 1;
