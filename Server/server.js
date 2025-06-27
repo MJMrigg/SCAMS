@@ -278,57 +278,6 @@ app.post("/getScoreBoard", async(request,response) =>{
 });
 
 
-//for the question database
-const uriQuestions = "mongodb+srv://mRuiz:thisIsTest@cluster0.na67dnl.mongodb.net/";
-
-//for vishing questions
-app.post("/getVishingQuestions",async(request,response)=>{
-	const client = new MongoClient(uriQuestions);
-	await client.connect();
-	try{
-		var dataBase = "VishingQuestions";
-		var dbCollection = "VishingQuestions";
-		const db = client.db(dataBase);
-		const collection = db.collection(dbCollection);
-	}catch(err){
-		console.error(`[Error] ${err}`);
-	}finally{
-		await client.close();
-	}
-}
-//for spam email (phishing) questions
-app.post("/getEmailQuestions",async(request,response)=>{
-	const client = new MongoClient(uriQuestions);
-	await client.connect();
-	try{
-		var dataBase = "ManualSpamQuestions";
-		var dbCollection = "ManualSpamQuestions";
-		const db = client.db(dataBase);
-		const collection = db.collection(dbCollection);
-	}catch(err){
-		console.error(`[Error] ${err}`);
-	}finally{
-		await client.close();
-	}
-}
-
-//for common attack questions
-app.post("/getCommonQuestions",async(request,response)=>{
-	const client = new MongoClient(uriQuestions);
-	await client.connect();
-	try{
-		var dataBase = "CommonAttackQuestions";
-		var dbCollection = "CommonAttackQuestions";
-		const db = client.db(dataBase);
-		const collection = db.collection(dbCollection);
-	}catch(err){
-		console.error(`[Error] ${err}`);
-	}finally{
-		await client.close();
-	}
-}
-
-
 //Begin the server on port 3000
 app.listen(3000, () => {
   console.log('Server listening on http://localhost:3000');
