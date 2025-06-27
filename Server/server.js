@@ -277,6 +277,26 @@ app.post("/getScoreBoard", async(request,response) =>{
   }
 });
 
+//for the question banks
+
+app.post("/getVishing", async(request,response) =>{
+  //Connect to MongoDB
+  const client = new MongoClient(uri);
+  await client.connect();
+  //Try to retrieve account data
+  try{
+    //Connect to the proper database and collection
+    var dataBase = "SSE_MobileSecurityGame";
+    var dbCollection = "VishingBank"
+    const db = client.db(dataBase);
+    const collection = db.collection(dbCollection);
+  }catch(err){
+    console.error(`[Error] ${err}`);
+  }finally{
+    //Close Mongo
+    await client.close();
+  }
+});
 
 //Begin the server on port 3000
 app.listen(3000, () => {
