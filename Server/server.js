@@ -279,6 +279,7 @@ app.post("/getScoreBoard", async(request,response) =>{
 
 //for the question banks
 
+
 //Vishing level question bank
 app.post("/getVishing", async(request,response) =>{
   //Connect to MongoDB
@@ -291,6 +292,8 @@ app.post("/getVishing", async(request,response) =>{
     var dbCollection = "VishingBank"
     const db = client.db(dataBase);
     const collection = db.collection(dbCollection);
+	const questions = await collection.find({}).toArray();
+	return questions;
   }catch(err){
     console.error(`[Error] ${err}`);
   }finally{
@@ -311,6 +314,8 @@ app.post("/getPhishing", async(request,response) =>{
     var dbCollection = "PhishingBank"
     const db = client.db(dataBase);
     const collection = db.collection(dbCollection);
+	const questions = await collection.find({}).toArray();
+	return questions;
   }catch(err){
     console.error(`[Error] ${err}`);
   }finally{
@@ -331,6 +336,8 @@ app.post("/getCommon", async(request,response) =>{
     var dbCollection = "CommonAttackBank"
     const db = client.db(dataBase);
     const collection = db.collection(dbCollection);
+	const questions = await collection.find({}).toArray();
+	return questions;
   }catch(err){
     console.error(`[Error] ${err}`);
   }finally{
@@ -338,7 +345,6 @@ app.post("/getCommon", async(request,response) =>{
     await client.close();
   }
 });
-
 //Begin the server on port 3000
 app.listen(3000, () => {
   console.log('Server listening on http://localhost:3000');
