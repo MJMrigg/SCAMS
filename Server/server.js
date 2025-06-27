@@ -284,7 +284,7 @@ const uriQuestions = "mongodb+srv://mRuiz:thisIsTest@cluster0.na67dnl.mongodb.ne
 //for vishing questions
 app.post("/getVishingQuestions",async(request,response)=>{
 	const client = new MongoClient(uriQuestions);
-	const client.connect();
+	await client.connect();
 	try{
 		var dataBase = "VishingQuestions";
 		var dbCollection = "VishingQuestions";
@@ -299,7 +299,7 @@ app.post("/getVishingQuestions",async(request,response)=>{
 //for spam email (phishing) questions
 app.post("/getEmailQuestions",async(request,response)=>{
 	const client = new MongoClient(uriQuestions);
-	const client.connect();
+	await client.connect();
 	try{
 		var dataBase = "ManualSpamQuestions";
 		var dbCollection = "ManualSpamQuestions";
@@ -315,7 +315,7 @@ app.post("/getEmailQuestions",async(request,response)=>{
 //for common attack questions
 app.post("/getCommonQuestions",async(request,response)=>{
 	const client = new MongoClient(uriQuestions);
-	const client.connect();
+	await client.connect();
 	try{
 		var dataBase = "CommonAttackQuestions";
 		var dbCollection = "CommonAttackQuestions";
