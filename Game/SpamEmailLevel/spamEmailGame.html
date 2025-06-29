@@ -8,9 +8,14 @@
 				this.emailImg.src = 'data:image/png;base64,'+ this.image;
 				
 				this.playerAns = [null,null,null,null,null,null];
+				console.log("Player answer array created");
 				this.gameFinish = false;
 				this.correctAnsNum = 0;
 				this.currIndex = 0;
+				
+				this.ansResult = document.getElementById("results");
+				this.goButton = document.getElementById("confirm");
+				this.score = document.getElementById("score");
 				
 				this.questionBank = [];
 				this.alreadyDone = [];
@@ -22,12 +27,13 @@
 			}
 			
 			changeImage(){
-				this.image = this.questionBank[currIndex].imagebase64;
+				this.image = this.questionBank[this.currIndex].imagebase64;
 				this.emailImg = document.getElementById("emailPic");
 				this.emailImg.src = 'data:image/png;base64,'+ this.image;
 			}
 			
 			changeVal(opt, chosen){
+				console.log("function called");
 				if(opt==0){
 					console.log("emailAdd");
 					if(chosen == 1){
@@ -63,8 +69,8 @@
 			}
 			
 			changeCheck(opt, checked){
-				var type = opt
-				if(type == 0){//the spelling errors
+				//var type = opt
+				if(opt == 0){//the spelling errors
 					if(checked){
 						this.playerAns[3]=true;
 					}else{
@@ -116,8 +122,8 @@
 			}
 			
 			async getQuestionBank(){
-				this.questionBank;
-				try{
+				//this.questionBank;
+				/*try{
 					const query = await fetch("/getScoreBoard", {
 						method:"POST"
 						//that SHOULD be the only thing needed
@@ -130,7 +136,7 @@
 				this.questionBank = questions;
 				for(var i = 0;i<this.questionBank.length-1;i++){
 					this.alreadyDone[i]=false;
-				}
+				}*/
 			}
 			
 			checkAllAns(){
@@ -197,6 +203,8 @@
 			<label for = "OptionSel1">Yes</label>
 			<input type = "radio" id = "OptionSel1" name ="emailAdd" onClick = "m.changeVal(0,0)">
 			<label for = "OptionSel1">No</label>
+			</center>
+			
 		</div>
 		
 		<div id = "subjectLine" style = "border: 1px solid #000;">
@@ -215,8 +223,8 @@
 			<label for = "OptionSel1">No</label>
 			
 			<div id="emailAdditional" style="display:none">
-				<input type = "checkbox" value = "spellingErr" onclick="m.changeCheck(0,this.checked)">Spelling mistakes</input>
-				<input type = "checkbox"value="feelOff" onclick="m.changeCheck(0,this.checked)">Sounds off</input>
+				<input type = "checkbox" value = "spellingErr" onClick="m.changeCheck(0,this.checked)">Spelling mistakes</input>
+				<input type = "checkbox"value="feelOff" onClick="m.changeCheck(0,this.checked)">Sounds off</input>
 			</div>
 			
 			</center>
@@ -224,24 +232,24 @@
 		
 		<div id = "suspiciousYesNo" style = "border: 1px solid #000;">
 			<center><b>PDF Included</b><br>
-			<input type = "radio" id = "pdfIn" name = "yesNo"onClick = "m.changeVal(2,1)">
+			<input type = "radio" id = "pdfIn" name = "pdfIn"onClick = "m.changeVal(2,1)">
 			<label for = "OptionSel1">Yes</label>
-			<input type = "radio" id = "pdfIn" name = "yesNo"onClick = "m.changeVal(2,0)">
+			<input type = "radio" id = "pdfIn" name = "pdfIn"onClick = "m.changeVal(2,0)">
 			<label for = "OptionSel1">No</label>
 			</center>
 		</div>
 		
-		<button id="confirm" class="selection" onclick = "m.confirmAnswers">Confirm Selection</button>
 		<div id = "results" style = "height:auto;"><br></div>
 		<div id = "finishedDisplay" style = "font-size:25px;text-align:center"></div>
+		<button id="confirm" class="selection" onclick = "m.confirmAnswers()">Confirm Selection</button>
+
 		<br>
 		<button id="returnMenu" class="selection" onclick = "window.location.href = 'SpamEmailMenu.html'">Return to Phishing Menu</button>
 		<button id="returnLevel" class = "selection" onclick = "window.location.href = '../menu.html'">Return to Level screen</button><br>
-
-		<script>
-			var m = new main();
-			//m.changeImage();
-		</script>
 	</div>
+	<script>
+		var m = new main();
+		//m.changeImage();
+	</script>
 </body>
 </html>
