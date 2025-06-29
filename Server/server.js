@@ -315,7 +315,8 @@ app.post("/getPhishing", async(request,response) =>{
     const db = client.db(dataBase);
     const collection = db.collection(dbCollection);
 	const questions = await collection.find({}).toArray();
-	return questions;
+	//return questions;
+	response.status(200).json(questions);
   }catch(err){
     console.error(`[Error] ${err}`);
   }finally{
