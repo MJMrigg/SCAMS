@@ -160,11 +160,18 @@ class main{
         this.pointsFound = 0; //Number of suspicious parts of the message found
         this.end = false; //This stage has not ended
         //Update the stage number and add the player's current score to the screen
-        document.getElementById("score").innerText = "Current Score: "+JSON.parse(sessionStorage.getItem("currentScore"));
-        document.getElementById("stage").innerText = "Message "+JSON.parse(sessionStorage.getItem("level1Stage"))+"/9";
+        if(JSON.parse(sessionStorage.getItem("level1Stage")) > 0){ //If this is an actual level
+            document.getElementById("stage").innerText = "Message "+JSON.parse(sessionStorage.getItem("level1Stage"))+"/9";
+            document.getElementById("score").innerText = "Current Score: "+JSON.parse(sessionStorage.getItem("currentScore"));
+            this.tutorial = false;
+        }else{ //If this is the tutorial
+            this.tutorial = true;
+            alert("Welcome to the smishing tutorial! Please draw your eyes to the small text just below \"Tutorial Message\"");
+            this.tutorialText = document.getElementById("tutorial");
+        }
         //Add Real Points to Real Points array and set their bounds
         for(let i = 0; i < points.length; i += 6){
-            this.addObject(0,realPoint,[points[i], points[i+1], points[i+2]]);
+            this.addObject(0, realPoint, [points[i], points[i+1], points[i+2]]);
 		    this.realPoints[this.realPoints.length-1].finishBox(points[i+3], points[i+4], points[i+5]);
 		    this.realPoints[this.realPoints.length-1].bounds.push(
                 Math.abs(this.realPoints[this.realPoints.length-1].centralPoint[0] - bounds[i*(4/6)]), //Left Bound
@@ -177,12 +184,12 @@ class main{
         this.takeaway = tip;
 	    this.renderAll();
     }
-    addObject(type,prefab,coordinates){
+    addObject(type, prefab, coordinates){
         //Take in object type, its prefab code, and vertex coordinates, create the object, render, and return it
         var temp = new prefab; //Create Object
         //Set properties
         temp.prefab = prefab;
-        temp.startBox(coordinates[0],coordinates[1],coordinates[2]);
+        temp.startBox(coordinates[0], coordinates[1], coordinates[2]);
         //Add to proper array
         if(type == 0){
             this.realPoints.push(temp);
@@ -211,9 +218,10 @@ class main{
         //Take in mouse click, convert window coordinates to canvas coordinates, and add a Player Point to the canvas
         //Calculate point on canvas where click happened
 	    var canvasCoordinates = this.convert(event);
+        console.log(canvasCoordinates);
         //Add Box, set coordinates, and render all objects
         if(this.playerPoints.length == 0 || this.playerPoints[this.playerPoints.length-1].isFinished){ //If the last placed box is finished, add a new Player Point
-            this.addObject(1,playerPoint,[canvasCoordinates[0],canvasCoordinates[1],0]);
+            this.addObject(1, playerPoint, [canvasCoordinates[0], canvasCoordinates[1], 0]);
         }else{ //If it's not, finish it
             this.playerPoints[this.playerPoints.length-1].finishBox(canvasCoordinates[0], canvasCoordinates[1], 0);
             console.log(this.playerPoints[this.playerPoints.length-1].vertices);
@@ -239,11 +247,11 @@ class main{
     renderAll(){
         //Clear the screen and then render all objects
         gl.clear(gl.CLEAR_BUFFER_BIT);
-        if(this.end){ //Only render the Real Points at the end of the game, since they're the answers
+        //if(this.end){ //Only render the Real Points at the end of the game, since they're the answers
             for(var i in this.realPoints){
                 this.realPoints[i].render(this.webgl.program);
             }
-        }
+        //}
         for(let i = 0; i < this.playerPoints.length; i++){
             this.playerPoints[i].render(this.webgl.program);
         }
@@ -316,10 +324,10 @@ class main{
 
         //If that was the final stage, send them back the menu
         if(stage == 9){
-		//Reset the stage number so that they can play the game again.
-		var level1Stage = 0;
+            //Reset the stage number so that they can play the game again.
+            var level1Stage = 0;
             sessionStorage.setItem("level1Stage", JSON.stringify(level1Stage));
-            window.location.href='../menu.html'; //Return to menue
+            window.location.href='../menu.html'; //Return to menu
         }else{
             //Else, send them to the next stage
             var level1Stage = stage + 1;
