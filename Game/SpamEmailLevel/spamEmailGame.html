@@ -202,19 +202,15 @@
 			
 			nextQuestion(){
 				//var len = this.questionBank.length;
-				var ran = Math.random()*this.questionBank.length
-				while(this.alreadyDone[ran]){
-					ran = Math.random()*this.questionBank.length
+				while(this.alreadyDone[this.currIndex]){
+					this.currIndex = Math.floor(Math.random()*this.questionBank.length);
 				}
-				this.currIndex = ran;
 				this.updateScreen();
 			}
 			
 			updateScreen(){
 				//this.changeImage();
-				while(this.alreadyDone[this.currIndex]){
-					this.currIndex = Math.floor(Math.random()*this.questionBank.length);
-				}
+				
 				this.changeImage(this.questionBank[this.currIndex].imagebase64);
 				for(var i = 0; i<this.playerAns.length;i++){
 					this.playerAns[i]=null;
