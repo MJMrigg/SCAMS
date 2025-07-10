@@ -201,10 +201,10 @@
 			}
 			
 			nextQuestion(){
-				var len = this.questionBank.length;
-				var ran = Math.random()%len;
+				//var len = this.questionBank.length;
+				var ran = Math.random()*this.questionBank.length
 				while(this.alreadyDone[ran]){
-					ran = Math.random()%len;
+					ran = Math.random()*this.questionBank.length
 				}
 				this.currIndex = ran;
 				this.updateScreen();
