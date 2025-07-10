@@ -251,8 +251,8 @@
 				document.getElementById("subjectLine").checked = false;
 				document.getElementById("emailBod").checked = false;
 
-				document.getElementById("feelOff").style="none";
-				document.getElementById("spellingErr").style="none";
+				document.getElementById("feelOff").style="display:none";
+				document.getElementById("spellingErr").style="display:none";
 
 				document.getElementById("feelOff").checked = false;
 				document.getElementById("spellingErr").checked = false;
@@ -280,7 +280,7 @@
 	<link rel="stylesheet" href="../../styles.css">
 	<div class = "menu" style="height: 750px; width:700px;">
 		<img id="emailPic" src = "" alt = "Loading image! Please wait." width = "680" height="420" /><br>
-		<div id = "emailAd" style = "border: 1px solid #000;">
+		<div id = "emailAd" for = "emailAd" style = "border: 1px solid #000;">
 			<center><b>Weird Email Address</b><br>
 			<input type = "radio" id = "emailAdT" name = "emailAdd" onClick = "m.changeVal(0,1)">
 			<label for = "OptionSel1">Yes</label>
@@ -288,7 +288,7 @@
 			<label for = "OptionSel1">No</label>
 		</div>
 		
-		<div id = "subjectLine" style = "border: 1px solid #000;">
+		<div id = "subjectLine" for = "subjectLine" style = "border: 1px solid #000;">
 			<center><b>Weird Email Subject Line</b><br>
 			<input type = "radio" id = "subT" name = "subject" onClick = "m.changeVal(1,1)">
 			<label for = "OptionSel1">Yes</label>
@@ -296,7 +296,7 @@
 			<label for = "OptionSel1">No</label>
 		</div>
 		
-		<div id = "emailBod" style = "border: 1px solid #000;">
+		<div id = "emailBod" for = "emailBod" style = "border: 1px solid #000;">
 			<center><b>Weird Email Body</b><br>
 			<input type = "radio" id = "bodT" name = "emailBod"onClick = "m.changeVal(2,1)">
 			<label for = "OptionSel1">Yes</label>
@@ -311,7 +311,7 @@
 			</center>
 		</div>
 		
-		<div id = "pdf" style = "border: 1px solid #000;">
+		<div id = "pdf" for = "pdf"style = "border: 1px solid #000;">
 			<center><b>PDF Included</b><br>
 			<input type = "radio" id = "pdfInT" name = "yesNo"onClick = "m.changeVal(5,1)">
 			<label for = "OptionSel1">Yes</label>
