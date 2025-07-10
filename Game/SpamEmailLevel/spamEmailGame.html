@@ -58,9 +58,12 @@
 					}else{
 						document.getElementById("emailAdditional").style.display="none";
 						this.playerAns[2]=false;
+						this.playerAns[3]=false;
+						this.playerAns[4]=false;
+
 					}
 				}else{
-					if(chosen == 5){
+					if(chosen == 1){
 						this.playerAns[5] = true;
 					}else{
 						this.playerAns[5] = false;
@@ -90,7 +93,7 @@
 				console.log("Yes and No value: " + this.playerAns);
 				console.log(this.correctAnsNum);
 				var allAns = true;
-				for(var i = 0; i<this.playerAns.length;i++){
+				for(var i = 0; i<this.playerAns.length-1;i++){
 					if(this.playerAns[i]==null){
 						allAns = false;
 					}
@@ -166,7 +169,7 @@
 				//console.log(this.calls[this.callCurrentIndex].correctAnswers);
 				var allCor = false;
 				var levelCor = 0;
-				if(this.questionBank[currIndex].senderAdd==this.playerAns[0]){
+				if(this.questionBank[this.currIndex].senderAdd==this.playerAns[0]){
 					levelCor++;
 				}
 				if(this.questionBank[currIndex].emailSubject==this.playerAns[1]){
