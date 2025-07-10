@@ -172,22 +172,46 @@
 				var levelCor = 0;
 				if(this.questionBank[this.currIndex].senderAdd==this.playerAns[0]){
 					levelCor++;
+					document.getElementById("emailAdd").style.color = "green";
+				}else{
+					document.getElementById("emailAdd").style.color = "red";
 				}
+				
 				if(this.questionBank[this.currIndex].emailSubject==this.playerAns[1]){
 					levelCor++;
+					document.getElementById("subT").style.color = "black";
+				}else{
+					document.getElementById("subT").style.color = "black";
 				}
+
 				if(this.questionBank[this.currIndex].emailBody==this.playerAns[2]){
 					levelCor++;
+					document.getElementById("subT").style.color = "black";
+				}else{
+					document.getElementById("subT").style.color = "black";
 				}
+
 				if(this.questionBank[this.currIndex].spellingErrors==this.playerAns[3]){
 					levelCor++;
+					document.getElementById("subT").style.color = "green";
+				}else{
+					document.getElementById("subT").style.color = "red";
 				}
+
 				if(this.questionBank[this.currIndex].soundsOff==this.playerAns[4]){
 					levelCor++;
+					document.getElementById("subT").style.color = "green";
+				}else{
+					document.getElementById("subT").style.color = "red";
 				}
+
 				if(this.questionBank[this.currIndex].pdfIncluded==this.playerAns[5]){
 					levelCor++;
+					document.getElementById("subT").style.color = "green";
+				}else{
+					document.getElementById("subT").style.color = "red";
 				}
+
 				console.log(this.correctAnsNum);
 				
 				//if all correct
@@ -287,8 +311,8 @@
 			<label for = "OptionSel1">No</label>
 			
 			<div id="emailAdditional" style="display:none">
-				<input type = "checkbox" value = "spellingErr" onclick="m.changeCheck(0,this.checked)">Spelling mistakes</input>
-				<input type = "checkbox"value="feelOff" onclick="m.changeCheck(0,this.checked)">Sounds off</input>
+				<input type = "checkbox" value = "spellingErr" id = "spellingErr"onclick="m.changeCheck(0,this.checked)">Spelling mistakes</input>
+				<input type = "checkbox"value="feelOff" id="feelOff"onclick="m.changeCheck(0,this.checked)">Sounds off</input>
 			</div>
 			
 			</center>
