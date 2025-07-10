@@ -15,8 +15,8 @@
 				this.currIndex = 0;
 				
 				this.ansResult = document.getElementById("results");
-				this.score = document.getElementById("score");
-				this.goButton = document.getElementById("button");
+				//this.score = document.getElementById("score");
+				this.goButton = document.getElementById("confirm");
 
 
 
@@ -123,7 +123,7 @@
 							this.currIndex=Math.floor(Math.random()*this.questionBank.length);
 						}
 					}else{
-						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
+						//this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
 						this.goButton.innerText = "Next level";
 						this.goButton.onclick = () => this.goNextLevel();
 					}
