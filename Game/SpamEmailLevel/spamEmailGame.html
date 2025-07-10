@@ -172,44 +172,44 @@
 				var levelCor = 0;
 				if(this.questionBank[this.currIndex].senderAdd==this.playerAns[0]){
 					levelCor++;
-					document.getElementById("emailAdd").style.color = "green";
+					document.getElementById("emailAd").style.color = "green";
 				}else{
-					document.getElementById("emailAdd").style.color = "red";
+					document.getElementById("emailAd").style.color = "red";
 				}
 				
 				if(this.questionBank[this.currIndex].emailSubject==this.playerAns[1]){
 					levelCor++;
-					document.getElementById("subT").style.color = "black";
+					document.getElementById("subjectLine").style.color = "black";
 				}else{
-					document.getElementById("subT").style.color = "black";
+					document.getElementById("subjectLine").style.color = "black";
 				}
 
 				if(this.questionBank[this.currIndex].emailBody==this.playerAns[2]){
 					levelCor++;
-					document.getElementById("subT").style.color = "black";
+					document.getElementById("emailBod").style.color = "black";
 				}else{
-					document.getElementById("subT").style.color = "black";
+					document.getElementById("emailBod").style.color = "black";
 				}
 
 				if(this.questionBank[this.currIndex].spellingErrors==this.playerAns[3]){
 					levelCor++;
-					document.getElementById("subT").style.color = "green";
+					document.getElementById("spellingErr").style.color = "green";
 				}else{
-					document.getElementById("subT").style.color = "red";
+					document.getElementById("spellingErr").style.color = "red";
 				}
 
 				if(this.questionBank[this.currIndex].soundsOff==this.playerAns[4]){
 					levelCor++;
-					document.getElementById("subT").style.color = "green";
+					document.getElementById("feelOff").style.color = "green";
 				}else{
-					document.getElementById("subT").style.color = "red";
+					document.getElementById("feelOff").style.color = "red";
 				}
 
 				if(this.questionBank[this.currIndex].pdfIncluded==this.playerAns[5]){
 					levelCor++;
-					document.getElementById("subT").style.color = "green";
+					document.getElementById("pdf").style.color = "green";
 				}else{
-					document.getElementById("subT").style.color = "red";
+					document.getElementById("pdf").style.color = "red";
 				}
 
 				console.log(this.correctAnsNum);
@@ -241,30 +241,22 @@
 				this.playerAns[4] = false;
 				this.playerAns[5] = null;
 
-				document.getElementById("emailAdT").style.color = "black";
-				document.getElementById("emailAdF").style.color = "black";
-				document.getElementById("subT").style.color = "black";
-				document.getElementById("subF").style.color = "black";
-				document.getElementById("bodT").style.color = "black";
-				document.getElementById("bodF").style.color = "black";
+				document.getElementById("emailAd").style.color = "black";
+				document.getElementById("subjectLine").style.color = "black";
+\				document.getElementById("emailBod").style.color = "black";
 				document.getElementById("feelOff").style.color = "black";
 				document.getElementById("spellingErr").style.color = "black";
 	
-				document.getElementById("pdfInT").style.color = "black";
-				document.getElementById("pdfInF").style.color = "black";
+				document.getElementById("pdf").style.color = "black";
 
-				document.getElementById("emailAdT").checked = false;
-				document.getElementById("emailAdF").checked = false;
-				document.getElementById("subT").checked = false;
-				document.getElementById("subF").checked = false;
-				document.getElementById("bodT").checked = false;
-				document.getElementById("bodF").checked = false;
+				document.getElementById("emailAd").checked = false;
+				document.getElementById("subjectLine").checked = false;
+				document.getElementById("emailBod").checked = false;
 
 				document.getElementById("feelOff").checked = false;
 				document.getElementById("spellingErr").checked = false;
 	
-				document.getElementById("pdfInT").checked = false;
-				document.getElementById("pdfInF").checked = false;
+				document.getElementById("pdf").checked = false;
 
 				this.updateScreen();
 			}
