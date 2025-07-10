@@ -8,32 +8,31 @@
 				this.emailImg.src = 'data:image/png;base64,'+ this.image;
 				
 				this.playerAns = [null,null,null,null,null,null];
-				console.log("Player answer array created");
 				this.gameFinish = false;
 				this.correctAnsNum = 0;
 				this.currIndex = 0;
 				
 				this.ansResult = document.getElementById("results");
-				this.goButton = document.getElementById("confirm");
 				this.score = document.getElementById("score");
-				
+
+
 				this.questionBank = [];
 				this.alreadyDone = [];
 				this.getQuestionBank();
-				//var len = this.questionBank.length;
-				//this.index = Math.random()%len;
+				var len = this.questionBank.length;
+				this.currIndex = Math.random()%len;
 				this.updateScreen();
 
 			}
 			
-			changeImage(){
-				this.image = this.questionBank[this.currIndex].imagebase64;
+			changeImage(str){
+				//this.image = this.questionBank[this.currIndex].imagebase64;
+				this.image = str;
 				this.emailImg = document.getElementById("emailPic");
 				this.emailImg.src = 'data:image/png;base64,'+ this.image;
 			}
 			
 			changeVal(opt, chosen){
-				console.log("function called");
 				if(opt==0){
 					console.log("emailAdd");
 					if(chosen == 1){
@@ -69,8 +68,8 @@
 			}
 			
 			changeCheck(opt, checked){
-				//var type = opt
-				if(opt == 0){//the spelling errors
+				var type = opt
+				if(type == 0){//the spelling errors
 					if(checked){
 						this.playerAns[3]=true;
 					}else{
@@ -106,37 +105,59 @@
 					}else{
 						this.ansResult.innerText = "Not Quite!";
 					}
-					/*if(nextIndex == this.mail.length){
-						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
-						this.goButton.innerText = "You finished all the levels!";
-						this.goButton.onclick = "";
-						document.getElementById("button").style.display = "none";
-						document.getElementById("finishedDisplay").innerText = "You finished all the levels!";
-						this.gameFinish = true;*/
-					/*}else if (!this.gameFinish){
+					var doneCount = 0;
+					for(let i =0; i<this.questionBank.length;i++){
+						if(this.alreadyDone[i]){
+							doneCount++;
+						}
+					}
+					if(doneCount==this.questionBank.length){
+						for(let i = 0;i<this.questionBank.length;i++){
+							this.alreadyDone[i]=false;
+							//resets game
+							this.currIndex=Math.floor(Math.random()*this.questionBank.length);
+						}
+					}else{
 						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
 						this.goButton.innerText = "Next level";
-						this.goButton.onclick = () => this.goNextLevel();
-					}*/
+						//this.goButton.onclick = () => this.goNextLevel();
+					}
+					this.goButton.innerText = "Next level";
+					this.goButton.onclick = () => this.goNextLevel();
 				}
 			}
 			
 			async getQuestionBank(){
-				//this.questionBank;
-				/*try{
-					const query = await fetch("/getScoreBoard", {
-						method:"POST"
-						//that SHOULD be the only thing needed
-					})
-					
-				}catch(Error){
-					alert(Error+"Failed to get question bank");
+				try {
+					//const response = await fetch('SSE_MobileSecurityGame.PhishingBank.json');
+					const response = await fetch("/getPhishing",{
+                        method: "POST",
+                        "Content-Type": "application/json",
+                        body: JSON.stringify({})
+                    });
+					//const data = await response.json();
+					const data = await response.json();
+					console.log(data);
+					var i = Math.floor(Math.random()*data.length);
+					console.log(i);
+					console.log(data[i]);
+					console.log(data[i].senderAdd==this.playerAns[0])
+					this.changeImage(data[i].imagebase64);
+					console.log(data.length);
+					for(let i = 0; i<data.length;i++){
+						this.alreadyDone.push(data[i]);
+						this.questionBank.push(data[i]);
+					}
+					this.currIndex = i;
+					console.log(this.alreadyDone.length);
+					console.log(this.questionBank.length);
+				} catch (error) {
+					console.error("Error fetching question bank:", error);
 				}
-				const questions = await response.json();
-				this.questionBank = questions;
-				for(var i = 0;i<this.questionBank.length-1;i++){
-					this.alreadyDone[i]=false;
-				}*/
+				//const questions = 'PhishingQA.json';
+				//this.questionBank = JSON.parse(questions);
+				//console.log("Did it work? "+ this.questionBank["senderAdd"]);
+				
 			}
 			
 			checkAllAns(){
@@ -185,7 +206,11 @@
 			}
 			
 			updateScreen(){
-				this.changeImage();
+				//this.changeImage();
+				while(this.alreadyDone[this.currIndex]){
+					this.currIndex = Math.floor(Math.random()*this.questionBank.length);
+				}
+				this.changeImage(this.questionBank[this.currIndex].imagebase64);
 				for(var i = 0; i<this.playerAns.length;i++){
 					this.playerAns[i]=null;
 				}
@@ -196,15 +221,13 @@
 <body>
 	<link rel="stylesheet" href="../../styles.css">
 	<div class = "menu" style="height: 750px; width:700px;">
-		<img id="emailPic" src = "" alt = "Image should be here" width = "680"/><br>
+		<img id="emailPic" src = "" alt = "Image should be here" width = "680" height="420" /><br>
 		<div id = "emailAd" style = "border: 1px solid #000;">
 			<center><b>Weird Email Address</b><br>
 			<input type = "radio" id = "OptionSel1" name = "emailAdd" onClick = "m.changeVal(0,1)">
 			<label for = "OptionSel1">Yes</label>
 			<input type = "radio" id = "OptionSel1" name ="emailAdd" onClick = "m.changeVal(0,0)">
 			<label for = "OptionSel1">No</label>
-			</center>
-			
 		</div>
 		
 		<div id = "subjectLine" style = "border: 1px solid #000;">
@@ -223,33 +246,33 @@
 			<label for = "OptionSel1">No</label>
 			
 			<div id="emailAdditional" style="display:none">
-				<input type = "checkbox" value = "spellingErr" onClick="m.changeCheck(0,this.checked)">Spelling mistakes</input>
-				<input type = "checkbox"value="feelOff" onClick="m.changeCheck(0,this.checked)">Sounds off</input>
+				<input type = "checkbox" value = "spellingErr" onclick="m.changeCheck(0,this.checked)">Spelling mistakes</input>
+				<input type = "checkbox"value="feelOff" onclick="m.changeCheck(0,this.checked)">Sounds off</input>
 			</div>
 			
 			</center>
 		</div>
 		
-		<div id = "suspiciousYesNo" style = "border: 1px solid #000;">
+		<div id = "pdf" style = "border: 1px solid #000;">
 			<center><b>PDF Included</b><br>
-			<input type = "radio" id = "pdfIn" name = "pdfIn"onClick = "m.changeVal(2,1)">
+			<input type = "radio" id = "pdfIn" name = "yesNo"onClick = "m.changeVal(5,1)">
 			<label for = "OptionSel1">Yes</label>
-			<input type = "radio" id = "pdfIn" name = "pdfIn"onClick = "m.changeVal(2,0)">
+			<input type = "radio" id = "pdfIn" name = "yesNo"onClick = "m.changeVal(5,0)">
 			<label for = "OptionSel1">No</label>
 			</center>
 		</div>
 		
+		<button id="confirm" class="selection" onclick = "m.submitAnswers()">Confirm Selection</button>
 		<div id = "results" style = "height:auto;"><br></div>
 		<div id = "finishedDisplay" style = "font-size:25px;text-align:center"></div>
-		<button id="confirm" class="selection" onclick = "m.confirmAnswers()">Confirm Selection</button>
-
 		<br>
-		<button id="returnMenu" class="selection" onclick = "window.location.href = 'SpamEmailMenu.html'">Return to Phishing Menu</button>
+		<button id="returnMenu" class="selection" onclick = "window.location.href = 'spamEmailMenu.html'">Return to Phishing Menu</button>
 		<button id="returnLevel" class = "selection" onclick = "window.location.href = '../menu.html'">Return to Level screen</button><br>
+
+		<script>
+			var m = new main();
+			//m.changeImage();
+		</script>
 	</div>
-	<script>
-		var m = new main();
-		//m.changeImage();
-	</script>
 </body>
 </html>
