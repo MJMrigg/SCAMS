@@ -9,6 +9,8 @@
 				this.emailImg.src = 'data:image/png;base64,'+ this.image;
 				
 				this.playerAns = [null,null,null,null,null,null];
+				this.playerAns[3]=false;
+				this.playerAns[4]=false;
 				this.gameFinish = false;
 				this.correctAnsNum = 0;
 				this.currIndex = 0;
@@ -58,8 +60,6 @@
 					}else{
 						document.getElementById("emailAdditional").style.display="none";
 						this.playerAns[2]=false;
-						this.playerAns[3]=false;
-						this.playerAns[4]=false;
 
 					}
 				}else{
@@ -172,19 +172,19 @@
 				if(this.questionBank[this.currIndex].senderAdd==this.playerAns[0]){
 					levelCor++;
 				}
-				if(this.questionBank[currIndex].emailSubject==this.playerAns[1]){
+				if(this.questionBank[this.currIndex].emailSubject==this.playerAns[1]){
 					levelCor++;
 				}
-				if(this.questionBank[currIndex].emailBody==this.playerAns[2]){
+				if(this.questionBank[this.currIndex].emailBody==this.playerAns[2]){
 					levelCor++;
 				}
-				if(this.questionBank[currIndex].spellingErrors==this.playerAns[3]){
+				if(this.questionBank[this.currIndex].spellingErrors==this.playerAns[3]){
 					levelCor++;
 				}
-				if(this.questionBank[currIndex].soundsOff==this.playerAns[4]){
+				if(this.questionBank[this.currIndex].soundsOff==this.playerAns[4]){
 					levelCor++;
 				}
-				if(this.questionBank[currIndex].pdfIncluded==this.playerAns[5]){
+				if(this.questionBank[this.currIndex].pdfIncluded==this.playerAns[5]){
 					levelCor++;
 				}
 				console.log(this.correctAnsNum);
