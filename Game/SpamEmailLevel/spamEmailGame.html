@@ -205,6 +205,27 @@
 				while(this.alreadyDone[this.currIndex]){
 					this.currIndex = Math.floor(Math.random()*this.questionBank.length);
 				}
+				for(var i = 0;i<6;i++){
+					//clears player's current answer array
+					this.playerAns[i] = null;
+				}
+
+				this.playerAns[3] = false;
+				this.playerAns[4] = false;
+				this.playerAns[5] = null;
+				var rad = document.querySelectorAll('input[type="radio"]');
+				document.getElementById("emailAd").style.color = "black";
+				document.getElementById("subjectLine").style.color = "black";
+				document.getElementById("emailBod").style.color = "black";
+				document.getElementById("emailAdditional").style.color = "black";
+				document.getElementById("pdf").style.color = "black";
+
+				document.getElementById("emailAd").checked = false;
+				document.getElementById("subjectLine").checked = false;
+				document.getElementById("emailBod").checked = false;
+				document.getElementById("emailAdditional").checked = false;
+				document.getElementById("pdf").checked = false;
+
 				this.updateScreen();
 			}
 			
@@ -215,6 +236,9 @@
 				for(var i = 0; i<this.playerAns.length;i++){
 					this.playerAns[i]=null;
 				}
+				this.goButton.innerText = "Submit Answers";
+				this.goButton.onclick = () => this.submitAnswers();
+				this.ansResult.innerText = " ";
 			}
 		}
 	</script>
@@ -233,9 +257,9 @@
 		
 		<div id = "subjectLine" style = "border: 1px solid #000;">
 			<center><b>Weird Email Subject Line</b><br>
-			<input type = "radio" id = "OptionSel1" name = "subject" onClick = "m.changeVal(1,1)">
+			<input type = "radio" id = "sub" name = "subject" onClick = "m.changeVal(1,1)">
 			<label for = "OptionSel1">Yes</label>
-			<input type = "radio" id = "OptionSel1" name = "subject" onClick = "m.changeVal(1,0)">
+			<input type = "radio" id = "sub" name = "subject" onClick = "m.changeVal(1,0)">
 			<label for = "OptionSel1">No</label>
 		</div>
 		
