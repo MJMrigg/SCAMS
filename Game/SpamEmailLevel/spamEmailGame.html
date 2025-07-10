@@ -209,22 +209,38 @@
 					//clears player's current answer array
 					this.playerAns[i] = null;
 				}
-
+				
+				this.playerAns[0] = null;
+				this.playerAns[1] = null;
+				this.playerAns[2] = null;
 				this.playerAns[3] = false;
 				this.playerAns[4] = false;
 				this.playerAns[5] = null;
-				var rad = document.querySelectorAll('input[type="radio"]');
-				document.getElementById("emailAd").style.color = "black";
-				document.getElementById("subjectLine").style.color = "black";
-				document.getElementById("emailBod").style.color = "black";
-				document.getElementById("emailAdditional").style.color = "black";
-				document.getElementById("pdf").style.color = "black";
 
-				document.getElementById("emailAd").checked = false;
-				document.getElementById("subjectLine").checked = false;
-				document.getElementById("emailBod").checked = false;
-				document.getElementById("emailAdditional").checked = false;
-				document.getElementById("pdf").checked = false;
+				document.getElementById("emailAdT").style.color = "black";
+				document.getElementById("emailAdF").style.color = "black";
+				document.getElementById("subT").style.color = "black";
+				document.getElementById("subF").style.color = "black";
+				document.getElementById("bodT").style.color = "black";
+				document.getElementById("bodF").style.color = "black";
+				document.getElementById("feelOff").style.color = "black";
+				document.getElementById("spellingErr").style.color = "black";
+	
+				document.getElementById("pdfInT").style.color = "black";
+				document.getElementById("pdfInF").style.color = "black";
+
+				document.getElementById("emailAdT").checked = false;
+				document.getElementById("emailAdF").checked = false;
+				document.getElementById("subT").checked = false;
+				document.getElementById("subF").checked = false;
+				document.getElementById("bodT").checked = false;
+				document.getElementById("bodF").checked = false;
+
+				document.getElementById("feelOff").checked = false;
+				document.getElementById("spellingErr").checked = false;
+	
+				document.getElementById("pdfInT").checked = false;
+				document.getElementById("pdfInF").checked = false;
 
 				this.updateScreen();
 			}
@@ -249,25 +265,25 @@
 		<img id="emailPic" src = "" alt = "Loading image! Please wait." width = "680" height="420" /><br>
 		<div id = "emailAd" style = "border: 1px solid #000;">
 			<center><b>Weird Email Address</b><br>
-			<input type = "radio" id = "OptionSel1" name = "emailAdd" onClick = "m.changeVal(0,1)">
+			<input type = "radio" id = "emailAdT" name = "emailAdd" onClick = "m.changeVal(0,1)">
 			<label for = "OptionSel1">Yes</label>
-			<input type = "radio" id = "OptionSel1" name ="emailAdd" onClick = "m.changeVal(0,0)">
+			<input type = "radio" id = "emailAdF" name ="emailAdd" onClick = "m.changeVal(0,0)">
 			<label for = "OptionSel1">No</label>
 		</div>
 		
 		<div id = "subjectLine" style = "border: 1px solid #000;">
 			<center><b>Weird Email Subject Line</b><br>
-			<input type = "radio" id = "sub" name = "subject" onClick = "m.changeVal(1,1)">
+			<input type = "radio" id = "subT" name = "subject" onClick = "m.changeVal(1,1)">
 			<label for = "OptionSel1">Yes</label>
-			<input type = "radio" id = "sub" name = "subject" onClick = "m.changeVal(1,0)">
+			<input type = "radio" id = "subF" name = "subject" onClick = "m.changeVal(1,0)">
 			<label for = "OptionSel1">No</label>
 		</div>
 		
 		<div id = "emailBod" style = "border: 1px solid #000;">
 			<center><b>Weird Email Body</b><br>
-			<input type = "radio" id = "OptionSel1" name = "emailBod"onClick = "m.changeVal(2,1)">
+			<input type = "radio" id = "bodT" name = "emailBod"onClick = "m.changeVal(2,1)">
 			<label for = "OptionSel1">Yes</label>
-			<input type = "radio" id = "OptionSel1" name = "emailBod"onClick = "m.changeVal(2,0)">
+			<input type = "radio" id = "bodF" name = "emailBod"onClick = "m.changeVal(2,0)">
 			<label for = "OptionSel1">No</label>
 			
 			<div id="emailAdditional" style="display:none">
@@ -280,9 +296,9 @@
 		
 		<div id = "pdf" style = "border: 1px solid #000;">
 			<center><b>PDF Included</b><br>
-			<input type = "radio" id = "pdfIn" name = "yesNo"onClick = "m.changeVal(5,1)">
+			<input type = "radio" id = "pdfInT" name = "yesNo"onClick = "m.changeVal(5,1)">
 			<label for = "OptionSel1">Yes</label>
-			<input type = "radio" id = "pdfIn" name = "yesNo"onClick = "m.changeVal(5,0)">
+			<input type = "radio" id = "pdfInF" name = "yesNo"onClick = "m.changeVal(5,0)">
 			<label for = "OptionSel1">No</label>
 			</center>
 		</div>
