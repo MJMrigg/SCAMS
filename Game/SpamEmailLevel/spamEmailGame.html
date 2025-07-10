@@ -179,16 +179,16 @@
 				
 				if(this.questionBank[this.currIndex].emailSubject==this.playerAns[1]){
 					levelCor++;
-					document.getElementById("subjectLine").style.color = "black";
+					document.getElementById("subjectLine").style.color = "green";
 				}else{
-					document.getElementById("subjectLine").style.color = "black";
+					document.getElementById("subjectLine").style.color = "red";
 				}
 
 				if(this.questionBank[this.currIndex].emailBody==this.playerAns[2]){
 					levelCor++;
-					document.getElementById("emailBod").style.color = "black";
+					document.getElementById("emailBod").style.color = "green";
 				}else{
-					document.getElementById("emailBod").style.color = "black";
+					document.getElementById("emailBod").style.color = "red";
 				}
 
 				if(this.questionBank[this.currIndex].spellingErrors==this.playerAns[3]){
@@ -234,12 +234,10 @@
 					this.playerAns[i] = null;
 				}
 				
-				this.playerAns[0] = null;
-				this.playerAns[1] = null;
-				this.playerAns[2] = null;
+
 				this.playerAns[3] = false;
 				this.playerAns[4] = false;
-				this.playerAns[5] = null;
+
 
 				document.getElementById("emailAd").style.color = "black";
 				document.getElementById("subjectLine").style.color = "black";
@@ -253,6 +251,9 @@
 				document.getElementById("subjectLine").checked = false;
 				document.getElementById("emailBod").checked = false;
 
+				document.getElementById("feelOff").style="none";
+				document.getElementById("spellingErr").style="none";
+
 				document.getElementById("feelOff").checked = false;
 				document.getElementById("spellingErr").checked = false;
 	
@@ -265,9 +266,9 @@
 				//this.changeImage();
 				
 				this.changeImage(this.questionBank[this.currIndex].imagebase64);
-				for(var i = 0; i<this.playerAns.length;i++){
+				/*for(var i = 0; i<this.playerAns.length;i++){
 					this.playerAns[i]=null;
-				}
+				}*/
 				this.goButton.innerText = "Submit Answers";
 				this.goButton.onclick = () => this.submitAnswers();
 				this.ansResult.innerText = " ";
