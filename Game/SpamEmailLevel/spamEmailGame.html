@@ -55,11 +55,15 @@
 				}
 				else if(opt==2){
 					if(chosen==1){
-						document.getElementById("emailAdditional").style.display="block";
+						document.getElementById("emailAdditional").style = "display:block";
+						document.getElementById("feelOff").style="display:block";
+						document.getElementById("spellingErr").style="display:block";
 						this.playerAns[2]=true;
 						
 					}else{
-						document.getElementById("emailAdditional").style.display="none";
+						document.getElementById("emailAdditional").style = "display:none";
+						document.getElementById("feelOff").style="display:none";
+						document.getElementById("spellingErr").style="display:none";
 						this.playerAns[2]=false;
 
 					}
