@@ -43,9 +43,6 @@ let gameStarted = false;
 let gameOver = false;
 
 function updateScore(change) {
-  if(score <= 0){ //Don't allow for negative scores
-    return;
-  }
   score += change;
   document.getElementById("score").textContent = "Score: " + score + " | Lives: " + lives;
 }
@@ -122,7 +119,7 @@ function gameLoop() {
 
     if (packet.y > canvas.height) {
       lives--;
-      updateScore(-5);
+      updateScore(-1);
       packets.splice(index, 1);
     }
   });
@@ -152,7 +149,7 @@ canvas.addEventListener("click", (e) => {
     const p = packets[i];
     if (clickX >= p.x && clickX <= p.x + p.width &&
         clickY >= p.y && clickY <= p.y + p.height) {
-      updateScore(p.isGolden ? 50 : 20);
+      updateScore(p.isGolden ? 5 : 1);
       packets.splice(i, 1);
       break;
     }
