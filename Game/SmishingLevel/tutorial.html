@@ -8,7 +8,7 @@
             void main(){
                 gl_Position = a_position;
                 fragColor = a_color;
-                gl_PointSize = 10.0;
+                gl_PointSize = 5.0;
             }
         </script>
         <script id="2dFragmentShader" type="notjs">
@@ -22,7 +22,7 @@
         <link rel="stylesheet" href="../../styles.css">
     </head>
     <body>
-        <div class="menu" style="height: 875px">
+        <div class="menu" style="height: 975px">
             <h1 id="stage">Tutorial Message</h1>
             <p id="tutorial"></p>
             <canvas id="canvas" class="forSmishing" width="300" height="649" style="background: url('srcimgs/tutorial.png');">
@@ -47,16 +47,17 @@
                         -0.8520000203450521, 0.5238058739707723, 0.4679999796549479, 0.3050077229692316,
                         -0.9853333536783854, 0.3635593408428832, 0.607999979654948, 0.2279661205039003,
                     ],
-                    "Not quite. Try again.",
-                    "Congradulations! You finished the tutorial!"
+                    "You did not find any suspicious parts of the message, earning you 0 points towards your total score.",
+                    "You'll get a message like this every time you submit your boxes. It'll also contain a tip you can use in the future when you get a REAL smishing message."
                 );
     
                 canvas.addEventListener("click", main.leftClick);
                 canvas.addEventListener("contextmenu", main.rightClick);
 		        canvas.addEventListener("mousemove", main.mouseMove);
             </script>
-            <button class="submit" onclick="mymain.submit(1)">Submit</button><br>
+            <button class="submit" onclick="mymain.submit(0)">Submit</button><br>
             <button class="selection" onclick="window.location.href='../menu.html'">Save and Quit</button>
+            <button class="selection" onclick="window.location.href='tutorial.html'">Restart Tutorial</button>
         </div>
     </body>
 </html>
