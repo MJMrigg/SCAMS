@@ -48,6 +48,10 @@
                 }
                 currentSlide++;
             }
+            function skipTutorial(){
+                sessionStorage.setItem("level1Stage", JSON.stringify(1));
+                window.location.href = "stage1.html";
+            }
         </script>
         <link rel="stylesheet" href="../../styles.css">
     </head>
@@ -58,7 +62,7 @@
                 <h2 id="textBox"></h2>
             </div>
             <button id="changeSlide" class="selection" onclick="next()">Begin</button>
-            <button class="selection" onclick= "window.location.href = 'stage1.html'">Skip Tutorial</button>
+            <button class="selection" onclick= "skipTutorial()">Skip Tutorial</button>
         </div>
         <script>
             var currentSlide = 0;
