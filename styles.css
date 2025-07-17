@@ -94,3 +94,9 @@ button.badPackets{
     border: 2px solid black;
     margin: 2px;
 }
+div.app-container {
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: left;
+}
