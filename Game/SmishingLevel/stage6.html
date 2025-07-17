@@ -19,7 +19,7 @@
             }
         </script>
         <script src="../../index.html"></script>
-        <script src="classes.js"></script>
+        <script src="main.js"></script>
         <link rel="stylesheet" href="../../styles.css">
     </head>
     <body>
@@ -35,21 +35,29 @@
                 var gl = canvas.getContext("webgl");
                 var mymain = new main(
                     [
-                        -0.0013334147135416474, 0.7376476693410536, 0, 0.3, 0.01, 0, //Unknown number
-                        -0.1680000813802084, -0.1098099577775905, 0, 0.6, 0.01, 0, //Wierd Link
-                        -0.574666748046875, 0.3247046801268778, 0, 0.24, 0.01, 0, //That's a really high number
-                        -0.5680000813802084, 0.3764766463880731, 0, 0.3, 0.01, 0, //Wierd name
-                        -0.5880000813802083, -0.43091934744859883, 0, 0.25, 0.01, 0, //Making it more personal for the user
-                        -0.24800008138020835, 0.025783262561392517, 0, 0.6, 0.1, 0, //Asking the user to download something
-                        0.005333251953125062, 0.20945041462526492, 0, 0.16, 0.01, 0, //Targetting the user specifically
-                        0.2919999186197917, 0.2680020324989165, 0, 0.1, 0.02, 0 //Targetting the user specifically
-                    ],
+                        -0.22666666666666668, 0.7486517719568566, 0.5, 0.21999999999999997, 0.7239984591679507, 0.5, //Unknown Number
+                        -0.6653334554036459, -0.10188751926040063, 0.5, 0.34133321126302074, -0.12654083204930666, 0.5, //Wierd Link
+                        -0.8453334554036458, 0.335708782742681, 0.5, -0.3586667887369792, 0.3110554699537751, 0.5, //That's a ridiculously high number
+                        -0.8453334554036458, 0.3911787365177195, 0.5, -0.29200012207031245, 0.36036209553158716, 0.5, //Wierd name
+                        -0.11866678873697911, 0.22476887519260402, 0.5, 0.14133321126302079, 0.2001155624036981, 0.5, //Making it more personal for the user
+                        -0.2186667887369792, 0.07068567026194139, 0.5, 0.1546665445963542, 0.03986902927580904, 0.5, //Asking the user to download something
+			-0.8453334554036458, -0.14872881003263738, 0.5, 0.12133321126302077, -0.23193374069519512, 0.5 //Call to action
+                    ],[
+				-0.3586666870117188, 1.0013482280431432, 0.40133331298828123, 0.6993451463790448,
+				-0.9386667887369792, -0.06798921417565484, 0.5146665445963541, -0.15119414483821259,
+				-0.9520001220703125, 0.36344375963020026, 0.5279998779296875, 0.2802388289676425,
+				-0.9520001220703125, 0.4219953775038521, -0.18533345540364587, 0.33879044684129433,
+				-0.15200012207031255, 0.24942218798150995, 0.2679998779296875, 0.17238058551617863,
+				-0.9186667887369792, 0.14464560862865938, 0.5146665445963541, -0.14811248073959937,
+				-0.9520001220703125, -0.12099383314511813, 0.6079998779296876, -0.5123651736690009
+			],
                     "You did not find any correct things. Remember to look for big names telling you to do something that may be strange or unsual.",
                     "Tip for future: Apple would just automatically update your phone. They wouldn't ask you to download their software. Also NEVER EVER EVER download software from an unknown number."
                 );
 
                 canvas.addEventListener("click", main.leftClick);
-                canvas.addEventListener("contextmenu",main.rightClick);
+                canvas.addEventListener("contextmenu", main.rightClick);
+		        canvas.addEventListener("mousemove", main.mouseMove);
             </script>
             <button class="submit" onclick="mymain.submit(6)">Submit</button><br>
             <button class="selection" onclick="window.location.href='../menu.html'">Save and Quit</button>

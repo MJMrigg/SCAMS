@@ -19,7 +19,7 @@
             }
         </script>
         <script src="../../index.html"></script>
-        <script src="classes.js"></script>
+        <script src="main.js"></script>
         <link rel="stylesheet" href="../../styles.css">
     </head>
     <body>
@@ -35,20 +35,27 @@
                 var gl = canvas.getContext("webgl");
                 var mymain = new main(
                     [
-                        -0.0013334147135416474, 0.7376476693410536, 0, 0.3, 0.01, 0, //Unknown number
-                        0.1786665852864584, 0.5373395029311923, 0, 0.12, 0.01, 0, //Someone from Verizon misspelled "Pixel"? Really?
-                        -0.3013334147135417, 0.48310219598661397, 0, 0.03, 0.01, 0, //And "GB" for "Gigabyte"? Are they really from Verizon?
-                        -0.694666748046875, 0.2643040449850731, 0, 0.09, 0.01, 0, //Wierd link
-                        -0.3413334147135416, 0.05166922218075887, 0, 0.09, 0.01, 0, //Wierd link
-                        -0.23466674804687504, 0.21807908350587435, 0, 0.38, 0.01, 0, //Targetting the user specifically
-
-                    ],
+                        -0.22666666666666668, 0.7486517719568566, 0.5, 0.21999999999999997, 0.7239984591679507, 0.5, //Unknown Number
+                        0.0626664225260416, 0.5545069337442219, 0.5, 0.2893330891927084, 0.5236902927580893, 0.5, //Someone from Verizon misspelled "Pixel"? Really?
+                        -0.3586667887369792, 0.5021186440677967, 0.5, -0.2520001220703125, 0.47130200308166414, 0.5, //And "GB" for "Gigabyte"? Are they really from Verizon?
+                        -0.8586667887369792, 0.2771571648690292, 0.5, 0.10799987792968757, 0.24634052388289684, 0.5, //Wierd link
+                        -0.5053334554036458, 0.05835901386748854, 0.5, -0.29866678873697916, -0.018682588597842886, 0.5, //Wierd link
+                        -0.6253334554036458, 0.22785053929121735, 0.5, 0.08133321126302073, 0.2001155624036981, 0.5, //Targetting the user specifically
+                    ],[
+			-0.3586666870117188, 1.0013482280431432, 0.40133331298828123, 0.6993451463790448,
+			0.0213332112630209, 0.5933358966845026, 0.5546665445963541, 0.4978043096274918,
+			-0.41200012207031245, 0.5193759583177846, -0.15200012207031255, 0.45157934814829304,
+			-0.9453334554036459, 0.30797380585516176, 0.18133321126302082, 0.23093220338983045,
+			-0.8920001220703125, 0.08486132041331618, 0.5613332112630209, -0.029160251235374135,
+			-0.6653334554036459, 0.25250385208012327, 0.14133321126302079, 0.17238058551617863
+			],
                     "You did not find any correct things. Remember to look for ",
                     "Tip for future: Look for grammar and spelling errors. There's no way Verizon would misspell \"GB\" as \"BG\"."
                 );
 
                 canvas.addEventListener("click", main.leftClick);
-                canvas.addEventListener("contextmenu",main.rightClick);
+                canvas.addEventListener("contextmenu", main.rightClick);
+		canvas.addEventListener("mousemove", main.mouseMove);
             </script>
             <button class="submit" onclick="mymain.submit(8)">Submit</button><br>
             <button class="selection" onclick="window.location.href='../menu.html'">Save and Quit</button>

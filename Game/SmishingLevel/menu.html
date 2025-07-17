@@ -2,7 +2,6 @@
 <html lang="en">
     <title>Smishing Main Menu</title>
     <head>
-        <script src="../../index.html"></script>
         <script>
             function next(){
                 //Get the textbox
@@ -39,27 +38,19 @@
                         button.innerText = "Okay, but I thought this was a game, not a reading assignment.";
                         break;
                     case 7:
-                        textBox.innerText = "Yes, this is in fact a game. In this game, you will be provided with a message and you must identify the suspicious parts of the message that prove it is a smishing attack.";
-                        button.innerText = "Ooh! How does it work?";
+                        textBox.innerText = "Yes, this is in fact a game. Press finish to continue.";
+                        button.innerText = "Finish";
                         break;
                     case 8:
-                        textBox.innerText = "You must click on the parts you think are suspicous about it. A red dot will then appear on what you clicked. Right click to remove your last dot. When you are confident with your answers, press submit and all of the correct parts will be revealed using green dots. There are nine messages in total and you can save and quit any time you like.";
-                        button.innerText = "How do I score?";
-                        break;
-                    case 9:
-                        textBox.innerText = "For each suspicious thing you correctly click, you will get a point towards your total score.";
-                        button.innerText = "Okay. Can I start now?";
-                        break;
-                    case 10:
-                        textBox.innerText = "Yes, you may start.";
-                        button.innerText = "Start";
-                        break;
-                    case 11:
-                        //Update session stage and go to stage 1
-                        sessionStorage.setItem("level1Stage",JSON.stringify(1));
-                        window.location.href = "stage1.html";
+                        //Update session stage and go to the tutorial stage
+                        sessionStorage.setItem("level1Stage", JSON.stringify(0));
+                        window.location.href = "tutorial.html";
                 }
                 currentSlide++;
+            }
+            function skipTutorial(){
+                sessionStorage.setItem("level1Stage", JSON.stringify(1));
+                window.location.href = "stage1.html";
             }
         </script>
         <link rel="stylesheet" href="../../styles.css">
@@ -71,7 +62,7 @@
                 <h2 id="textBox"></h2>
             </div>
             <button id="changeSlide" class="selection" onclick="next()">Begin</button>
-            <button class="selection" onclick= "window.location.href = 'stage1.html'">Skip Tutorial</button>
+            <button class="selection" onclick= "skipTutorial()">Skip Tutorial</button>
         </div>
         <script>
             var currentSlide = 0;

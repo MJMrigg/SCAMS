@@ -19,12 +19,12 @@ app.get("/", (request, response) => {
 });
 
 //Mongo information
-//const uri = "mongodb+srv://SSEconnection:RememberThis@cluster0.3jlg2.mongodb.net/?authSource=admin";
+//const uri = "mongodb+srv://SSEconnection:RememberThis@cluster0.3jlg2.mongodb.net/"; //Old database
 const uri = "mongodb+srv://evanhambre:R0SEBID25@cluster0.zlbvlpq.mongodb.net/"
-const options = {
+/*const options = {
   ssl: true,
   sslValidate: false,
-};
+};*/
 
 //Create an account via a post request based on the parameters in the request and send the account data back via a response
 app.post("/createAccount", async(request, response) => {
@@ -78,7 +78,6 @@ app.post("/createAccount", async(request, response) => {
 //Retrieve data via a post request based on the parameters in the request and send the retrieved data back via a response
 app.post("/login", async(request, response) =>{
   var data = request.body;
-  alert("T");
   //Connect to MongoDB
   const client = new MongoClient(uri);
   await client.connect();
@@ -138,16 +137,18 @@ app.post("/update", async(request,response) =>{
     const collection = db.collection(dbCollection);
 
     //Create document to be sent to mongo
-    var document = {
-      $set: {username: data.username},
-      $set: {email: data.email},
-      $set: {password: data.password},
-      $set: {highScore: data.highScore},
-      $set: {scores: data.scores},
+    var document = { 
+      $set: {
+        username: data.username, 
+        email: data.email, 
+        password: data.password, 
+        highScore: data.highScore,
+        scores: data.scores
+	    }
     };
     //Filter to know which document to update in mongo
     var filter = {
-      user_id: {$eq: data.user_id}
+      user_id: data.user_id
     };
     //Send document to mongo and store result
     var result = await collection.updateOne(filter,document);
@@ -262,7 +263,7 @@ app.post("/getScoreBoard", async(request,response) =>{
     var result = await collection.find(document).sort({highScore:-1}).limit(10).toArray();
     //Add all 10 scores and their unsernames to the document
     document = {};
-    for(let i = 0; i < 10; i++){
+    for(let i = 0; i < Math.min(result.length, 10); i++){ //Just in case there are less then 10 scores in the database
       document["highScore"+i] = result[i].highScore;
       document["username"+i] = result[i].username;
     }
@@ -276,7 +277,103 @@ app.post("/getScoreBoard", async(request,response) =>{
   }
 });
 
+//for the question banks
+
+
+//Vishing voicemail level question bank
+app.post("/getVishing", async(request,response) =>{
+  //Connect to MongoDB
+  const client = new MongoClient(uri);
+  await client.connect();
+  //Try to retrieve account data
+  try{
+    //Connect to the proper database and collection
+    var dataBase = "SSE_MobileSecurityGame";
+    var dbCollection = "VishingBank"
+    const db = client.db(dataBase);
+    const collection = db.collection(dbCollection);
+	var filter = {type: "voicemail"};
+	const questions = await collection.find(filter).toArray();
+	//return questions;
+	response.status(200).json(questions);
+  }catch(err){
+    console.error(`[Error] ${err}`);
+  }finally{
+    //Close Mongo
+    await client.close();
+  }
+});
+
+//Vishing call level question bank
+app.post("/getVishingCall", async(request,response) =>{
+  //Connect to MongoDB
+  const client = new MongoClient(uri);
+  await client.connect();
+  //Try to retrieve account data
+  try{
+    //Connect to the proper database and collection
+    var dataBase = "SSE_MobileSecurityGame";
+    var dbCollection = "VishingBank"
+    const db = client.db(dataBase);
+    const collection = db.collection(dbCollection);
+	var filter = {type: "call"};
+	const questions = await collection.find(filter).toArray();
+	//return questions;
+	response.status(200).json(questions);
+  }catch(err){
+    console.error(`[Error] ${err}`);
+  }finally{
+    //Close Mongo
+    await client.close();
+  }
+});
+
+//Phishing level question bank
+app.post("/getPhishing", async(request,response) =>{
+  //Connect to MongoDB
+  const client = new MongoClient(uri);
+  await client.connect();
+  //Try to retrieve account data
+  try{
+    //Connect to the proper database and collection
+    var dataBase = "SSE_MobileSecurityGame";
+    var dbCollection = "PhishingBank"
+    const db = client.db(dataBase);
+    const collection = db.collection(dbCollection);
+	const questions = await collection.find({}).toArray();
+	//return questions;
+	response.status(200).json(questions);
+  }catch(err){
+    console.error(`[Error] ${err}`);
+  }finally{
+    //Close Mongo
+    await client.close();
+  }
+});
+
+//CommonAttack question bank
+app.post("/getCommon", async(request,response) =>{
+  //Connect to MongoDB
+  const client = new MongoClient(uri);
+  await client.connect();
+  //Try to retrieve account data
+  try{
+    //Connect to the proper database and collection
+    var dataBase = "SSE_MobileSecurityGame";
+    var dbCollection = "CommonAttackBank"
+    const db = client.db(dataBase);
+    const collection = db.collection(dbCollection);
+	const questions = await collection.find({}).toArray();
+	return questions;
+  }catch(err){
+    console.error(`[Error] ${err}`);
+  }finally{
+    //Close Mongo
+    await client.close();
+  }
+});
+
 //Begin the server on port 3000
 app.listen(3000, () => {
-  console.log('Server listening on http://localhost:3000');
+  console.log('Server listening on Port 3000');
 });

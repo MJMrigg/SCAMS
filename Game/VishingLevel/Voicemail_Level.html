@@ -21,16 +21,38 @@
 				this.mailCurrentIndex = 0; //checks and increments array index
 				this.currentVoiceMail = this.mail[this.mailCurrentIndex];
 				
+				this.questionBank = [];
+				this.alreadyDone = [];
+
+				this.getQuestionBank();
+
+				
 				this.ansResult = document.getElementById("results");
 				this.goButton = document.getElementById("button");
 				this.score = document.getElementById("score");
-				this.callID = document.getElementById("callerID");
 				this.transcript = document.getElementById("transcript");
 
-				
-				this.callID.innerText = "Caller ID: " + this.currentVoiceMail.callerID;
 				this.transcript.innerText = this.currentVoiceMail.transcript;
 				
+			}
+			
+			async getQuestionBank(){
+				//this.questionBank;
+				try{
+					const query = await fetch("/getVishing", {
+						method:"POST"
+						//that SHOULD be the only thing needed
+					})
+					console.log("Bank successfully got!");
+					
+				}catch(Error){
+					alert(Error+"Failed to get question bank");
+				}
+				const questions = await response.json();
+				this.questionBank = questions;
+				for(var i = 0;i<this.questionBank.length-1;i++){
+					this.alreadyDone[i]=false;
+				}
 			}
 			
 			changeVal(type, val){
@@ -131,6 +153,8 @@
 					allCor = true;
 				}
 				this.maxScore +=3;
+				var currentScore = JSON.parse(sessionStorage.getItem("currentScore")) + levelCor;
+				sessionStorage.setItem("currentScore", JSON.stringify(currentScore));
 				return allCor;
 			}
 			
@@ -161,7 +185,7 @@
 				this.currentCall = this.mail[this.mailCurrentIndex];
 				this.ansResult.innerText = " ";
 				//displays new call transcript
-				this.callID.innerText = "Caller ID: " + this.currentVoiceMail.callerID;
+				//this.callID.innerText = "Caller ID: " + this.currentVoiceMail.callerID;
 				this.transcript.innerText = this.currentVoiceMail.transcript;
 				
 				//lists current score
@@ -176,7 +200,7 @@
 	<BODY>		
 		<center>
 		<div style = "width: 500px; height: 450px; border: 10px solid #000; background: lightgrey;">
-			<div id = "callerID" style = "border: 1px solid #000; font-size:30px;text-align:center"></div>
+			<div id = "callerID" style = "border: 1px solid #000; font-size:30px;text-align:center">Voicemail</div>
 			<div id = "transcript" style = "width: 498px; height: 500px; border: 2px solid #000; font-size:25px;">
 				
 			</div>

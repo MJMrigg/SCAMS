@@ -5,7 +5,7 @@
             //Start the smishing level either at the start or where the user last left off
             function startSmishingLevel(){
                 var level1Stage = JSON.parse(sessionStorage.getItem("level1Stage"));
-                if(level1Stage == 0){ //If this is the user's first time playing the level, go to the beginning
+                if(level1Stage == 0 || level1Stage == null){ //If this is the user's first time playing the level, go to the beginning
                     window.location.href = "SmishingLevel/menu.html";
                 }else{ //If it is not, go back to where they left off
                     window.location.href = "SmishingLevel/stage"+level1Stage+".html";
@@ -49,7 +49,7 @@
                             body: JSON.stringify(data)
                         });
                         //Get result and update session data
-                        var result = query.json();
+                        var result = await query.json();
                         sessionStorage.setItem("highScore",JSON.stringify(result.highScore));
                     }catch(Error){
                         alert(Error+" Please try again.");
@@ -100,14 +100,15 @@
         <link rel="stylesheet" href="../styles.css">
     </head>
     <body>
-        <div class="menu" style="height: 360px;">
+        <div class="menu" style="height: 420px;">
             <h1>Level Select</h1>
             <h3 id="currentScore"></h3>
-            <button class="selection" onclick="window.location.href = 'PermissionsLevel.html'">App Permissions Level</button><br>
+            <button class="selection" onclick="window.location.href = 'PermissionsLevel/permissionsLevel.html'">App Permissions Level</button><br>
             <button class="selection" onclick="window.location.href = 'VishingLevel/Vishing.html'">Vishing Level</button><br>
 			<button class="selection" onclick="window.location.href = 'BadPacketsLevel/BadPacketsLevel.html'">Bad Packets Level</button><br>
             <button class="selection" onclick="window.location.href = 'JuiceJLevel.html'">Juice Jacking Level</button><br>
             <button class="selection" onclick="startSmishingLevel()">Smishing Level</button><br>
+	        <button class="selection" onclick="window.location.href = 'SpamEmailLevel/SpamEmailMenu.html'">Phishing Level</button><br>
             <button class="selection" onclick="returnHome()">Return Home</button>
         </div>
         <script>addCurrentScore()</script>

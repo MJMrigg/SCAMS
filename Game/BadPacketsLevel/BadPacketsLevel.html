@@ -1,156 +1,309 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Bad Packets Defense</title>
-  <link rel="stylesheet" href="../styles.css">
-  
-  <style>
-    body, html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #1a1a1a;
-}
-    canvas { display: block; background: #1a1a1a; }
-    #score { position: absolute; top: 10px; left: 10px; color: white; font-size: 20px; }
-  </style>
-</head>
-<body>
-  <div id="score">Score: 0</div>
-  <canvas id="gameCanvas" width="800" height="600"></canvas><ul>
-  <button class="selection" onclick="window.location.href='../menu.html'">Save and Quit</button>
+  <head>
+    <meta charset="UTF-8">
+    <title>Bad Packets Defense</title>
+    <script>
+        class main{
+            constructor(){
+                this.score = 0; //The player's starts at score is 0
+                this.lives = 10; //The player starts with 10 lives
+                this.packets = []; //Stores where the packets appear on the screen
+                this.gameStarted = false; //The Game has not yet started
+                this.gameOver = false; //The Game has not yet ended
+                this.tutorial = true; //Start the tutorial
+                this.tutorialPart = 0; //Start at the beginning of the tutorial
+                this.wait = false; //Don't wait before drawing the next frame
+                this.drawStartScreen(); //Draw the first frame
+            }
+            
+            //Take in the amount of points the score should change by, change the score, and update the score on the scren
+            updateScore(change) {
+                this.score += change;
+                document.getElementById("score").textContent = "Score: " + this.score + " | Lives: " + this.lives;
+            }
+            
+            //Create a packet and add it to the packets array
+            spawnPacket() {
+                const isGolden = Math.random() < 0.05;
+                const packet = {
+                    x: Math.random() * (canvas.width - 60),
+                    y: -30,
+                    width: 60,
+                    height: 60,
+                    //Golden packets move faster than normal ones
+                    speed: isGolden ? 2.0 + Math.random() * 0.8 : 1.2 + Math.random() * 0.5,
+                    isGolden: isGolden
+                };
+                this.packets.push(packet);
+            }
+            
+            //Take in a packet and draw it
+            drawPacket(packet) {
+                ctx.fillStyle = packet.isGolden ? "gold" : "red";
+                ctx.fillRect(packet.x, packet.y, packet.width, packet.height);
+            }
+            
+            //Draw the start screen on the canvas
+            drawStartScreen() {
+                ctx.fillStyle = "black";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "white";
+                ctx.font = "36px Arial";
+                if(this.tutorial){ //If this is the tutorial
+                    ctx.fillText("Bad Packets Tutorial", canvas.width / 2 - 180, canvas.height / 2 - 30);
+                }else{
+                    ctx.fillText("Bad Packets Defense", canvas.width / 2 - 180, canvas.height / 2 - 30);
+                }
+                ctx.font = "24px Arial";
+                ctx.fillText("Click to Start", canvas.width / 2 - 70, canvas.height / 2 + 20);
+            }
 
-<script>
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+            //Draw the game over screen on the canvas
+            drawGameOver() {
+                ctx.fillStyle = "black";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "white";
+                ctx.font = "36px Arial";
+                ctx.fillText("Game Over", canvas.width / 2 - 100, canvas.height / 2 - 40);
+                ctx.font = "24px Arial";
+                ctx.fillText("Final Score: " + this.score, canvas.width / 2 - 80, canvas.height / 2);
+                ctx.fillText("Click to Restart", canvas.width / 2 - 90, canvas.height / 2 + 40);
 
-let score = 0;
-let lives = 10;
-let packets = [];
-let gameStarted = false;
-let gameOver = false;
+                if(this.tutorial){ //If this was the tutorial, tell the player what happens when they lose
+                    this.handleTutorial();
+                }else{ //Else, add the result to their total score and mark the tutorial as complete
+                    var playerCurrentScore = JSON.parse(sessionStorage.getItem("currentScore"));
+                    playerCurrentScore += score;
+                    sessionStorage.setItem("currentScore",JSON.stringify(playerCurrentScore));
+                }
+            }
+            
+            //Restart the game
+            resetGame() {
+                this.score = 0;
+                this.lives = 10;
+                //Delete all packets in the game
+                this.packets.forEach((packet, index) => {
+                    this.packets.splice(index, 1);
+                });
+                this.gameStarted = true;
+                this.gameOver = false;
+                if(this.tutorial) this.tutorialPart = 0;
+                this.updateScore(0);
+                this.gameLoop();
+            }
+            
+            //Draw the current frame
+            gameLoop() {
+                //Draw the start screen if the game has yet to start
+                if (!this.gameStarted) {
+                    this.drawStartScreen();
+                    return;
+                }
 
-function updateScore(change) {
-  score += change;
-  document.getElementById("score").textContent = "Score: " + score + " | Lives: " + lives;
-}
+                //Stop drawing frames if the game is over
+                if (this.lives <= 0) {
+                    this.gameOver = true;
+                    this.drawGameOver();
+                    return;
+                }
 
-function spawnPacket() {
-  const isGolden = Math.random() < 0.05;
-  const packet = {
-    x: Math.random() * (canvas.width - 60),
-    y: -30,
-    width: 60,
-    height: 60,
-    speed: isGolden ? 2.0 + Math.random() * 0.8 : 1.2 + Math.random() * 0.5,
-    isGolden: isGolden
-  };
-  packets.push(packet);
-}
+                ctx.clearRect(0, 0, canvas.width, canvas.height); //Clear the canvas
+                //Draw each packet at their new position
+                this.packets.forEach((packet, index) => {
+                    packet.y += packet.speed;
+                    this.drawPacket(packet);
 
-function drawPacket(packet) {
-  ctx.fillStyle = packet.isGolden ? "gold" : "red";
-  ctx.fillRect(packet.x, packet.y, packet.width, packet.height);
-}
+                    //If that new position is below the canvas, take away a point and delete the packet
+                    if (packet.y > canvas.height) {
+                        this.lives--;
+                        this.updateScore(-1);
+                        this.packets.splice(index, 1);
+                        if(this.tutorial) this.handleTutorial(); //If this was the tutorial, handle what happens when the player lets a packet through
+                    }
+                });
 
-function drawStartScreen() {
-  ctx.fillStyle = "black";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "white";
-  ctx.font = "36px Arial";
-  ctx.fillText("Bad Packets Defense", canvas.width / 2 - 180, canvas.height / 2 - 30);
-  ctx.font = "24px Arial";
-  ctx.fillText("Click to Start", canvas.width / 2 - 70, canvas.height / 2 + 20);
-}
+                if(this.tutorial){ //If this is the tutorial, handle the tutorial functionality
+                    this.handleTutorial();
+                }else{ //If it's not, proceed as normal
+                    if (Math.random() < 0.01) this.spawnPacket(); //Possibly spawn a new packet
+                }
+            }
 
-function drawGameOver() {
-  document.querySelector("button").style.display = "block";
-  ctx.fillStyle = "black";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "white";
-  ctx.font = "36px Arial";
-  ctx.fillText("Game Over", canvas.width / 2 - 100, canvas.height / 2 - 40);
-  ctx.font = "24px Arial";
-  ctx.fillText("Final Score: " + score, canvas.width / 2 - 80, canvas.height / 2);
-  var playerCurrentScore = JSON.parse(sessionStorage.getItem("currentScore"));
-  playerCurrentScore += score;
-  sessionStorage.setItem("currentScore",JSON.stringify(playerCurrentScore));
-  ctx.fillText("Click to Restart", canvas.width / 2 - 90, canvas.height / 2 + 40);
-}
+            //Do the tutorial based on which part of the tutorial the player is on
+            handleTutorial(){
+                switch(this.tutorialPart){
+                    case 0:
+                        alert("Welcome to the Bad Packets Defense Tutorial! In this game, network packets that contain malicious content will fall from the top of the screen and you will have to stop them from reaching the bottom and into the vulnerable mobile device.");
+                        //Spawn a red packet for the player to click
+                        this.spawnPacket();
+                        this.packets[this.packets.length-1].isGolden = false;
+                        this.packets[this.packets.length-1].x = canvas.width / 2;
+                        this.tutorialPart += 1;
+                        break;
+                    case 1:
+                        //If the packet has reached the center of the screen, slow the packet and let the player click it.
+                        if(this.packets[this.packets.length-1].y >= canvas.height / 88){
+                            this.tutorialPart += 0.5; //Set the tutorial part to a decimal so that it doesn't trigger the switch until the packet is gone
+                            this.packets[this.packets.length-1].speed = 0.15;
+                            alert("When a packet falls, click it to prevent it from reaching the user's mobile device.");
+                        }
+                        break;
+                    case 2:
+                        alert("When you click a Bad Packet before it enters the user's mobile device, your score will increase by 1. You can see this number in the top left corner of the screen.");
+                        //Spawn a golden packet for the player to click
+                        this.spawnPacket();
+                        this.packets[this.packets.length-1].isGolden = true;
+                        this.packets[this.packets.length-1].x = canvas.width / 2;
+                        this.tutorialPart += 1;
+                        break;
+                    case 3:
+                        //If the packet has reached the center of the screen, slow the packet and let the player click it.
+                        if(this.packets[this.packets.length-1].y >= canvas.height / 88){
+                            this.tutorialPart += 0.5;
+                            this.packets[this.packets.length-1].speed = 0.15;
+                            alert("Golden Packets have especially dangerous malware. Stop them from reaching the user's mobile device for 5 points.");
+                        }
+                        break;
+                    case 4:
+                        //Spawn a really fast packet so that the user can see what happens when a packet enters the user's mobile device
+                        this.spawnPacket();
+                        this.packets[this.packets.length-1].speed = 20.0;
+                        this.packets[this.packets.length-1].x = canvas.width / 2;
+                        this.tutorialPart += 1;
+                        break;
+                    case 5:
+                        if(this.packets.length == 0){
+                            alert("Oh no! A packet got through to the user's mobile device! When that happens, you will lose a life. When you lose all 10 lives, the user's phone is so full of malware, its unsuable and all hackers have access to their data.");
+                            this.tutorialPart += 1;
+                            //Show the player what happens when they lose all their lives
+                            for(let i = 0; i < 10; i++){
+                                this.spawnPacket();
+                                this.packets[this.packets.length-1].speed = 20.0; //Make them so fast, there's no way they can click it
+                            }
+                        }
+                        break;
+                    case 6:
+                        if(this.gameOver){
+                            alert("Oh no! Too many bad packets have gotten through! When this happens, the game is over and you will have a chance to play again. Enjoy!");
+                            this.tutorialPart += 1;
+                        }
+                        break;
+                }
+            }
 
-function resetGame() {
-  score = 0;
-  lives = 10;
-  packets = [];
-  gameStarted = true;
-  gameOver = false;
-  updateScore(0);
-  gameLoop();
-}
+            //Handle when the player clicks on the screen
+            handleClick(e){
+                //If the game has yet to start, start the game
+                if (!this.gameStarted) {
+                    this.gameStarted = true;
+                    this.updateScore(0);
+                    this.gameLoop();
+                    return;
+                }
 
-function gameLoop() {
-  if (!gameStarted) {
-    drawStartScreen();
-    return;
-  }
+                //If the game just finished, restart the game
+                if (this.gameOver) {
+                    this.resetGame();
+                    return;
+                }
 
-  if (lives <= 0) {
-    gameOver = true;
-    drawGameOver();
-    return;
-  }
+                //If the game is in full swing, check to see if the player clicked on a packet
+                const rect = canvas.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const clickY = e.clientY - rect.top;
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  packets.forEach((packet, index) => {
-    packet.y += packet.speed;
-    drawPacket(packet);
+                //For each packet, get its information and see if the player clicked it
+                for (let i = 0; i < this.packets.length; i++) {
+                    const p = this.packets[i];
+                    //If the player didn't click on the packet, keep going through packets
+                    if(clickX < p.x || clickX > p.x + p.width || clickY < p.y || clickY > p.y + p.height){
+                        continue;
+                    }
+                    //If they did, update the score and remove it
+                    this.updateScore(p.isGolden ? 5 : 1);
+                    this.packets.splice(i, 1);
+                    if(this.tutorial){ //If this was the tutorial, handle what happens when the player clicks a packet
+                        if(!Number.isInteger(this.tutorialPart)) this.tutorialPart += 0.5;
+                        this.handleTutorial();
+                    }
+                    break; //Stop checking, since the player can only remove one packet per click
+                }
+            }
 
-    if (packet.y > canvas.height) {
-      lives--;
-      updateScore(-5);
-      packets.splice(index, 1);
-    }
-  });
+            //Get the score currently in session storage, add the game score, store the result, and leave the game
+            saveAndQuit(){
+                var playerCurrentScore = JSON.parse(sessionStorage.getItem("currentScore"));
+                playerCurrentScore += this.score;
+                sessionStorage.setItem("currentScore", JSON.stringify(playerCurrentScore));
+                window.location.href = '../menu.html';
+            }
 
-  if (Math.random() < 0.01) spawnPacket();
-  requestAnimationFrame(gameLoop);
-}
+            //Restart the tutorial
+            restartTutorial(){
+                this.tutorial = true;
+                this.tutorialPart = 0; //Restart the tutorial
+                //Set the score to 0, lives to 10, and get rid of all packets
+                this.updateScore(0);
+                this.lives = 10;
+                this.packets.forEach((packet, index) => {
+                    this.packets.splice(index, 1);
+                });
+                //Begin the game
+                this.gameStarted = false;
+                this.gameOver = false;
+                this.drawStartScreen();
+            }
 
-canvas.addEventListener("click", (e) => {
-  if (!gameStarted) {
-    gameStarted = true;
-    updateScore(0);
-    gameLoop();
-    return;
-  }
+            //Skip the tutorial by setting up the game so that it doesn't do the tutorial
+            skipTutorial(){
+                if(!this.tutorial){ //Don't do this if this isn't the tutorial
+                    return;
+                }
+                this.tutorial = false; //This is not the tutorial
+                //Set the score to 0, lives to 10, and get rid of all packets
+                this.updateScore(0);
+                this.lives = 10;
+                this.packets.forEach((packet, index) => {
+                    this.packets.splice(index, 1);
+                });
+                //Begin the game
+                this.gameStarted = false;
+                this.gameOver = false;
+                this.drawStartScreen();
+            }
 
-  if (gameOver) {
-    resetGame();
-    return;
-  }
+            static click(e){
+                mymain.handleClick(e);
+            }
+            static loop(){
+                mymain.gameLoop();
+                requestAnimationFrame(main.loop);
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../../styles.css">
+  </head>
+  <body>
+    <div class="menuForBadPackets">
+        <div class="forBadPackets">
+            <div id="score" class="badPacketsScore">Score: 0 | Lives: 10</div><br>
+            <canvas id="gameCanvas" class="forBadPackets" width="800" height="600"></canvas><ul>
+            <script>
+                const canvas = document.getElementById("gameCanvas");
+                const ctx = canvas.getContext("2d");
+                const mymain = new main;
 
-  const rect = canvas.getBoundingClientRect();
-  const clickX = e.clientX - rect.left;
-  const clickY = e.clientY - rect.top;
-
-  for (let i = 0; i < packets.length; i++) {
-    const p = packets[i];
-    if (clickX >= p.x && clickX <= p.x + p.width &&
-        clickY >= p.y && clickY <= p.y + p.height) {
-      updateScore(p.isGolden ? 50 : 20);
-      packets.splice(i, 1);
-      break;
-    }
-  }
-});
-
-drawStartScreen();
-
-</script>
-</body>
+                canvas.addEventListener("click", main.click);
+                requestAnimationFrame(main.loop);
+            </script>
+        </div>
+        <div style="margin-left: 8px;">
+          <button class="badPackets" onclick=mymain.saveAndQuit()>Save and Quit</button><br>
+          <button class="badPackets" onclick="mymain.skipTutorial()">Skip Tutorial</button><br>
+          <button class="badPackets" onclick="mymain.restartTutorial()">Restart Tutorial</button>
+        </div>
+    </div>
+  </body>
 </html>

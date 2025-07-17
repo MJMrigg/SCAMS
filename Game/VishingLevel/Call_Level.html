@@ -102,10 +102,10 @@
 					}
 					if(nextIndex == this.calls.length){
 						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
-						var currentScore = JSON.parse(sessionStorage.getItem("currentScore")); //Get player's current score
-						sessionStorage.setItem("currentScore",JSON.stringify(currentScore+this.correctAnsNum)); //Set it to their final score
 						this.goButton.innerText = "You finished all the levels!";
 						this.goButton.onclick = "";
+						document.getElementById("button").style.display = "none";
+						document.getElementById("finishedDisplay").innerText = "You finished all the levels!";
 						this.gameFinish = true;
 					}else if (!this.gameFinish){
 						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
@@ -124,6 +124,21 @@
 					if(this.calls[this.callCurrentIndex].checkCorrect(i, this.playerAns[i])){
 						this.correctAnsNum++;
 						levelCor++;
+						if(i==0){
+							document.getElementById("personalInfo").style.color = "green";
+						}else if(i==1){
+							document.getElementById("paymentMethod").style.color = "green";
+						}else{
+							document.getElementById("suspiciousYesNo").style.color = "green";
+						}
+					}else{
+						if(i==0){
+							document.getElementById("personalInfo").style.color = "red";
+						}else if(i==1){
+							document.getElementById("paymentMethod").style.color = "red";
+						}else{
+							document.getElementById("suspiciousYesNo").style.color = "red";
+						}
 					}
 				}
 				console.log(this.correctAnsNum);
@@ -133,6 +148,8 @@
 					allCor = true;
 				}
 				this.maxScore +=3;
+				var currentScore = JSON.parse(sessionStorage.getItem("currentScore")) + levelCor;
+				sessionStorage.setItem("currentScore", JSON.stringify(currentScore));
 				return allCor;
 			}
 			
@@ -160,6 +177,10 @@
 				this.goButton.onclick = () => this.submitAnswers();
 				this.currentCall = this.calls[this.callCurrentIndex];
 				this.ansResult.innerText = " ";
+				
+				document.getElementById("personalInfo").style.color = "black";
+				document.getElementById("paymentMethod").style.color = "black";
+				document.getElementById("suspiciousYesNo").style.color = "black";
 				//displays new call transcript
 				this.callID.innerText = "Caller ID: " + this.currentCall.callID;
 				this.callScript_Line1.innerText = this.currentCall.transcript_Line1;
@@ -177,10 +198,10 @@
 		</SCRIPT>
 	</HEAD>
 	<BODY>
-
+		<center>
 		<div style = "width: 500px; height: 450px; border: 10px solid #000; background: lightgrey;">
 			<div id = "callerID" style = "border: 1px solid #000; font-size:30px;text-align:center"></div>
-			<div id = "transcript" style = "width: 498px; height: 500px; border: 1px solid #000; font-size:25px;">
+			<div id = "transcript" style = "width: 498px; height: 500px; border: 2px solid #000; font-size:25px; text-align: left">
 				<div id = "transcript_Line1" style="padding-bottom:10px"></div>
 				<div id = "transcript_Line2" style="padding-bottom:10px"></div>
 				<div id = "transcript_Line3" style="padding-bottom:10px"></div>
@@ -188,33 +209,41 @@
 				<div id = "transcript_Line5"style="padding-bottom:10px"></div>
 			</div>
 		</div>
+		</center>
 		<!-- Answer selections below -->
+		<center>
 		<div style = "width: 500px; border: 10px solid #000; background: white;">
-			<div style = "border: 1px solid #000;">
+			<div id = "personalInfo" style = "border: 1px solid #000;">
+				<center><b>Asks for personal information</b><br>
 				<input type = "radio" id = "OptionSel1" name = "personalInfo" onClick = "m.changeVal(0,1)">
-				<label for = "OptionSel1">Asks for personal information</label>
+				<label for = "OptionSel1">Yes</label>
 				<input type = "radio" id = "OptionSel1" name ="personalInfo" onClick = "m.changeVal(0,0)">
-				<label for = "OptionSel1">Nothing Wrong</label>
+				<label for = "OptionSel1">No</label>
 			</div>
-			<div style = "border: 1px solid #000;">
+			<div id = "paymentMethod" style = "border: 1px solid #000;">
+				<center><b>Asks for odd payment method</b><br>
 				<input type = "radio" id = "OptionSel1" name = "payment" onClick = "m.changeVal(1,1)">
-				<label for = "OptionSel1">Asks for odd payment method</label>
+				<label for = "OptionSel1">Yes</label>
 				<input type = "radio" id = "OptionSel1" name = "payment" onClick = "m.changeVal(1,0)">
-				<label for = "OptionSel1">Nothing Wrong</label>
+				<label for = "OptionSel1">No</label>
 			</div>
-			<div style = "border: 1px solid #000;">
+			<div id = "suspiciousYesNo" style = "border: 1px solid #000;">
+				<center><b>Asks suspicious yes and no questions</b><br>
 				<input type = "radio" id = "OptionSel1" name = "yesNo"onClick = "m.changeVal(2,1)">
-				<label for = "OptionSel1">Asks only yes and no questions</label>
+				<label for = "OptionSel1">Yes</label>
 				<input type = "radio" id = "OptionSel1" name = "yesNo"onClick = "m.changeVal(2,0)">
-				<label for = "OptionSel1">Nothing Wrong</label>
+				<label for = "OptionSel1">No</label>
+				</center>
 			</div>
 			<div style = "border: 1px solid #000;">
 				<div id = "results" style = "height:auto;"><br></div>
+				<div id = "finishedDisplay" style = "font-size:25px;text-align:center"></div>
 				<button id = "button" class = "selection" onClick = "m.submitAnswers()">Submit Answers</button><br>
-				<BUTTON class = "selection" onclick = "window.location.href = '../menu.html'">Return to Level Screen</BUTTON>
+				<BUTTON class = "selection" onclick = "window.location.href = 'Vishing.html'">Return to Selection Screen</BUTTON>
 			</div>
 			<div id = "score" style = "height:auto; border: 1px solid #000;"></div>
 		</div>
+		</center>
 		
 		<SCRIPT>
 			var m = new main();

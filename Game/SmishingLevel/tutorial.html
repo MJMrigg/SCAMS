@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script id="2dVertexShader" type="notjs">
+            attribute vec4 a_position;
+            attribute vec3 a_color;
+            varying vec3 fragColor;
+            void main(){
+                gl_Position = a_position;
+                fragColor = a_color;
+                gl_PointSize = 5.0;
+            }
+        </script>
+        <script id="2dFragmentShader" type="notjs">
+            precision mediump float;
+            varying vec3 fragColor;
+            void main(){
+                gl_FragColor = vec4(fragColor,1);
+            }
+        </script>
+        <script src="main.js"></script>
+        <link rel="stylesheet" href="../../styles.css">
+    </head>
+    <body>
+        <div class="menu" style="height: 975px">
+            <h1 id="stage">Tutorial Message</h1>
+            <p id="tutorial"></p>
+            <canvas id="canvas" class="forSmishing" width="300" height="649" style="background: url('srcimgs/tutorial.png');">
+                YOUR BROWSER DOES NOT SUPPORT CANVAS
+            </canvas><br>
+            <script>
+                var canvas = document.getElementById("canvas");
+                var gl = canvas.getContext("webgl");
+                var mymain = new main(
+                    [
+                        -0.832000020345052, 0.5496918335901386, 0.5, 0.40799997965494783, 0.518875192604006, 0.5, //Weird Greeting
+                        -0.16533335367838542, 0.7382896905320084, 0.5, 0.2279999796549479, 0.7197997059403289, 0.5, //Unkown Number
+                        -0.6453333536783854, 0.39129431773040246, 0.5, 0.16799997965494784, 0.3573960126456568, 0.5, //Weird Link
+                        -0.8453333536783854, 0.496070897083253, 0.5, -0.3920000203450521, 0.46217259199850735, 0.5, //Admits they're a hacker
+                        -0.052000020345052134, 0.496070897083253, 0.5, 0.32133331298828116, 0.46217259199850735, 0.5, //Asks user to download malware
+                        -0.012000020345052098, 0.3389060280539773, 0.5, 0.41466664632161465, 0.3080893870678447, 0.5, //Access all the user's data
+                    ],[
+                        -0.9186666870117187, 0.574961493305506, 0.6546666463216146, 0.4917565626429483,
+                        -0.31200002034505203, 0.9293528646460298, 0.327999979654948, 0.685901400855583,
+                        -0.9120000203450521, 0.4344376151109881, 0.26799997965494793, 0.298844394772005,
+                        -0.9386666870117187, 0.570030835449971, 0.607999979654948, 0.4375192792096012,
+                        -0.8520000203450521, 0.5238058739707723, 0.4679999796549479, 0.3050077229692316,
+                        -0.9853333536783854, 0.3635593408428832, 0.607999979654948, 0.2279661205039003,
+                    ],
+                    "You did not find any suspicious parts of the message, earning you 0 points towards your total score.",
+                    "You'll get a message like this every time you submit your boxes. It'll also contain a tip you can use in the future when you get a REAL smishing message."
+                );
+    
+                canvas.addEventListener("click", main.leftClick);
+                canvas.addEventListener("contextmenu", main.rightClick);
+		        canvas.addEventListener("mousemove", main.mouseMove);
+            </script>
+            <button class="submit" onclick="mymain.submit(0)">Submit</button><br>
+            <button class="selection" onclick="window.location.href='../menu.html'">Save and Quit</button>
+            <button class="selection" onclick="window.location.href='tutorial.html'">Restart Tutorial</button>
+        </div>
+    </body>
+</html>
+<!--
+    References:
+    https://www.proofpoint.com/us/threat-reference/smishing
+    https://digital.va.gov/cyber-spot/smish-smish-dont-get-phished/
+    https://business.bofa.com/en-us/content/what-is-smishing-how-to-prevent-it.html
+    https://www.fcc.gov/avoid-temptation-smishing-scams
+-->

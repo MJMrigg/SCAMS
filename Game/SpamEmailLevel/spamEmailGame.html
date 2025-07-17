@@ -1,0 +1,342 @@
+<html>
+<head>
+	<script>
+		class main{
+			constructor(){
+				this.image = '';
+				this.emailImg = document.getElementById("emailPic");
+				this.emailImg.src = 'data:image/png;base64,'+ this.image;
+				
+				this.playerAns = [null,null,null,null,null,null];
+				this.playerAns[3]=false;
+				this.playerAns[4]=false;
+				this.gameFinish = false;
+				this.correctAnsNum = 0;
+				this.currIndex = 0;
+				
+				this.ansResult = document.getElementById("results");
+				//this.score = document.getElementById("score");
+				this.goButton = document.getElementById("confirm");
+
+
+
+				this.questionBank = [];
+				this.alreadyDone = [];
+				//this.getQuestionBank();
+				//var len = this.questionBank.length;
+				this.currIndex = 0;
+				//this.updateScreen();
+
+			}
+			
+			changeImage(str){
+				//this.image = this.questionBank[this.currIndex].imagebase64;
+				this.image = str;
+				this.emailImg = document.getElementById("emailPic");
+				this.emailImg.src = 'data:image/png;base64,'+ this.image;
+			}
+			
+			changeVal(opt, chosen){
+				if(opt==0){
+					console.log("emailAdd");
+					if(chosen == 1){
+						this.playerAns[0] = true;
+					}else{
+						this.playerAns[0] = false;
+					}
+				}
+				else if(opt==1){
+					console.log("emailSubject");
+					if(chosen == 1){
+						this.playerAns[1] = true;
+					}else{
+						this.playerAns[1] = false;
+					}
+				}
+				else if(opt==2){
+					if(chosen==1){
+						document.getElementById("emailAdditional").style = "display:block";
+						document.getElementById("feelOff").style="display:block";
+						document.getElementById("spellingErr").style="display:block";
+						this.playerAns[2]=true;
+						
+					}else{
+						document.getElementById("emailAdditional").style = "display:none";
+						document.getElementById("feelOff").style="display:none";
+						document.getElementById("spellingErr").style="display:none";
+						this.playerAns[2]=false;
+
+					}
+				}else{
+					if(chosen == 1){
+						this.playerAns[5] = true;
+					}else{
+						this.playerAns[5] = false;
+					}
+				}
+			}
+			
+			changeCheck(opt, checked){
+				var type = opt
+				if(type == 0){//the spelling errors
+					if(checked){
+						this.playerAns[3]=true;
+					}else{
+						this.playerAns[3]=false;
+					}
+				}else{//the sounding off
+					if(checked){
+						this.playerAns[4]=true;
+					}else{
+						this.playerAns[4]=false;
+					}
+				}
+			}
+			
+			submitAnswers(){
+				console.log("Pressed");
+				console.log("Yes and No value: " + this.playerAns);
+				console.log(this.correctAnsNum);
+				var allAns = true;
+				for(var i = 0; i<this.playerAns.length-1;i++){
+					if(this.playerAns[i]==null){
+						allAns = false;
+					}
+				}
+				if(!allAns){
+					this.ansResult.innerText = "Please answer all questions before submitting!";
+				}else{
+					var check = this.checkAllAns();//check answers to display proper result message
+					//var nextIndex = this.mailCurrentIndex + 1;//makes next index a temporary variable
+					//console.log("next index: "+nextIndex);
+					if(check){
+						this.ansResult.innerText = "Fantastic!";
+					}else{
+						this.ansResult.innerText = "Not Quite!";
+					}
+					var doneCount = 0;
+					for(let i =0; i<this.questionBank.length;i++){
+						if(this.alreadyDone[i]){
+							doneCount++;
+						}
+					}
+					if(doneCount==this.questionBank.length){
+						for(let i = 0;i<this.questionBank.length;i++){
+							this.alreadyDone[i]=false;
+							//resets game
+							this.currIndex=Math.floor(Math.random()*this.questionBank.length);
+						}
+					}else{
+						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
+						this.goButton.innerText = "Next level";
+						this.goButton.onclick = () => this.nextQuestion();
+					}
+					this.goButton.innerText = "Next level";
+					this.goButton.onclick = () => this.nextQuestion();
+				}
+			}
+			
+			async getQuestionBank(){
+				try {
+					//const response = await fetch('SSE_MobileSecurityGame.PhishingBank.json');
+					const response = await fetch("/getPhishing",{
+                        method: "POST",
+                        "Content-Type": "application/json",
+                        body: JSON.stringify({})
+                    });
+					//const data = await response.json();
+					const data = await response.json();
+					console.log(data);
+					var i = Math.floor(Math.random()*data.length);
+					console.log(i);
+					console.log(data[i]);
+					console.log(data[i].senderAdd==this.playerAns[0])
+					this.changeImage(data[i].imagebase64);
+					console.log(data.length);
+					for(let i = 0; i<data.length;i++){
+						this.alreadyDone.push(data[i]);
+						this.questionBank.push(data[i]);
+					}
+					this.currIndex = i;
+					console.log(this.alreadyDone.length);
+					console.log(this.questionBank.length);
+				} catch (error) {
+					console.error("Error fetching question bank:", error);
+				}
+				//const questions = 'PhishingQA.json';
+				//this.questionBank = JSON.parse(questions);
+				//console.log("Did it work? "+ this.questionBank["senderAdd"]);
+				
+			}
+			
+			checkAllAns(){
+				console.log(this.playerAns);
+				//console.log(this.calls[this.callCurrentIndex].correctAnswers);
+				var allCor = false;
+				var levelCor = 0;
+				if(this.questionBank[this.currIndex].senderAdd==this.playerAns[0]){
+					levelCor++;
+					document.getElementById("emailAd").style.color = "green";
+				}else{
+					document.getElementById("emailAd").style.color = "red";
+				}
+				
+				if(this.questionBank[this.currIndex].emailSubject==this.playerAns[1]){
+					levelCor++;
+					document.getElementById("subjectLine").style.color = "green";
+				}else{
+					document.getElementById("subjectLine").style.color = "red";
+				}
+
+				if(this.questionBank[this.currIndex].emailBody==this.playerAns[2]){
+					levelCor++;
+					document.getElementById("emailBod").style.color = "green";
+				}else{
+					document.getElementById("emailBod").style.color = "red";
+				}
+
+				if(this.questionBank[this.currIndex].spellingErrors==this.playerAns[3]){
+					levelCor++;
+					document.getElementById("spellingErr").style.color = "green";
+				}else{
+					document.getElementById("spellingErr").style.color = "red";
+				}
+
+				if(this.questionBank[this.currIndex].soundsOff==this.playerAns[4]){
+					levelCor++;
+					document.getElementById("feelOff").style.color = "green";
+				}else{
+					document.getElementById("feelOff").style.color = "red";
+				}
+
+				if(this.questionBank[this.currIndex].pdfIncluded==this.playerAns[5]){
+					levelCor++;
+					document.getElementById("pdf").style.color = "green";
+				}else{
+					document.getElementById("pdf").style.color = "red";
+				}
+
+				console.log(this.correctAnsNum);
+				
+				//if all correct
+				if(levelCor==6){
+					allCor = true;
+				}
+				this.maxScore += 6;
+				var currentScore = JSON.parse(sessionStorage.getItem("currentScore")) + levelCor;
+				sessionStorage.setItem("currentScore", JSON.stringify(currentScore));
+				return allCor;
+			}
+			
+			nextQuestion(){
+				//var len = this.questionBank.length;
+				while(this.alreadyDone[this.currIndex]){
+					this.currIndex = Math.floor(Math.random()*this.questionBank.length);
+				}
+				for(var i = 0;i<6;i++){
+					//clears player's current answer array
+					this.playerAns[i] = null;
+				}
+				
+
+				this.playerAns[3] = false;
+				this.playerAns[4] = false;
+
+
+				document.getElementById("emailAd").style.color = "black";
+				document.getElementById("subjectLine").style.color = "black";
+				document.getElementById("emailBod").style.color = "black";
+				document.getElementById("feelOff").style.color = "black";
+				document.getElementById("spellingErr").style.color = "black";
+	
+				document.getElementById("pdf").style.color = "black";
+
+				document.getElementById("emailAd").checked = false;
+				document.getElementById("subjectLine").checked = false;
+				document.getElementById("emailBod").checked = false;
+
+				document.getElementById("feelOff").style="display:none";
+				document.getElementById("spellingErr").style="display:none";
+
+				document.getElementById("feelOff").checked = false;
+				document.getElementById("spellingErr").checked = false;
+	
+				document.getElementById("pdf").checked = false;
+
+				this.updateScreen();
+			}
+			
+			updateScreen(){
+				//this.changeImage();
+				
+				this.changeImage(this.questionBank[this.currIndex].imagebase64);
+				/*for(var i = 0; i<this.playerAns.length;i++){
+					this.playerAns[i]=null;
+				}*/
+				this.goButton.innerText = "Submit Answers";
+				this.goButton.onclick = () => this.submitAnswers();
+				this.ansResult.innerText = " ";
+			}
+		}
+	</script>
+</head>
+<body>
+	<link rel="stylesheet" href="../../styles.css">
+	<div class = "menu" style="height: 750px; width:700px;">
+		<img id="emailPic" src = "" alt = "Loading image! Please wait." width = "680" height="420" /><br>
+		<div id = "emailAd" for = "emailAd" style = "border: 1px solid #000;">
+			<center><b>Weird Email Address</b><br>
+			<input type = "radio" id = "emailAdT" name = "emailAdd" onClick = "m.changeVal(0,1)">
+			<label for = "OptionSel1">Yes</label>
+			<input type = "radio" id = "emailAdF" name ="emailAdd" onClick = "m.changeVal(0,0)">
+			<label for = "OptionSel1">No</label>
+		</div>
+		
+		<div id = "subjectLine" for = "subjectLine" style = "border: 1px solid #000;">
+			<center><b>Weird Email Subject Line</b><br>
+			<input type = "radio" id = "subT" name = "subject" onClick = "m.changeVal(1,1)">
+			<label for = "OptionSel1">Yes</label>
+			<input type = "radio" id = "subF" name = "subject" onClick = "m.changeVal(1,0)">
+			<label for = "OptionSel1">No</label>
+		</div>
+		
+		<div id = "emailBod" for = "emailBod" style = "border: 1px solid #000;">
+			<center><b>Weird Email Body</b><br>
+			<input type = "radio" id = "bodT" name = "emailBod"onClick = "m.changeVal(2,1)">
+			<label for = "OptionSel1">Yes</label>
+			<input type = "radio" id = "bodF" name = "emailBod"onClick = "m.changeVal(2,0)">
+			<label for = "OptionSel1">No</label>
+			
+			<div id="emailAdditional" style="display:none">
+				<input type = "checkbox" value = "spellingErr" id = "spellingErr"onclick="m.changeCheck(0,this.checked)">Spelling mistakes</input>
+				<input type = "checkbox"value="feelOff" id="feelOff"onclick="m.changeCheck(0,this.checked)">Sounds off</input>
+			</div>
+			
+			</center>
+		</div>
+		
+		<div id = "pdf" for = "pdf"style = "border: 1px solid #000;">
+			<center><b>PDF Included</b><br>
+			<input type = "radio" id = "pdfInT" name = "yesNo"onClick = "m.changeVal(5,1)">
+			<label for = "OptionSel1">Yes</label>
+			<input type = "radio" id = "pdfInF" name = "yesNo"onClick = "m.changeVal(5,0)">
+			<label for = "OptionSel1">No</label>
+			</center>
+		</div>
+		
+		<button id="confirm" class="selection" onclick = "m.submitAnswers()">Confirm Selection</button>
+		<div id = "results" style = "height:auto;"><br></div>
+
+		<div id = "finishedDisplay" style = "font-size:25px;text-align:center"></div>
+		<br>
+		<button id="returnMenu" class="selection" onclick = "window.location.href = 'SpamEmailMenu.html'">Return to Phishing Menu</button>
+		<button id="returnLevel" class = "selection" onclick = "window.location.href = '../menu.html'">Return to Level screen</button><br>
+
+		<script>
+			var m = new main();
+			m.getQuestionBank();
+			m.changeImage();
+		</script>
+	</div>
+</body>
+</html>

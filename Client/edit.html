@@ -8,17 +8,17 @@
                 var newUserInformation = [];
                 for(let i = 0; i < 3; i++){
                     //Get data from the form
-                    var information = document.getElementById("information");
+                    var information = document.getElementById("newInformation");
                     var userData = JSON.parse(sessionStorage.getItem("userData"));
-                    if(information.element[i].value.length == 0){ //If the user left that data field blank...
+                    if(information.elements[i].value.length == 0){ //If the user left that data field blank...
                         newUserInformation[i] = userData[i]; //Don't change that part of their information.
                     }else{ //If they didn't leave it blank...
-                        newUserInformation[i] = information.element[i].value; //Change that part of their information.
+                        newUserInformation[i] = information.elements[i].value; //Change that part of their information.
                     }
                 }
                 //Try to make sure another user doesn't already have an account using the email
                 var data = { //Create mongo document
-                    email: newUserInformation.elements[1].value,
+                    email: newUserInformation[1],
                 };
                 try{
                     //Send a query along a post request to the backend
@@ -32,7 +32,7 @@
                     //Get response
                     var response = await query.json();
                     if(response.user_id != null){ //If they already have an account
-                        throw "Error: Account already exisits";
+                        throw "Error: Account with that email already exisits";
                     }
                 }catch(Error){
                     //Stop running since the user already has an account
@@ -41,7 +41,7 @@
                 }
                 //Try to see if the username is already taken
                 data = { //Update mongo document
-                    username: newUserInformation.elements[0].value,
+                    username: newUserInformation[0],
                 };
                 try{
                     //Send a query along a post request to the backend
@@ -63,7 +63,7 @@
                     return;
                 }
                 //Make sure the password is long enough
-                if(information.elements[2].value.length < 10){
+                if(newUserInformation[2] < 10){
                     alert("Error: Password is too short.");
                     return;
                 }
@@ -73,7 +73,7 @@
                     username: newUserInformation[0],
                     email: newUserInformation[1],
                     password: newUserInformation[2],
-                    highScore: JSON.parse(sessionStorage.getIem("highScore")),
+                    highScore: JSON.parse(sessionStorage.getItem("highScore")),
                     scores: JSON.parse(sessionStorage.getItem("scores"))
                 }
                 try{
@@ -89,7 +89,7 @@
                     var response = await query.json();
                     //Update session data(Prevents program from having to constantly query mongo)
                     //The username, email, and password being an array makes editing the profile easier
-                    sessionStorage.setItem("userData",JSON.stringify([response.username,response.email,response.password]));
+                    sessionStorage.setItem("userData",JSON.stringify([response.username, response.email, response.password]));
                     alert("Your data was changed sucessfully!");
                     window.location.href = "profile.html";       
                 }catch(Error){
@@ -100,7 +100,7 @@
         <link rel="stylesheet" href="../styles.css">
     </head>
     <body>
-        <div class="menu" style="height: 450px">
+        <div class="menu" style="height: 500px">
             <h1>Edit Your Profile</h1>
             <div class="form">
                 <form id="newInformation">
@@ -114,8 +114,8 @@
                     <p>New Password:</p>
                     <input type="password" id="password" name="password">
                     <br><br>
-                    <button class="submit" onclick="edit()">Submit</button>
-                    <button class="submit" onclick="window.location.href = 'profile.html'">Cancel</button>
+                    <button class="submit" type="button" onclick="edit()">Submit</button>
+                    <button class="submit" type="button" onclick="window.location.href = 'profile.html'">Cancel</button>
                 </form>
             </div>
         </div>

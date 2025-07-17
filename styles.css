@@ -49,7 +49,54 @@ button.submit{
     margin: 2px;
 }
 div.column{
-    width: 55px;
+    width: 50px;
     float: left;
-    text-align: center;
+    text-align: left;
+}
+canvas.forBadPackets{
+    display: block;
+    background: black;
+}
+div.forBadPackets{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: #1a1a1a;
+    width: 850px;
+    height: 675px;
+    overflow: hidden;
+    margin-left: 10px;
+}
+div.badPacketsScore{
+    margin-left: 10px; 
+    margin-top: 10px;
+    color: white; 
+    font-size: 20px;
+    align-self: flex-start;
+}
+div.menuForBadPackets{
+    width: 1000px;
+    height: 700px;
+    text-align: left;
+    border: 10px solid black;
+    margin: auto;
+    float: center;
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+button.badPackets{
+    width: 120px;
+    padding: 1%;
+    background-color: lime;
+    border: 2px solid black;
+    margin: 2px;
+}
+div.app-container {
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: left;
 }

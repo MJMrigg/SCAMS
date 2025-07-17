@@ -19,7 +19,7 @@
             }
         </script>
         <script src="../../index.html"></script>
-        <script src="classes.js"></script>
+        <script src="main.js"></script>
         <link rel="stylesheet" href="../../styles.css">
     </head>
     <body>
@@ -35,17 +35,23 @@
                 var gl = canvas.getContext("webgl");
                 var mymain = new main(
                     [
-                        -0.22133341471354162, 0.2988186734850491, 0, 0.7, 0.05, 0, //Weird link
-                        0.01866658528645826, 0.7394966395867439, 0, 0.28, 0.01, 0, //Unkown Number
-                        -0.38800008138020836, 0.4313302297254189, 0, 0.15, 0.01, 0, //Lottery Scam
-                        -0.414666748046875, 0.5416538138602658, 0, 0.2, 0.01, 0 //Name dropping Apple
-                    ],
+                        -0.3320001220703125, 0.335708782742681, 0, -0.12533345540364582, 0.25250385208012327, 0, //Weird link
+			-0.22666666666666668, 0.7486517719568566, 0.5, 0.21999999999999997, 0.7239984591679507, 0.5, //Unknown Number
+                        -0.5053334554036458, 0.4404853620955316, 0, -0.2586667887369791, 0.41583204930662565, 0, //Lottery Scam
+                        -0.4106667073567708, 0.5545069337442219, 0, -0.18400004069010412, 0.5236902927580893, 0, //Name dropping Apple
+                    ],[
+				-0.9986667887369791, 0.35728043143297383, 0.48799987792968746, 0.23401386748844377,
+				-0.3586666870117188, 1.0013482280431432, 0.40133331298828123, 0.6993451463790448,
+				-0.9253334554036459, 0.47130200308166414, -0.2120001220703125, 0.39426040061633283,
+				-0.9186667887369792, 0.5822419106317411, 0.10799987792968757, 0.4990369799691834
+			],
                     "You did not find any correct things. Remember to look out for offerings of prizes from big names that evoke emotion.",
                     "Tip for Future: Big names like Apple are rarely this generous."
                 );
 
                 canvas.addEventListener("click", main.leftClick);
                 canvas.addEventListener("contextmenu",main.rightClick);
+		canvas.addEventListener("mousemove",main.mouseMove);
             </script>
             <button class="submit" onclick="mymain.submit(2)">Submit</button><br>
             <button class="selection" onclick="window.location.href='../menu.html'">Save and Quit</button>
