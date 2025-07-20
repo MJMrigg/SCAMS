@@ -65,7 +65,9 @@
                     email: JSON.parse(sessionStorage.getItem("userData"))[1],
                     password: JSON.parse(sessionStorage.getItem("userData"))[2],
                     highScore: JSON.parse(sessionStorage.getItem("highScore")),
-                    scores: scoreList
+                    scores: scoreList,
+                    permissionsLevelStage: JSON.parse(sessionStorage.getItem("permissionsLevelStage")),
+                    smishingLevelStage: JSON.parse(sessionStorage.getItem("level1Stage"))
                 }
                 try{
                     //Send a query along a post request to the backend

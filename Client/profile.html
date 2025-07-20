@@ -16,7 +16,7 @@
             }
             //Return back to the home screen. The user can also be logging out.
             function returnHome(loggingOut){
-                if(loggingOut){
+                if(loggingOut){ //If the user is logging out
                     //Remove user's data from the session
                     sessionStorage.removeItem("userId");
                     sessionStorage.removeItem("userData");

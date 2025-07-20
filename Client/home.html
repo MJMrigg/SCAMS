@@ -24,5 +24,24 @@
             <button class="selection" onclick="window.location.href = 'scores.html'">View Scoreboard</button><br>
             <button class="selection" onclick="viewProfile()">View Profile</button><br>
         </div>
+        <script>
+            //If the user information was not filled out
+            //Also allows users to bookmark the SCAMS homepage
+            if(JSON.parse(sessionStorage.getItem("currentScore")) == null){
+                sessionStorage.setItem("currentScore",JSON.stringify(0)); //User's score for this run
+            }
+            if(JSON.parse(sessionStorage.getItem("loggedIn")) == null){
+                sessionStorage.setItem("loggedIn",JSON.stringify(false)); //User does not start logged in
+            }
+            if(JSON.parse(sessionStorage.getItem("level1Stage")) == null){
+                sessionStorage.setItem("level1Stage",JSON.stringify(0)); //User's stage on smishing level(0 is the tutorial)
+            }
+            if(JSON.parse(sessionStorage.getItem("highScore")) == null){
+                sessionStorage.setItem("highScore",JSON.stringify(0)); //User's highest score
+            }
+            if(JSON.parse(sessionStorage.getItem("permissionsLevelStage")) == null){
+                sessionStorage.setItem("permissionsLevelStage",JSON.stringify(0)); //User's stage on permissions level
+            }
+        </script>
     </body>
 </html>

@@ -45,6 +45,9 @@
                         sessionStorage.setItem("highScore",JSON.stringify(Math.max(response.highScore,currentScore)));
                         sessionStorage.setItem("scores",JSON.stringify(response.scores));
                         sessionStorage.setItem("loggedIn",JSON.stringify(true)); //Mark user as logged in
+                        //Set the user's stages on the levels
+                        sessionStorage.setItem("permissionsLevelStage", JSON.stringify(response.permissionsLevelStage));
+                        sessionStorage.setItem("level1Stage", JSON.stringify(response.smishingLevelStage));
                         alert("Sucessfully logged in! Welcome back "+response.username+"!");
                         window.location.href = "home.html";
                     }
@@ -66,7 +69,7 @@
                     <input type="password" id="password" name="password">
                     <br><br>
                     <button class="function" onclick="login(event)">Submit</button>
-                    <button class="function" type="button" onclick="window.location.href = 'home.html'">Return Home</button>
+                    <button class="function" type="button" onclick="window.location.href = 'home.html'">Cancel</button>
                 </form>
             </div>
         </div>

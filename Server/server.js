@@ -21,10 +21,6 @@ app.get("/", (request, response) => {
 //Mongo information
 //const uri = "mongodb+srv://SSEconnection:RememberThis@cluster0.3jlg2.mongodb.net/"; //Old database
 const uri = "mongodb+srv://evanhambre:R0SEBID25@cluster0.zlbvlpq.mongodb.net/"
-/*const options = {
-  ssl: true,
-  sslValidate: false,
-};*/
 
 //Create an account via a post request based on the parameters in the request and send the account data back via a response
 app.post("/createAccount", async(request, response) => {
@@ -55,9 +51,15 @@ app.post("/createAccount", async(request, response) => {
       username: data.username,
       email: data.email,
       password: data.password,
+      permissionsLevelStage: data.permissionsLevelStage,
+      smishingLevelStage: data.smishingLevelStage,
       highScore: 0,
       scores: []
     };
+    if(data.firstScore > 0){ //If the player already had a score, add it to the scores array
+      document.scores.push(data.firstScore);
+      document.highScore = data.firstScore;
+    }
     //Insert the document data into the database
     result = await collection.insertOne(document);
     //Make sure it worked
@@ -108,7 +110,9 @@ app.post("/login", async(request, response) =>{
         email: result[0].email,
         password: result[0].password,
         highScore: result[0].highScore,
-        scores: result[0].scores
+        scores: result[0].scores,
+        permissionsLevelStage: result[0].permissionsLevelStage,
+        smishingLevelStage: result[0].smishingLevelStage
       };
     }
     //Return the document
@@ -160,7 +164,9 @@ app.post("/update", async(request,response) =>{
       email: result[0].email,
       password: result[0].password,
       highScore: result[0].highScore,
-      scores: result[0].scores
+      scores: result[0].scores,
+      permissionsLevelStage: data.permissionsLevelStage,
+      smishingLevelStage: data.smishingLevelStage,
     }
     //Return the document
     response.status(200).json(document);
