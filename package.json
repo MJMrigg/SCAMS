@@ -1,6 +1,6 @@
 {
   "name": "desktop",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Server used to host Mongo",
   "license": "ISC",
   "author": "Matthew Rigg",
@@ -13,6 +13,7 @@
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "mongodb": "^6.15.0",
+    "nodemailer": "^7.0.5",
     "path": "^0.12.7"
   }
 }

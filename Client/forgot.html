@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            //Get user's email and then send their information to that email
+            async function sendUserInfo(event){
+                event.preventDefault();
+                //Get email
+                var information = document.getElementById("information");
+                var emailAddress = information.elements[0].value;
+                if(emailAddress.length == 0){ //If the user didn't input an email, tell them
+                    alert("Error: No email inputted");
+                    return;
+                }
+                //Create data to be sent to mongo
+                var data = {
+                    email: emailAddress
+                }
+                //Try to send the user their username and password
+                try{
+                    //Send a query via post request to the backend
+                    var query = await fetch("/forgot",{
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/JSON"
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    //Get response and tell user what happend based on it
+                    var response = await query.json();
+                    switch(response.result){
+                        case 0:
+                            alert("Error: No account with that email address. Perhaps you used a different email.");
+                            break;
+                        case 1:
+                            alert("Your username and password were sent to your account sucessfully! Check you inbox or SPAM folder.");
+                            break;
+                        case 2:
+                            alert("Error: Account information unable to be sent. Please Try again.");
+                            break;
+                        default:
+                            alert("Error. Please try again.");
+                            break;
+                    }
+                }catch(error){
+                    alert("Error. Please try again.");
+                    console.log(error);
+                }
+            }
+        </script>
+    </head>
+    <link rel="stylesheet" href="../styles.css">
+    <body>
+        <div class="menu"><br><br>
+            <h1>Enter your Account Email below</h1>
+            <p>Your username and password will be sent to your account email.</p>
+            <form id="information" name="information">
+                <input type="text" id="email" name="email">
+                <br><br>
+                <button class="selection" onclick="sendUserInfo(event)">Submit</button>
+                <button class="selection" type="button" onclick="window.location.href = 'login.html'">Return to Login</button><br>
+            </form>
+        </div>
+    </body>
+</html>

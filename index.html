@@ -11,8 +11,8 @@
             sessionStorage.setItem("currentScore",JSON.stringify(0)); //User's score for this run
             sessionStorage.setItem("level1Stage",JSON.stringify(0)); //User's stage on smishing level(0 is the tutorial)
             sessionStorage.setItem("highScore",JSON.stringify(0)); //User's highest score
-            sessionStorage.setItem("permissionsLevelStage",JSON.stringify(0)); //User's stage on permissions level
-
+            sessionStorage.setItem("permissionsLevelStage",JSON.stringify(-1)); //User's stage on permissions level(-1 is the tutorial)
+            
             //Take the user to the homepage
             window.location.href = "Client/home.html";
         </script>

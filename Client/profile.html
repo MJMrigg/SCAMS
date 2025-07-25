@@ -8,7 +8,6 @@
                 var userData = JSON.parse(sessionStorage.getItem("userData"));
                 var highScore = JSON.parse(sessionStorage.getItem("highScore"));
                 var scores = JSON.parse(sessionStorage.getItem("scores"));
-                console.log(scores);
                 document.getElementById("username").innerText = "Username: "+userData[0];
                 document.getElementById("email").innerText = "Email: "+userData[1];
                 document.getElementById("highScore").innerText = "High Score: "+highScore;
@@ -31,7 +30,7 @@
         <link rel="stylesheet" href="../styles.css">
     </head>
     <body>
-        <div class="menu" style="height:310px">
+        <div class="menu" style="height: auto; min-height: 310px;">
             <h1>Your Profile</h1>
             <!--Only a form for the aesthetic of form style. No inputs here.-->
             <div class="form">

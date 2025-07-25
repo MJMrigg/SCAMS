@@ -3,6 +3,7 @@ import express from "express";
 import {MongoClient} from "mongodb";
 import {fileURLToPath} from 'url';
 import path from 'path';
+import nodemailer from 'nodemailer';
 
 //Create an express application to handle communications between the front end and back end
 const app = express();
@@ -13,9 +14,9 @@ const file = fileURLToPath(import.meta.url);
 const directory = path.dirname(file);
 app.use(express.static(path.join(directory, "..")));
 
-//Begin the program at the index file
+//Begin the program at the home file
 app.get("/", (request, response) => {
-  response.status(200).sendFile(path.join(directory, "index.html"));
+  response.status(200).sendFile(path.join(directory, "Client/home.html"));
 });
 
 //Mongo information
@@ -280,6 +281,59 @@ app.post("/getScoreBoard", async(request,response) =>{
   }finally{
     //Close Mongo
     await client.close();
+  }
+});
+
+//Send the client their password to their email should they forget it
+app.post("/forgot", async(request, response) => {
+  var data = request.body;
+  //Connect to MongoDB
+  const client = new MongoClient(uri);
+  await client.connect();
+  //Try to run queries with mongo
+  try{
+    //Connect to the proper database and collection
+    var dataBase = "SSE_MobileSecurityGame";
+    var dbCollection = "Testing"
+    const db = client.db(dataBase);
+    const collection = db.collection(dbCollection);
+
+    //See if the email the user provided is in the system
+    var document = {
+      email: {$eq: data.email}
+    };
+    //Send document to mongo and store result as array
+    var result = await collection.find(document).toArray();
+    //Check the result and update the document accordingly
+    if(result[0] == undefined){ //If there was no result, it means there is not account with that email
+      document = {result: 0};
+    }else{ //If there was a result, it means there was an account with that user
+      document = {result: 1};
+      //Create transporter with sender information
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: "riggmatthew25@gmail.com",
+          pass: "" //Need create password
+          //www.youtube.com/watch?v=fF-07yFTq5o
+        },
+      });
+      //Create email information
+      const mailOptions = {
+        from: 'riggmatthew25@gmail.com',
+        to: 'evanhambre@gmail.com',
+        subject: 'SCAMS User Information Request',
+        text: 'Hello '+result[0].username+"!\n\nWe were recently made aware that you requested your account information. You will find that information below:\n\nUsername: "+result[0].username+"\nPassword: "+result[0].password+"\n\nIf you did not request this information, it may mean that your account has been compromised. We suggest you login and change your information right away, as well as respond to this email so that we can know about any issues we may have in our security system.\n\nHave a great day!\n\n-SCAMS"
+      };
+      //Send the email
+      result = await transporter.sendMail(mailOptions);
+      console.log(result);
+      //Need create email for SCAMS
+    }
+    //Return the document
+    response.status(200).json(document);
+  }catch(err){
+    console.error(`[Error] ${err}`);
   }
 });
 

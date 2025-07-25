@@ -26,39 +26,23 @@
                     return;
                 }
                 //If they were, save their score to their account
-                //Get their highest score
-                var highScore = JSON.parse(sessionStorage.getItem("highScore"));
-                //If they got a new high score, update it on their account
-                var data = {}; //Create document containing data to be updated
-                if(currentScore > highScore){
-                    data = { //Update the document
-                        user_id: JSON.parse(sessionStorage.getItem("userId")),
-                        username: JSON.parse(sessionStorage.getItem("userData"))[0],
-                        email: JSON.parse(sessionStorage.getItem("userData"))[1],
-                        password: JSON.parse(sessionStorage.getItem("userData"))[2],
-                        highScore: currentScore,
-                        scores: JSON.parse(sessionStorage.getItem("scores"))
-                    };
-                    try{
-                        //Send a query along a post request to the backend
-                        var query = await fetch("/update",{
-                            method: "POST",
-                            headers:{
-                                "Content-Type": "application/json"
-                            },
-                            body: JSON.stringify(data)
-                        });
-                        //Get result and update session data
-                        var result = await query.json();
-                        sessionStorage.setItem("highScore",JSON.stringify(result.highScore));
-                    }catch(Error){
-                        alert(Error+" Please try again.");
-                    }
-                }
-                //Try to add their current score onto their account(not as a highscore, in the array storing all their scores)
-                //First add their current score into the their scores
+                //Try to add their current score onto their account
+                //First ask the player if they want to overwrite their previous score or if they want to save it as a new one
                 var scoreList = JSON.parse(sessionStorage.getItem("scores"));
-                scoreList.push(currentScore);
+                var overwrite = prompt("Would you like to (1)save your score as a new score or (2)overwrite your previous score of "+scoreList[scoreList.length-1] +"? Type 1 or 2.");
+                overwrite = overwrite.toUpperCase();
+                if(overwrite == "ONE" || overwrite == 1 || overwrite == "1"){
+                    scoreList.push(currentScore);
+                }else if(overwrite == "TWO" || overwrite == 2 || overwrite == "2"){
+                    scoreList[scoreList.length-1] = currentScore;
+                }else{
+                    alert("Error: Invalid answer. Canceling save.");
+                    return;
+                }
+                //Handle if their current score is higher than their high score
+                var highScore = JSON.parse(sessionStorage.getItem("highScore"));
+                sessionStorage.setItem("highScore", JSON.stringify(Math.max(highScore, currentScore)));
+                //Send new score list to server
                 data = {
                     user_id: JSON.parse(sessionStorage.getItem("userId")),
                     username: JSON.parse(sessionStorage.getItem("userData"))[0],
@@ -107,10 +91,10 @@
             <h3 id="currentScore"></h3>
             <button class="selection" onclick="window.location.href = 'PermissionsLevel/PermissionsLevel.html'">App Permissions Level</button><br>
             <button class="selection" onclick="window.location.href = 'VishingLevel/Vishing.html'">Vishing Level</button><br>
-		<button class="selection" onclick="window.location.href = 'BadPacketsLevel/BadPacketsLevel.html'">Bad Packets Level</button><br>
-            <button class="selection" onclick="window.location.href = 'JuiceJLevel.html'">Juice Jacking Level</button><br>
             <button class="selection" onclick="startSmishingLevel()">Smishing Level</button><br>
 	        <button class="selection" onclick="window.location.href = 'SpamEmailLevel/SpamEmailMenu.html'">Phishing Level</button><br>
+            <button class="selection" onclick="window.location.href = 'BadPacketsLevel/BadPacketsLevel.html'">Bad Packets Level</button><br>
+            <button class="selection" onclick="window.location.href = 'JuiceJLevel.html'">Juice Jacking Level</button><br>
             <button class="selection" onclick="returnHome()">Return Home</button>
         </div>
         <script>addCurrentScore()</script>

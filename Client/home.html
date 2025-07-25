@@ -40,7 +40,7 @@
                 sessionStorage.setItem("highScore",JSON.stringify(0)); //User's highest score
             }
             if(JSON.parse(sessionStorage.getItem("permissionsLevelStage")) == null){
-                sessionStorage.setItem("permissionsLevelStage",JSON.stringify(0)); //User's stage on permissions level
+                sessionStorage.setItem("permissionsLevelStage",JSON.stringify(-1)); //User's stage on permissions level(-1 is the tutorial)
             }
         </script>
     </body>
