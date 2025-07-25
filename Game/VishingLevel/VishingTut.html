@@ -1,0 +1,69 @@
+<html>
+    <!-- Vishing level tutorial -->
+    <head>
+        <script>
+            class main{
+                constructor(){
+                    this.currentPart = 0;
+                    this.tutPic = this.document.getElementById("tutImg");
+
+                    this.correctAllAns = [null,]; //all correct ans for tutorial
+                    this.currCorrect= [null]; //current correct answer for part 
+                    this.playerAns = [null];//player answer for part
+
+                    this.tutScore = 0;//self explanatory, total score for tutorial, does not effect player account score
+
+                    this.head = this.document.getElementById("head");
+                    this.opt = this.document.getElementById();
+                }
+                onclick(){
+                    if(this.currentPart == 3){
+                    //get rid of button and button function
+                    //would be 
+                        this.opt.style = "display:none";
+                    }else{
+                        this.currentPart++;
+                        updateScreen();
+                    }
+                }
+                changeAnswer(){
+
+                }
+                updateScreen(){
+                    //do as base64 or actual file img?
+                    //use img or just the txt like the actual level?
+                    if(this.currentPart==1){
+                        this.tutPic.style = "";//first picture
+                        this.opt.style = "display:block";
+                    }else if(this.currentPart==2){
+                        this.tutPic.style = "";//second
+                        this.opt.style = "display:block";
+                    }else{
+                        this.tutPic.style = "";//third and final
+                    }
+                }
+                checkAnswer(){
+                    this
+                }
+            }
+        </script>
+        <link rel="stylesheet" href="../../styles.css">
+    </head>
+    <body>
+	    <div class = "menu" style="height: 380px;">
+            <div id="tutImg" style="display:none">
+                <img id="pic" src = "" alt = "Loading image! Please wait." width = "150" height="100" hidden/><br><!--Hidden until start-->
+            </div>
+            <h1 id="head">This is the tutorial for the Vishing Level!</h1>
+            <h3 id="startingTxt">In this level, you'll learn how to identify different spam calls and spam voicemails.</h3>
+            <h3 id="startingTxt">You'll have a choice in whether you want to learn calls or voicemails first at the level selection screen. Both levels have the same gameplay. </h3>
+            <h3 id="startingTxt">This is where you'll learn how to play both! </h3>
+            <button onclick="m.next()" id="nextBtn">Next</button>
+            <button onclick="window.location.href='Vishing.html'">No Tutorial For Me!</button>
+            <button onclick="window.location.href = '../menu.html'">Back to Main Menu</button>
+        </div>
+        <script>
+            var m = new main();
+        </script>
+    </body>
+</html>
