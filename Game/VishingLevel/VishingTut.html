@@ -58,9 +58,11 @@
             <h3 id="startingTxt">In this level, you'll learn how to identify different spam calls and spam voicemails.</h3>
             <h3 id="startingTxt">You'll have a choice in whether you want to learn calls or voicemails first at the level selection screen. Both levels have the same gameplay. </h3>
             <h3 id="startingTxt">This is where you'll learn how to play both! </h3>
-            <button onclick="m.next()" id="nextBtn">Next</button>
-            <button onclick="window.location.href='Vishing.html'">No Tutorial For Me!</button>
-            <button onclick="window.location.href = '../menu.html'">Back to Main Menu</button>
+
+            <button onclick="m.next()" id="nextBtn" class="selection">Next</button>
+            
+            <button onclick="window.location.href='Vishing.html'" class="selection">No Tutorial For Me!</button>
+            <button onclick="window.location.href = '../menu.html'" class="selection">Back to Main Menu</button>
         </div>
         <script>
             var m = new main();
