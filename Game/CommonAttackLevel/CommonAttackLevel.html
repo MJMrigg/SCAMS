@@ -1,0 +1,200 @@
+<html>
+
+<head>
+	<script>
+	class main{
+		constructor(){
+			this.gameBank=[];//collection of ALL data
+			this.gameCall=[];//filtered for vishing calls
+			this.gameSmish=[];//filtered for smishing
+			this.gameVoice=[];//filtered for vishing voicemails
+			this.gamePerm=[];//filtered for app permissions
+
+			this.playerAns = [];
+
+			this.optPerm = this.document.getElementById();
+			this.optTxt = this.document.getElementById();
+			this.optCall = this.document.getElementById();
+			this.optVoice = this.document.getElementById();
+		}
+		changeOptType(type){
+			if(type == "perm"){
+
+			}else if(type == "text"){
+
+			}else if(type == "email"){
+
+			}else if(type == "call"){
+
+			}else{//voicemail
+				
+			}
+
+		}
+		async getQuestionBank(){
+				try {
+					//const response = await fetch('SSE_MobileSecurityGame.PhishingBank.json');
+					const response = await fetch("/getCommon",{
+                        method: "POST",
+                        "Content-Type": "application/json",
+                        body: JSON.stringify({})
+                    });
+					//const data = await response.json();
+					const data = await response.json();
+					console.log(data);
+					var i = Math.floor(Math.random()*data.length);
+					console.log(i);
+					console.log(data[i]);
+					console.log(data[i].senderAdd==this.playerAns[0])
+					this.changeImage(data[i].imagebase64);
+					console.log(data.length);
+					for(let i = 0; i<data.length;i++){
+						this.alreadyDone.push(data[i]);
+						this.gameBank.push(data[i]);
+					}
+					this.currIndex = i;
+					console.log(this.alreadyDone.length);
+					console.log(this.gameBank.length);
+					this.gameCall=this.gameBank();//filter for calls
+					this.gamePerm=this.gameBank();//filter for permissions
+					this.gameSmish=this.gameBank();//filter for smishing
+					this.gameVoice=this.gameBank();//filter for voicemail
+				} catch (error) {
+					console.error("Error fetching question bank:", error);
+				}
+				//const questions = 'PhishingQA.json';
+				//this.questionBank = JSON.parse(questions);
+				//console.log("Did it work? "+ this.questionBank["senderAdd"]);
+				
+			}
+	}
+	</script>
+</head>
+	
+<body>
+	<div class = "menu" style="height: 750px; width:700px;">
+		<!--for testing purposes!-->
+			<button>Permission</button>
+			<button>Text</button>
+			<button>Email</button>
+			<button>Call</button>
+			<button>Voicemail</button>
+		<!--End for testing purposes-->
+
+		<img id="pic" src = "" alt = "Loading image! Please wait." width = "680" height="420" /><br>
+		<div id = "permissionsOpt" style="display:none">
+			<input type = "checkbox" value="" id="" onclick=""></input>
+			<input type = "checkbox" value="" id="" onclick=""></input>
+			<input type = "checkbox" value="" id="" onclick=""></input>
+			<input type = "checkbox" value="" id="" onclick=""></input>
+			<input type = "checkbox" value="" id="" onclick=""></input>
+		</div>
+
+		<div id = "textOpt" style="display:none">
+			<div id="SmishphoneNum" for="SmishphoneNum" style="border: 1px solid #000; display:none">
+				<input type="radio" id="SmishnumT" name="SmishnumT" onclick="m.changeVal()">
+				<input type="radio" id="SmishnumF" name="SmishnumF" onclick="m.changeVal()">
+			</div>
+			<div id="SmishphoneNum" for="SmishphoneNum" style="border: 1px solid #000; display:none">
+				<input type="radio" id="SmishnumT" name="SmishnumT" onclick="m.changeVal()">
+				<input type="radio" id="SmishnumF" name="SmishnumF" onclick="m.changeVal()">
+				<div type = "" id="SmishAddOpt" name ="" onclick="m.changeVal">
+					<input type = "checkbox" name="link" onclick="m.checkBoxClick()" style="display:none">
+					<input type="checkbox" name = "typos" onclick="m.checkBoxClick()" style="display:none">
+					<input type="checkbox" name="falseClaim" onclick="m.checkBoxClick()" style="display:none">
+				</div>
+			</div>
+		</div>
+
+		<div id = "emailOpt" style="display:none">
+			<div id = "emailAd" for = "emailAd" style = "border: 1px solid #000;">
+				<center><b>Weird Email Address</b><br>
+				<input type = "radio" id = "emailAdT" name = "emailAdd" onClick = "m.changeVal(1,1,1)">
+				<label for = "OptionSel1">Yes</label>
+				<input type = "radio" id = "emailAdF" name ="emailAdd" onClick = "m.changeVal(1,0,0)">
+				<label for = "OptionSel1">No</label>
+			</div>
+		
+			<div id = "subjectLine" for = "subjectLine" style = "border: 1px solid #000;">
+				<center><b>Weird Email Subject Line</b><br>
+				<input type = "radio" id = "subT" name = "subject" onClick = "m.changeVal(1,1,1)">
+				<label for = "OptionSel1">Yes</label>
+				<input type = "radio" id = "subF" name = "subject" onClick = "m.changeVal(1,1,0)">
+				<label for = "OptionSel1">No</label>
+			</div>
+		
+			<div id = "emailBod" for = "emailBod" style = "border: 1px solid #000;">
+				<center><b>Weird Email Body</b><br>
+				<input type = "radio" id = "bodT" name = "emailBod"onClick = "m.changeVal(1,2,1)">
+				<label for = "OptionSel1">Yes</label>
+				<input type = "radio" id = "bodF" name = "emailBod"onClick = "m.changeVal(1,2,0)">
+				<label for = "OptionSel1">No</label>
+				
+				<div id="emailAdditional" style="display:none">
+					<input type = "checkbox" value = "spellingErr" id = "spellingErr"onclick="m.changeCheck(0,this.checked)">Spelling mistakes</input>
+					<input type = "checkbox"value="feelOff" id="feelOff"onclick="m.changeCheck(0,this.checked)">Sounds off</input>
+				</div>
+				
+				</center>
+			</div>
+			<div id = "pdf" for = "pdf"style = "border: 1px solid #000;">
+				<center><b>PDF Included</b><br>
+				<input type = "radio" id = "pdfInT" name = "yesNo"onClick = "m.changeVal(1,5,1)">
+				<label for = "OptionSel1">Yes</label>
+				<input type = "radio" id = "pdfInF" name = "yesNo"onClick = "m.changeVal(1,5,0)">
+				<label for = "OptionSel1">No</label>
+				</center>
+			</div>
+		</div>
+
+		<div id = "callOpt" style="display:none">
+			<div id="numCallOpt" name = "personalInfoCall" style="border: 1px solid #000;">
+				<center><b>Asks for Personal Information</b></center>
+				<input type="radio" id="persCallT" name="numCallT" onclick="m.changeVal(2,0,0)">
+				<input type="radio" id="persCallF" name="numCallF" onclick="m.changeVal(2,0,1)">
+			</div>
+			<div id="falseClaimOpt" name = "susYesNo" style="border: 1px solid #000;">
+				<center><b>Suspicious Yes and No Questions</b></center>
+				<input type="radio" id="susYesNoT" name="susYesNoT" onclick="m.changeVal(2,1,0)">
+				<input type="radio" id="susYesNoF" name="susYesNoF" onclick="m.changeVal(2,1,1)">
+			</div>
+			<div id="falseClaimOpt" name = "payMethodCall" style="border: 1px solid #000;">
+				<center><b>Asks for an Odd Payment Method</b></center>
+				<input type="radio" id="payMethodCallT" name="payMethodCallT" onclick="m.changeVal(2,2,0)">
+				<input type="radio" id="payMethodCallF" name="payMethodCallF" onclick="m.changeVal(2,2,1)">
+			</div>
+		</div>
+
+		<div id = "voicemailOpt" style="display:none">
+			<div id = "companyClaim" style = "border: 1px solid #000;">
+				<center><b>Suspicious claim to be a company</b><br>
+				<input type = "radio" id = "OptionSel1" name = "company" onClick = "m.changeVal(0,1)">
+				<label for = "OptionSel1">Yes</label>
+				<input type = "radio" id = "OptionSel1" name ="company" onClick = "m.changeVal(0,0)">
+				<label for = "OptionSel1">No</label>
+				</center>
+			</div>
+			<div id = "personalInfo" style = "border: 1px solid #000;">
+				<center><b>Asks for personal information</b><br>
+				<input type = "radio" id = "OptionSel1" name = "personalInfo" onClick = "m.changeVal(1,1)">
+				<label for = "OptionSel1">Yes</label>
+				<input type = "radio" id = "OptionSel1" name = "personalInfo" onClick = "m.changeVal(1,0)">
+				<label for = "OptionSel1">No</label>
+				</center>
+			</div>
+			<div id = "urgentClaim" style = "border: 1px solid #000;">
+				<center><b>Details it as an urgent matter</b><br>
+				<input type = "radio" id = "OptionSel1" name = "urgent"onClick = "m.changeVal(2,1)">
+				<label for = "OptionSel1">Yes</label>
+				<input type = "radio" id = "OptionSel1" name = "urgent"onClick = "m.changeVal(2,0)">
+				<label for = "OptionSel1">No</label>
+				</center>
+			</div>
+		</div>
+	</div>
+
+	<script>
+
+	</script>
+</body>
+</html>
