@@ -1,0 +1,79 @@
+<html>
+	<!-- Phishing/Spam Email Tutorial -->
+<head>
+	<link rel="stylesheet" href="../../styles.css">
+	<script>
+		class main{
+			constructor(){
+                this.currentPart = 0;
+				this.correctAns = [];
+				this.playerAns = [];
+				this.tutScore = [];
+				this.scoreRes = this.document.getElementById("FinishScore");
+				this.inTxt = this.document.getElementById("InTxt");
+				this.head = this.document.getElementById("head");
+			}
+            onclick(){
+                if(this.currentPart == 3){
+				//get rid of button and button function
+				//would be 
+					this.opt.style = "display:none";
+				}else{
+					this.currentPart++;
+					updateScreen();
+				}
+            }
+			updateScreen(){
+				//do as base64 or actual file img?
+				this.head.innerText = "Tutorial In Progress";
+				if(this.currentPart==1){
+					this.tutPic.style = "";//first picture
+					this.opt.style = "display:block";
+                }else if(this.currentPart==2){
+                    this.tutPic.style = "";//second
+					this.opt.style = "display:block";
+                }else{
+                    this.tutPic.style = "";//third and final
+					this.opt.style = "display:block";
+
+                }
+			}
+		}
+	</script>
+</head>
+<body>
+	<div class = "menu" style = "height: 450px;">
+		<!-- <h2>Spam Email Tutorial Video</h2> -->
+		<!--Video was initial idea before tutorial level idea-->
+		<!--<video style = "padding:5px" width = "320" height = "240" controls> 
+			<source
+			src = ""
+			type = "video/mp4"
+			>
+			This browser doesn't support videos. 
+			Tutorial Video not yet implemented! 
+		</video>-->
+		<div>
+	        <div id="tutImg">
+				<img id="pic" src = "" alt = "Loading image! Please wait." width = "150" height="100" hidden/><br><!--Hidden until start-->
+			</div>
+		</div>
+		<div style="padding:10px">
+			<h1 id="head">This is the tutorial for the Spam Email Level!</h1>
+			<h3 id="InTxt">In this level, you'll learn how to properly detect if an email is spam or genuine!</h3>
+			<h3 id="FinishScore"></h3>
+		</div>
+		<div style = "padding: 10px">
+			<button onclick="m.next()" id="nextBtn">Next</button>
+
+			<button id="startGame" class = "selection" onclick = "window.location.href = 'spamEmailGame.html'">Start Game!</button>
+			<br>
+			<button id="returnMenu" class="selection" onclick = "window.location.href = 'spamEmailMenu.html'">Return to Spam Email Menu</button>
+
+		</div>
+	</div>
+	<script>
+		var m = new main();
+	</script>
+</body>
+</html>
