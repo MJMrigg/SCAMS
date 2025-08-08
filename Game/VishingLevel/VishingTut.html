@@ -5,13 +5,11 @@
             class main{
                 constructor(){
                     this.currentPart = 0;
+                    alert("Welcome to the gameplay tutorial for the Vishing Level! You'll learn the basic mechanics of the level here!");
                 }
 
-                changeAnswer(){
-
-                }
                 updateScreen(){
-                    //completely different way now
+
                     this.checkAnswer();
                 }
                 checkAnswer(){
@@ -54,32 +52,35 @@
         <link rel="stylesheet" href="../../styles.css">
     </head>
     <body>
-	    <div class = "menu" style="height: 300px;">
-            <center>
-                <div style = "width: 500px; height: 250px; border: 10px solid #000; background: lightgrey;">
-                    <div id = "callerID" style = "border: 1px solid #000; font-size:30px;text-align:center">Phone Number!</div>
-                    <div id = "transcript" style = "width: 500px; height: 150px; border: 2px solid #000; font-size:25px;">
-                        This is a test transcript! It can be either a voicemail transcript or a call transcript between two people!
+	    <center>
+            <div class = "menu" style="height: 400px;">
+                <center>
+                    <div style = "width: 490px; height: 300px; border: 10px solid #000; background: lightgrey;">
+                        <div id = "callerID" style = "border: 1px solid #000; font-size:30px;text-align:center">Phone Number!</div>
+                        <div id = "transcript" style = "width: 490px; height: 300px; border: 2px solid #000; font-size:25px;">
+                            This is a test transcript! It can be either a voicemail transcript or a call transcript between two people!
+                        </div>
                     </div>
-                </div>
-            </center>
-            <center>
-                <div style = "width: 500px; border: 10px solid #000; background: white;">
-                <b>Specific part to look for!</b><br>
-                <div id="optSel">
-                    <input type = "radio" id = "OptionSel1T" name = "company">
-                    <label for = "OptionSel1">Correct</label>
-                    <input type = "radio" id = "OptionSel1F" name ="company">
-                    <label for = "OptionSel1">Wrong</label>
-                </div>
-                </div>
-                <button onclick="m.next()" id="nextBtn" class="selection">Next</button>
+                </center>
                 
-                <button onclick="window.location.href='Vishing.html'" class="selection">No Tutorial For Me!</button>
-                <button onclick="window.location.href = '../menu.html'" class="selection">Back to Main Menu</button>
-            </center>  
-           
-        </div>
+                <center>
+                    <div style = "width: 490px; border: 10px solid #000; background: white;">
+                        <b>Specific part to look for!</b><br>
+                        <div id="optSel">
+                            <input type = "radio" id = "OptionSel1T" name = "company">
+                            <label for = "OptionSel1">Correct</label>
+                            <input type = "radio" id = "OptionSel1F" name ="company">
+                            <label for = "OptionSel1">Wrong</label>
+                        </div>
+                        <button onclick="m.next()" id="nextBtn" class="selection">Next</button>
+                        
+                        <button onclick="window.location.href='Vishing.html'" class="selection">No Tutorial For Me!</button>
+                        <button onclick="window.location.href = '../menu.html'" class="selection">Back to Main Menu</button>
+                    </div>
+                    
+                </center>  
+            
+            </div>
 
         </center>
         <script>
