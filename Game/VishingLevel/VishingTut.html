@@ -5,16 +5,18 @@
             class main{
                 constructor(){
                     this.currentPart = 0;
-                    this.tutPic = this.document.getElementById("tutImg");
+                    //this.tutPic = this.document.getElementById("tutImg");
 
-                    this.correctAllAns = [null,]; //all correct ans for tutorial
-                    this.currCorrect= [null]; //current correct answer for part 
-                    this.playerAns = [null];//player answer for part
+                    //this.correctAllAns = [null,]; //all correct ans for tutorial
+                    //this.currCorrect= [null]; //current correct answer for part 
+                    //this.playerAns = [null];//player answer for part
 
-                    this.tutScore = 0;//self explanatory, total score for tutorial, does not effect player account score
+                    //this.tutScore = 0;//self explanatory, total score for tutorial, does not effect player account score
 
-                    this.head = this.document.getElementById("head");
-                    this.opt = this.document.getElementById();
+                    //this.head = this.document.getElementById("head");
+                    //this.opt = this.document.getElementById();
+                    alert("Is this right?");
+
                 }
                 onclick(){
                     if(this.currentPart == 3){
@@ -30,32 +32,46 @@
 
                 }
                 updateScreen(){
-                    //do as base64 or actual file img?
-                    //use img or just the txt like the actual level?
-                    if(this.currentPart==1){
-                        //this.tutPic.src = "";//first picture
-                        //just do text like the original
-                        this.opt.style = "display:block";
-                    }else if(this.currentPart==2){
-                        //this.tutPic.src = "";//second
-                        this.opt.style = "display:block";
-                    }else{
-                        //this.tutPic.src = "";//third and final
-                        this.opt.style = "display:block";
-                    }
+                    //completely different way now
+
+                    //window.alert("Hello?");
+                    this.checkAnswer();
                 }
                 checkAnswer(){
-                    if(this.currCorrect==this.playerAns){
+                    if(this.currentPart==1){
                         //pop-up Correct! This will turn green if you get it right c:
-                    }else{
+                        document.getElementById("OptionSel1T").checked=true;
+                        document.getElementById("optSel").style.color = "green";
+                        alert("This is what it'll look like if you get the part correct! The section will go green!");
+
+                    }else if(this.currentPart==2){
                         //pop-up Incorrect! This will turn red if you get it wrong :c
-                    }
-                    this.playerAns=null;
-                    if(this.currentPart==3){
+                        document.getElementById("OptionSel1F").checked=true;
+                        document.getElementById("optSel").style.color = "red";
+                        alert("This is what it'll look like if you get the part wrong! The section will go red");
 
                     }else{
-                        this.currentPart++;
+                        //alert("You're all done with the tutorial! Short, I know. Get ready for the real deal!");
+                        //this.document.getElementById("nextBtn").onclick="window.location.href='Vishing.html'";
+                        alert("You're all done with the tutorial! Short, I know. Get ready for the real deal!");
+                        document.getElementById("nextBtn").innerText="Start!";
+                        //document.getElementById("nextBtn").onclick="window.location.href='Vishing.html'";
+                        document.getElementById("nextBtn").onclick = function () {
+                            window.location.href = 'Vishing.html';
+                        };
                     }
+                }
+                next(){
+                    //alert("Is this right?");
+                    if(this.currentPart==3){
+                        //alert("You're all done with the tutorial! Short, I know. Get ready for the real deal!");
+                        //this.document.getElementById().innerTxt="Start!";
+                        //this.document.getElementById("nextBtn").onclick="window.location.href='Vishing.html'";
+                    }else{
+                        this.currentPart++;
+                        this.updateScreen();
+                    }
+                    
                 }
             }
         </script>
@@ -74,22 +90,19 @@
             <center>
                 <div style = "width: 500px; border: 10px solid #000; background: white;">
                 <b>Specific part to look for!</b><br>
-				<input type = "radio" id = "OptionSel1" name = "company" onClick = "m.changeVal(0,1)">
-				<label for = "OptionSel1">Correct</label>
-				<input type = "radio" id = "OptionSel1" name ="company" onClick = "m.changeVal(0,0)">
-				<label for = "OptionSel1">Wrong</label>
+                <div id="optSel">
+                    <input type = "radio" id = "OptionSel1T" name = "company">
+                    <label for = "OptionSel1">Correct</label>
+                    <input type = "radio" id = "OptionSel1F" name ="company">
+                    <label for = "OptionSel1">Wrong</label>
+                </div>
                 </div>
                 <button onclick="m.next()" id="nextBtn" class="selection">Next</button>
                 
                 <button onclick="window.location.href='Vishing.html'" class="selection">No Tutorial For Me!</button>
                 <button onclick="window.location.href = '../menu.html'" class="selection">Back to Main Menu</button>
             </center>  
-            <!--<h1 id="head">This is the tutorial for the Vishing Level!</h1>
-            <h3 id="startingTxt">In this level, you'll learn how to identify different spam calls and spam voicemails.</h3>
-            <h3 id="startingTxt">You'll have a choice in whether you want to learn calls or voicemails first at the level selection screen. Both levels have the same gameplay. </h3>
-            <h3 id="startingTxt">This is where you'll learn how to play both! </h3>
-        -->
-
+           
         </div>
 
         </center>
