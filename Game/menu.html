@@ -89,13 +89,18 @@
         <div class="menu" style="height: 420px;">
             <h1>Level Select</h1>
             <h3 id="currentScore"></h3>
-            <button class="selection" onclick="window.location.href = 'PermissionsLevel/PermissionsLevel.html'">App Permissions Level</button><br>
-            <button class="selection" onclick="window.location.href = 'VishingLevel/VishingTut.html'">Vishing Level</button><br>
-            <button class="selection" onclick="startSmishingLevel()">Smishing Level</button><br>
-	        <button class="selection" onclick="window.location.href = 'SpamEmailLevel/SpamEmailMenu.html'">Phishing Level</button><br>
-            <button class="selection" onclick="window.location.href = 'BadPacketsLevel/BadPacketsLevel.html'">Bad Packets Level</button><br>
-            <button class="selection" onclick="window.location.href = 'JuiceJLevel.html'">Juice Jacking Level</button><br>
-            <button class="selection" onclick="returnHome()">Return Home</button>
+            <button class="selection" onclick="window.location.href = 'VishingLevel/VishingTut.html'" style="width: 180px; height:50px;">Vishing Level</button>
+
+            <button class="selection" onclick="window.location.href = 'PermissionsLevel.html'" style="width: 180px; height:50px;">App Permissions Level</button><br>
+            <button class="selection" onclick="startSmishingLevel()" style="width: 180px; height:50px;">Smishing Level</button>
+
+			<button class="selection" onclick="window.location.href = 'BadPacketsLevel/BadPacketsLevel.html'" style="width: 180px; height:50px;">Bad Packets Level</button><br>
+            <button class="selection" onclick="window.location.href = 'SpamEmailLevel/SpamEmailMenu.html'" style="width: 180px; height:50px;">Phishing Level</button>
+
+            <button class="selection" onclick="window.location.href = 'JuiceJLevel.html'" style="width: 180px; height:50px;">Juice Jacking Level</button><br>
+            <center>
+                <button class="selection" onclick="returnHome()" style="width: 180px; height:50px;">Return Home</button>
+            </center>
         </div>
         <script>addCurrentScore()</script>
     </body>
