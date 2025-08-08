@@ -33,37 +33,66 @@
                     //do as base64 or actual file img?
                     //use img or just the txt like the actual level?
                     if(this.currentPart==1){
-                        this.tutPic.style = "";//first picture
+                        //this.tutPic.src = "";//first picture
+                        //just do text like the original
                         this.opt.style = "display:block";
                     }else if(this.currentPart==2){
-                        this.tutPic.style = "";//second
+                        //this.tutPic.src = "";//second
                         this.opt.style = "display:block";
                     }else{
-                        this.tutPic.style = "";//third and final
+                        //this.tutPic.src = "";//third and final
+                        this.opt.style = "display:block";
                     }
                 }
                 checkAnswer(){
-                    this
+                    if(this.currCorrect==this.playerAns){
+                        //pop-up Correct! This will turn green if you get it right c:
+                    }else{
+                        //pop-up Incorrect! This will turn red if you get it wrong :c
+                    }
+                    this.playerAns=null;
+                    if(this.currentPart==3){
+
+                    }else{
+                        this.currentPart++;
+                    }
                 }
             }
         </script>
         <link rel="stylesheet" href="../../styles.css">
     </head>
     <body>
-	    <div class = "menu" style="height: 380px;">
-            <div id="tutImg" style="display:none">
-                <img id="pic" src = "" alt = "Loading image! Please wait." width = "150" height="100" hidden/><br><!--Hidden until start-->
-            </div>
-            <h1 id="head">This is the tutorial for the Vishing Level!</h1>
+	    <div class = "menu" style="height: 300px;">
+            <center>
+                <div style = "width: 500px; height: 250px; border: 10px solid #000; background: lightgrey;">
+                    <div id = "callerID" style = "border: 1px solid #000; font-size:30px;text-align:center">Phone Number!</div>
+                    <div id = "transcript" style = "width: 500px; height: 150px; border: 2px solid #000; font-size:25px;">
+                        This is a test transcript! It can be either a voicemail transcript or a call transcript between two people!
+                    </div>
+                </div>
+            </center>
+            <center>
+                <div style = "width: 500px; border: 10px solid #000; background: white;">
+                <b>Specific part to look for!</b><br>
+				<input type = "radio" id = "OptionSel1" name = "company" onClick = "m.changeVal(0,1)">
+				<label for = "OptionSel1">Correct</label>
+				<input type = "radio" id = "OptionSel1" name ="company" onClick = "m.changeVal(0,0)">
+				<label for = "OptionSel1">Wrong</label>
+                </div>
+                <button onclick="m.next()" id="nextBtn" class="selection">Next</button>
+                
+                <button onclick="window.location.href='Vishing.html'" class="selection">No Tutorial For Me!</button>
+                <button onclick="window.location.href = '../menu.html'" class="selection">Back to Main Menu</button>
+            </center>  
+            <!--<h1 id="head">This is the tutorial for the Vishing Level!</h1>
             <h3 id="startingTxt">In this level, you'll learn how to identify different spam calls and spam voicemails.</h3>
             <h3 id="startingTxt">You'll have a choice in whether you want to learn calls or voicemails first at the level selection screen. Both levels have the same gameplay. </h3>
             <h3 id="startingTxt">This is where you'll learn how to play both! </h3>
+        -->
 
-            <button onclick="m.next()" id="nextBtn" class="selection">Next</button>
-            
-            <button onclick="window.location.href='Vishing.html'" class="selection">No Tutorial For Me!</button>
-            <button onclick="window.location.href = '../menu.html'" class="selection">Back to Main Menu</button>
         </div>
+
+        </center>
         <script>
             var m = new main();
         </script>
