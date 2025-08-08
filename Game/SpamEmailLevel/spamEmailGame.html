@@ -282,7 +282,7 @@
 </head>
 <body>
 	<link rel="stylesheet" href="../../styles.css">
-	<div class = "menu" style="height: 750px; width:700px;">
+	<div class = "menu" style="height: 790px; width:700px;">
 		<img id="emailPic" src = "" alt = "Loading image! Please wait." width = "680" height="420" /><br>
 		<div id = "emailAd" for = "emailAd" style = "border: 1px solid #000;">
 			<center><b>Weird Email Address</b><br>
@@ -301,7 +301,7 @@
 		</div>
 		
 		<div id = "emailBod" for = "emailBod" style = "border: 1px solid #000;">
-			<center><b>Weird Email Body</b><br>
+			<center><b>Suspicious Email Body</b><br>
 			<input type = "radio" id = "bodT" name = "emailBod"onClick = "m.changeVal(2,1)">
 			<label for = "OptionSel1">Yes</label>
 			<input type = "radio" id = "bodF" name = "emailBod"onClick = "m.changeVal(2,0)">
@@ -314,23 +314,23 @@
 			
 			</center>
 		</div>
-		
-		<div id = "pdf" for = "pdf"style = "border: 1px solid #000;">
-			<center><b>PDF Included</b><br>
-			<input type = "radio" id = "pdfInT" name = "yesNo"onClick = "m.changeVal(5,1)">
-			<label for = "OptionSel1">Yes</label>
-			<input type = "radio" id = "pdfInF" name = "yesNo"onClick = "m.changeVal(5,0)">
-			<label for = "OptionSel1">No</label>
-			</center>
-		</div>
-		
-		<button id="confirm" class="selection" onclick = "m.submitAnswers()">Confirm Selection</button>
-		<div id = "results" style = "height:auto;"><br></div>
+		<div>
+			<div id = "pdf" for = "pdf"style = "border: 1px solid #000;">
+				<center><b>PDF Included</b><br>
+				<input type = "radio" id = "pdfInT" name = "yesNo"onClick = "m.changeVal(5,1)">
+				<label for = "OptionSel1">Yes</label>
+				<input type = "radio" id = "pdfInF" name = "yesNo"onClick = "m.changeVal(5,0)">
+				<label for = "OptionSel1">No</label>
+				</center>
+			</div>
+			<button id="confirm" class="selection" onclick = "m.submitAnswers()">Confirm Selection</button>
+			<div id = "results" style = "height:auto;"><br></div>
 
-		<div id = "finishedDisplay" style = "font-size:25px;text-align:center"></div>
-		<br>
-		<button id="returnMenu" class="selection" onclick = "window.location.href = 'SpamEmailMenu.html'">Return to Phishing Menu</button>
-		<button id="returnLevel" class = "selection" onclick = "window.location.href = '../menu.html'">Return to Level screen</button><br>
+			<div id = "finishedDisplay" style = "font-size:25px;text-align:center"></div>
+			<br>
+			<button id="returnMenu" class="selection" onclick = "window.location.href = 'SpamEmailMenu.html'">Return to Phishing Menu</button>
+			<button id="returnLevel" class = "selection" onclick = "window.location.href = '../menu.html'">Return to Level screen</button><br>
+		</div>
 
 		<script>
 			var m = new main();
