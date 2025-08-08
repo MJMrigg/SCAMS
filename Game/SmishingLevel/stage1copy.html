@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script id="2dVertexShader" type="notjs">
+            attribute vec4 a_position;
+            attribute vec3 a_color;
+            varying vec3 fragColor;
+            uniform vec3 translate;
+            uniform vec3 rotate;
+            uniform vec3 scale;
+                        
+            vec4 translation(vec4 curPosition){
+                mat4 translationMatrix = mat4(
+                    1.0,0.0,0.0,0.0,
+                    0.0,1.0,0.0,0.0,
+                    0.0,0.0,1.0,0.0,
+                    translate.x,translate.y,translate.z,1.0
+                );
+                return translationMatrix*curPosition;
+            }
+            vec4 rotation(vec4 curRotation){
+                vec3 c = cos(rotate);
+                vec3 s = sin(rotate);
+                mat4 xRotationMatrix = mat4(
+                    1.0,0.0,0.0,0.0,
+                    0.0,c.x,s.x,0.0,
+                    0.0,-1.0*s.x,c.x,0.0,
+                    0.0,0.0,0.0,1.0
+                );
+                mat4 yRotateMatrix = mat4(
+                    c.y,0.0,-1.0*s.y,0.0,
+                    0.0,1.0,0.0,0.0,
+                    s.y,0.0,c.y,0.0,
+                    0.0,0.0,0.0,1.0
+                );
+                mat4 zRotateMatrix = mat4(
+                    c.z,s.z,0.0,0.0,
+                    -1.0*s.z,c.z,0.0,0.0,
+                    0.0,0.0,1.0,0.0,
+                    0.0,0.0,0.0,1.0
+                );
+                return zRotateMatrix*yRotateMatrix*xRotationMatrix*curRotation;
+            }
+            vec4 scaleTransformation(vec4 curScale){
+                mat4 scaleMatrix = mat4(
+                    scale.x, 0.0, 0.0, 0.0,
+                    0.0, scale.y, 0.0, 0.0,
+                    0.0, 0.0, scale.z, 0.0,
+                    0.0, 0.0, 0.0, 1.0
+                );
+                return scaleMatrix*curScale;
+            }
+
+            void main(){
+                gl_Position = translation(rotation(scaleTransformation(a_position)));
+                fragColor = a_color;
+                gl_PointSize = 10.0;
+            }
+        </script>
+        <script id="2dFragmentShader" type="notjs">
+            precision mediump float;
+            varying vec3 fragColor;
+            void main(){
+                gl_FragColor = vec4(fragColor,1);
+            }
+        </script>
+        <script src="classes.js"></script>
+        <link rel="stylesheet" href="../../styles.css">
+    </head>
+    <body>
+        <div class="menu" style="height: 875px">
+            <h1 id="stage"></h1>
+            <p id="score"></p>
+            <p>Click on the arrows that point point to parts of the message that look suspicious.</p>
+            <canvas id="canvas" class="forSmishing" width="300" height="649">
+                YOUR BROWSER DOES NOT SUPPORT CANVAS
+            </canvas><br>
+            <script>
+                var canvas = document.getElementById("canvas");
+                var gl = canvas.getContext("webgl");
+                var mymain = new main;
+    
+                canvas.addEventListener("click", main.leftClick);
+            </script>
+            <button class="submit" onclick="mymain.submit(1)">Submit</button><br>
+            <button class="selection" onclick="window.location.href='../menu.html'">Save and Quit</button>
+        </div>
+    </body>
+</html>
+<!--
+    References:
+    https://www.proofpoint.com/us/threat-reference/smishing
+    https://digital.va.gov/cyber-spot/smish-smish-dont-get-phished/
+    https://business.bofa.com/en-us/content/what-is-smishing-how-to-prevent-it.html
+    https://www.fcc.gov/avoid-temptation-smishing-scams
+    https://caniphish.com/what-is-smishing#PreventSmishing
+-->

@@ -409,6 +409,9 @@ class main{
         this.tutorialPoints[this.tutorialPoints.length-1].move(x, y);
         this.renderAll();
     }
+    redoTutorial(){
+        window.location.href = "tutorial.html";
+    }
     async submit(stage){ //Takes in the stage number
         //See if the player clicked on all the suspicious parts of the message, calculate their score, end the stage, and move on to the next one
 

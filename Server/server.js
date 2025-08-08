@@ -433,6 +433,42 @@ app.post("/getCommon", async(request,response) =>{
   }
 });
 
+//Getb the question for a stage in the smishing level
+app.post("/getSmishing", async(request, response) => {
+  var data = request.body;
+  //Connect to MongoDB
+  const client = new MongoClient(uri);
+  await client.connect();
+  //Try to run queries with mongo
+  try{
+    //Connect to the proper database and collection
+    var dataBase = "SSE_MobileSecurityGame";
+    var dbCollection = "SmishingBank"
+    const db = client.db(dataBase);
+    const collection = db.collection(dbCollection);
+
+    //Get the data for that stage
+    //Create the document to be sent to mongo
+    var document = {
+      stage: {$eq: data.stage}
+    };
+    //Send document to mongo and store result as array
+    var result = await collection.find(document).toArray();
+    console.log(result);
+    //Update document with data from result
+    document = {
+      stage: result[0].stage,
+      arrows: result[0].arrows,
+      losingText: result[0].losingText,
+      takeaway: result[0].takeaway
+    };
+    //Return the document
+    response.status(200).json(document);
+  }catch(err){
+    console.error(`[Error] ${err}`);
+  }
+});
+
 //Begin the server on port 3000
 app.listen(3000, () => {
   console.log('Server listening on Port 3000');
