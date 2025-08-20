@@ -174,14 +174,17 @@ class main{
     }
     //Set up the stage
     async setUpStage(){
+        this.end = false; //The level is not yet done
         //If any, get rid of all arrows and objects on the screen
-        for(let i in this.objects){
+        var length = this.objects.length;
+        for(let i = length - 1; i >= 0; i--){
             delete this.objects[i];
+            this.objects.pop();
         }
         this.stage = JSON.parse(sessionStorage.getItem("level1Stage")); //Stage number
         //Update the stage number or handle if this is the tutorial
         if(this.stage > 0){ //If this is an actual level
-            document.getElementById("stage").innerText = "Message "+this.stage+"/9";
+            document.getElementById("stage").innerText = "Message "+this.stage+"/50";
             document.getElementById("score").innerText = "Current Score: "+JSON.parse(sessionStorage.getItem("currentScore"));
             this.tutorial = false;
             canvas.style.background = "url('srcimgs/stage"+this.stage+".png')"; //Set background image
@@ -209,12 +212,16 @@ class main{
         //Get response from post request that contains all the data that was post
         var result = await query.json();
         this.pointsFound = 0; //Number of suspicious parts of the message found
+        this.realPoints = 0; //Number of arrows that really point to suspicious parts
         //Get arrow coordinates and if its a real or fake arrow and set up arrows
         for(let i = 0; i < result.arrows.length; i+=9){
             var loc = [result.arrows[i], result.arrows[i+1], 0];
             var rot = [result.arrows[i+2], result.arrows[i+3], result.arrows[i+4]];
             var scale = [result.arrows[i+5], result.arrows[i+6], result.arrows[i+7]];
             this.addObject(0, arrow, loc, rot, scale).real = result.arrows[i+8];
+            if(result.arrows[i+8]){ //If this arrow points to a suspicious part of the message
+                this.realPoints += 1; //Add one to the real points count
+            }
         }
         this.losingText = result.losingText;
         this.takeaway = result.takeaway;
@@ -255,8 +262,8 @@ class main{
             //If it was, see if it was already clicked
             if(this.objects[i].clicked){ //If it was, turn it blue, marking it as unclicked
                 this.objects[i].changeColor([0.0, 0.0, 1.0]);
-            }else{ //If it wasn't, turn it red, marking it as clicked
-                this.objects[i].changeColor([1.0, 0.0, 0.0]);
+            }else{ //If it wasn't, turn it pink, marking it as clicked
+                this.objects[i].changeColor([1.0, 0.0, 1.0]);
             }
             this.objects[i].clicked = !this.objects[i].clicked; //Mark the object as clicked/not clicked
             this.renderAll(); //Re-render object
@@ -276,9 +283,9 @@ class main{
         //Clear the screen and then render all objects
         gl.clear(gl.CLEAR_BUFFER_BIT);
         for(var i in this.objects){ //Render every arrow
-            if(this.objects[i].real && this.end){ //If the arrow is a real arrow, render it as green
+            /*if(this.objects[i].real && this.end){ //If the arrow is a real arrow, render it as green
                 this.objects[i].changeColor([0.0, 1.0, 0.0]);
-            }
+            }*/
             this.objects[i].render(this.webgl.program);
         }
         if(this.tutorial){ //Render tutorial points if this is the tutorial
@@ -360,24 +367,23 @@ class main{
     }
     //See if the player clicked the right suspicious arrows.
     async submit(){
-        var realFound = 0; //Real suspicious points found
-        var fakeFound = 0; //Fake suspicious points found
-        //For each Player Point
+        var realFound = 0; //Real suspicious points clicked
+        var fakeFound = 0; //Fake suspicious points clicked
+        //For each arrow
         for(let i = 0; i < this.objects.length; i++){
-            //If this arrow was something suspicious in the message, turn it green
-            if(this.objects[i].real){
-                this.objects[i].changeColor([0.0, 1.0, 0.0]);
-            }
             //Check this arrow was clicked
             if(this.objects[i].clicked){
-                if(this.objects[i].real){ //If the clicked arrow was a real suspicious part of the message, add one to the score
-                    this.pointsFound += 1;
+                //Check if the arrow clicked was a real suspicious point
+                if(this.objects[i].real){
+                    this.pointsFound += 1; //If the clicked arrow was a real suspicious part of the message, add one to the score
                     realFound += 1;
-                }else{ //If it wasn't a real supsicious part of the messags, subtract one
-                    this.pointsFound -= 1;
+                    this.objects[i].changeColor([0.0, 1.0, 0.0]); //Turn it green to show that it was correctly clicked 
+                }else{
+                    this.pointsFound -= 1; //If it wasn't a real supsicious part of the messags, subtract one
                     fakeFound += 1;
+                    this.objects[i].changeColor([1.0, 0.0, 0.0]); //Turn it red to show that it was incorrectly clicked
                 }
-            }
+            } //Arrows not clicked remain blue
         }
         //Now that the player has submitted their answers of what they believe to be suspicious parts of the message, the real points will now be shown
         this.end = true;
@@ -393,6 +399,7 @@ class main{
         }else{
             text = "You found "+realFound+" correct things"
         }
+        text += "out of "+this.realPoints+" correct things,"
         if(fakeFound == 0){
             text += " and 0 incorrect things, ";
         }else if(fakeFound == 1){
@@ -401,7 +408,7 @@ class main{
             text += "and "+fakeFound+" incorrect things, ";
         }
         if(this.pointsFound <= 0 && realFound == 0){
-            text += this.losingText;
+            text += "earning you 0 points towards you total score. "+this.losingText;
         }else if(this.pointsFound == 1 && realFound >= 0){
             text += "earning you 1 point towards your total score!";
         }else{
@@ -410,7 +417,9 @@ class main{
         if(this.pointsFound > 0){
             text += "!";
         }else{
-            text +=".";
+            if(this.pointsFound > 0 && realFound != 0){
+                text +=".";
+            }
         }
         alert(text+"\n"+this.takeaway);
 
@@ -428,7 +437,7 @@ class main{
         sessionStorage.setItem("currentScore", JSON.stringify(currentScore));
 
         //If that was the final stage, send them back the menu
-        if(this.stage == 9){
+        if(this.stage == 50){
             //Reset the stage number so that they can play the game again.
             sessionStorage.setItem("level1Stage", JSON.stringify(0));
             window.location.href='../menu.html'; //Return to menu

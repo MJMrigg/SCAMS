@@ -34,7 +34,7 @@
                 sessionStorage.setItem("loggedIn",JSON.stringify(false)); //User does not start logged in
             }
             if(JSON.parse(sessionStorage.getItem("level1Stage")) == null){
-                sessionStorage.setItem("level1Stage",JSON.stringify(1)); //User's stage on smishing level(0 is the tutorial)
+                sessionStorage.setItem("level1Stage",JSON.stringify(0)); //User's stage on smishing level(0 is the tutorial)
             }
             if(JSON.parse(sessionStorage.getItem("highScore")) == null){
                 sessionStorage.setItem("highScore",JSON.stringify(0)); //User's highest score

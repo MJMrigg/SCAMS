@@ -16,7 +16,7 @@ app.use(express.static(path.join(directory, "..")));
 
 //Begin the program at the home file
 app.get("/", (request, response) => {
-  response.status(200).sendFile(path.join(directory, "Client/home.html"));
+  response.status(200).sendFile(path.join(directory, "../Client/home.html"));
 });
 
 //Mongo information
@@ -454,7 +454,6 @@ app.post("/getSmishing", async(request, response) => {
     };
     //Send document to mongo and store result as array
     var result = await collection.find(document).toArray();
-    console.log(result);
     //Update document with data from result
     document = {
       stage: result[0].stage,
