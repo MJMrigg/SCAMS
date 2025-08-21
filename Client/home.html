@@ -33,13 +33,33 @@
     </head>
     <body>
         <div class="menu w-75 h-50">
-            <h1 style="font-family: 'Times New Roman', Times, serif; font-weight: bold;">Spoof Call and Malware Simulator<br>(SCAMS)</h1>
+            <h1>Spoof Call and Malware Simulator<br>(SCAMS)</h1>
             <button class="selection" style="font-family: 'Tahoma';" onclick="window.location.href = '../Game/menu.html'">Play</button><br>
             <button class="selection" style="font-family: 'Tahoma';" onclick="window.location.href = 'login.html'">Login</button><br>
             <button class="selection" style="font-family: 'Tahoma';" onclick="window.location.href = 'create.html'">Create Account</button><br>
             <button class="selection" style="font-family: 'Tahoma';" onclick="window.location.href = 'scores.html'">View Scoreboard</button><br>
             <button class="selection" style="font-family: 'Tahoma';" onclick="viewProfile()">View Profile</button><br>
         </div>
-
+        <script>
+            function setInformation(){
+                //User Information
+                if(JSON.stringify(sessessionStorage.getItem("loggedIn")) == null){
+                    sessionStorage.setItem("loggedIn",JSON.stringify(false)); //User does not start logged in
+                }
+                if(JSON.stringify(sessessionStorage.getItem("currentScore")) == null){
+                    sessionStorage.setItem("currentScore",JSON.stringify(0)); //User's score for this run
+                }
+                if(JSON.stringify(sessessionStorage.getItem("level1Stage")) == null){
+                    sessionStorage.setItem("level1Stage",JSON.stringify(false)); //User's stage on smishing level(0 is the tutorial)
+                }
+                if(JSON.stringify(sessessionStorage.getItem("highScore")) == null){
+                    sessionStorage.setItem("highScore",JSON.stringify(0)); //User's highest score
+                }
+                if(JSON.stringify(sessessionStorage.getItem("permissionsLevelStage")) == null){
+                    sessionStorage.setItem("permissionsLevelStage",JSON.stringify(-1)); //User's stage on permissions level(-1 is the tutorial)
+                }
+            }
+            setInformation();
+        </script>
     </body>
 </html>

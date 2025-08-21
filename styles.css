@@ -23,17 +23,22 @@ button.selection{
     background-color: lime;
     border: 2px solid black;
     margin: 2px;
+    font-family: 'Tahoma';
+    color: black;
 }
 button.function{
     background-color: lime;
     border: 2px solid black;
     margin: 2px; 
     color: black;
+    font-family: 'Tahoma';
 }
 input.submit{
     background-color: lime;
     border: 2px solid black;
-    margin: 2px; 
+    margin: 2px;
+    font-family: 'Tahoma'; 
+    color: black;
 }
 div.score{
     float: left;
@@ -107,6 +112,8 @@ div.app-container {
 }
 h1{
     color: black;
+    font-family: 'Times New Roman', Times, serif; 
+    font-weight: bold
 }
 h2{
     color: black;
