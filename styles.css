@@ -27,6 +27,7 @@ button.selection{
     margin: 2px;
     font-family: 'Tahoma';
     color: black;
+    font-size: 0.9rem;
 }
 button.function{
     background-color: lime;
@@ -34,6 +35,7 @@ button.function{
     margin: 2px; 
     color: black;
     font-family: 'Tahoma';
+    font-size: 0.9rem;
 }
 input.submit{
     background-color: lime;
@@ -115,7 +117,7 @@ div.app-container {
 h1{
     color: black;
     font-family: 'Times New Roman', Times, serif; 
-    font-weight: bold
+    font-weight: bold;
 }
 h2{
     color: black;
@@ -123,6 +125,13 @@ h2{
 h3{
     color: black;
 }
+h4{
+    color: black;
+    font-family: 'Times New Roman', Times, serif; 
+    font-weight: bold; 
+    font-size: 1.1rem;
+}
+
 p{
     color: black;
 }
