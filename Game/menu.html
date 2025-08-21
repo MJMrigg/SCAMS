@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+    <!--for bootstrap-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <head>
         <script>
             //Start the smishing level either at the start or where the user last left off
@@ -8,7 +11,7 @@
                 if(level1Stage == 0 || level1Stage == null){ //If this is the user's first time playing the level, go to the beginning
                     window.location.href = "SmishingLevel/menu.html";
                 }else{ //If it is not, go back to where they left off
-                    window.location.href = "SmishingLevel/stages.html";
+                    window.location.href = "SmishingLevel/stage"+level1Stage+".html";
                 }
             }
             //If the player was logged in, add their score to their account and return home
@@ -26,32 +29,46 @@
                     return;
                 }
                 //If they were, save their score to their account
-                //Try to add their current score onto their account
-                //First ask the player if they want to overwrite their previous score or if they want to save it as a new one
-                var scoreList = JSON.parse(sessionStorage.getItem("scores"));
-                var overwrite = prompt("Would you like to (1)save your score as a new score or (2)overwrite your previous score of "+scoreList[scoreList.length-1] +"? Type 1 or 2.");
-                overwrite = overwrite.toUpperCase();
-                if(overwrite == "ONE" || overwrite == 1 || overwrite == "1"){
-                    scoreList.push(currentScore);
-                }else if(overwrite == "TWO" || overwrite == 2 || overwrite == "2"){
-                    scoreList[scoreList.length-1] = currentScore;
-                }else{
-                    alert("Error: Invalid answer. Canceling save.");
-                    return;
-                }
-                //Handle if their current score is higher than their high score
+                //Get their highest score
                 var highScore = JSON.parse(sessionStorage.getItem("highScore"));
-                sessionStorage.setItem("highScore", JSON.stringify(Math.max(highScore, currentScore)));
-                //Send new score list to server
+                //If they got a new high score, update it on their account
+                var data = {}; //Create document containing data to be updated
+                if(currentScore > highScore){
+                    data = { //Update the document
+                        user_id: JSON.parse(sessionStorage.getItem("userId")),
+                        username: JSON.parse(sessionStorage.getItem("userData"))[0],
+                        email: JSON.parse(sessionStorage.getItem("userData"))[1],
+                        password: JSON.parse(sessionStorage.getItem("userData"))[2],
+                        highScore: currentScore,
+                        scores: JSON.parse(sessionStorage.getItem("scores"))
+                    };
+                    try{
+                        //Send a query along a post request to the backend
+                        var query = await fetch("/update",{
+                            method: "POST",
+                            headers:{
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify(data)
+                        });
+                        //Get result and update session data
+                        var result = await query.json();
+                        sessionStorage.setItem("highScore",JSON.stringify(result.highScore));
+                    }catch(Error){
+                        alert(Error+" Please try again.");
+                    }
+                }
+                //Try to add their current score onto their account(not as a highscore, in the array storing all their scores)
+                //First add their current score into the their scores
+                var scoreList = JSON.parse(sessionStorage.getItem("scores"));
+                scoreList.push(currentScore);
                 data = {
                     user_id: JSON.parse(sessionStorage.getItem("userId")),
                     username: JSON.parse(sessionStorage.getItem("userData"))[0],
                     email: JSON.parse(sessionStorage.getItem("userData"))[1],
                     password: JSON.parse(sessionStorage.getItem("userData"))[2],
                     highScore: JSON.parse(sessionStorage.getItem("highScore")),
-                    scores: scoreList,
-                    permissionsLevelStage: JSON.parse(sessionStorage.getItem("permissionsLevelStage")),
-                    smishingLevelStage: JSON.parse(sessionStorage.getItem("level1Stage"))
+                    scores: scoreList
                 }
                 try{
                     //Send a query along a post request to the backend
@@ -83,23 +100,25 @@
                 score.innerText = "Current Score: "+currentScore;
             }
         </script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="../styles.css">
     </head>
     <body>
-        <div class="menu" style="height: 420px;">
-            <h1>Level Select</h1>
-            <h3 id="currentScore"></h3>
-            <button class="selection" onclick="window.location.href = 'VishingLevel/VishingTut.html'" style="width: 180px; height:50px;">Vishing Level</button>
+		<div class="menu w-75 h-50" style="height: 420px;">
+            <h1 style="font-family: 'Times New Roman', Times, serif; font-weight: bold;">Level Select</h1>
+            <h4 style="font-family: 'Times New Roman', Times, serif; font-weight: bold; font-size: 1.1rem;" id="currentScore"></h4>
+            <button class="selection" onclick="window.location.href = 'VishingLevel/VishingTut.html'" style="width: 180px; height:50px;font-family: 'Tahoma';font-weight: normal;font-size: 0.9rem;">Vishing Level</button>
 
-            <button class="selection" onclick="window.location.href = 'PermissionsLevel/PermissionsLevel.html'" style="width: 180px; height:50px;">App Permissions Level</button><br>
-            <button class="selection" onclick="startSmishingLevel()" style="width: 180px; height:50px;">Smishing Level</button>
+            <button class="selection" onclick="window.location.href = 'PermissionsLevel.html'" style="width: 180px; height:50px;font-family: 'Tahoma';font-weight: normal;font-size: 0.9rem;">App Permissions Level</button><br>
+            <button class="selection" onclick="startSmishingLevel()" style="width: 180px; height:50px;font-family: 'Tahoma';font-weight: normal;font-size: 0.9rem;">Smishing Level</button>
 
-			<button class="selection" onclick="window.location.href = 'BadPacketsLevel/BadPacketsLevel.html'" style="width: 180px; height:50px;">Bad Packets Level</button><br>
-            <button class="selection" onclick="window.location.href = 'SpamEmailLevel/SpamEmailMenu.html'" style="width: 180px; height:50px;">Phishing Level</button>
+			<button class="selection" onclick="window.location.href = 'BadPacketsLevel/BadPacketsLevel.html'" style="width: 180px; height:50px;font-family: 'Tahoma';font-weight: normal;font-size: 0.9rem;">Bad Packets Level</button><br>
+            <button class="selection" onclick="window.location.href = 'SpamEmailLevel/SpamEmailMenu.html'" style="width: 180px; height:50px;font-family: 'Tahoma';font-weight: normal;font-size: 0.9rem;">Phishing Level</button>
 
-            <button class="selection" onclick="window.location.href = 'JuiceJLevel.html'" style="width: 180px; height:50px;">Juice Jacking Level</button><br>
+            <button class="selection" onclick="window.location.href = 'JuiceJLevel.html'" style="width: 180px; height:50px;font-family: 'Tahoma';font-weight: normal;font-size: 0.9rem;">Juice Jacking Level</button><br>
             <center>
-                <button class="selection" onclick="returnHome()" style="width: 180px; height:50px;">Return Home</button>
+                <button class="selection" onclick="returnHome()" style="width: 180px; height:50px;font-family: 'Tahoma';font-weight: normal;font-size: 0.9rem;">Return Home</button>
             </center>
         </div>
         <script>addCurrentScore()</script>
