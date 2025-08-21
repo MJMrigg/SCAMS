@@ -6,6 +6,9 @@ div.menu{
     margin: auto;
     float: center;
     background-color: white;
+    padding-bottom: 20px;
+    padding-right: 10px;
+    padding-left: 10px;
 }
 div.form{
     width: 200px;
@@ -25,6 +28,7 @@ button.function{
     background-color: lime;
     border: 2px solid black;
     margin: 2px; 
+    color: black;
 }
 input.submit{
     background-color: lime;
@@ -93,6 +97,7 @@ button.badPackets{
     background-color: lime;
     border: 2px solid black;
     margin: 2px;
+    color: black;
 }
 div.app-container {
     padding: 20px;
