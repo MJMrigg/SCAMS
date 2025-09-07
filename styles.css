@@ -1,26 +1,67 @@
+/*Devices with a width larger then 600px*/
+@media screen and (min-width: 600px){
+    div.column{
+        font-size: 3vh;
+    }
+    p{
+        font-size: 3vh;
+    }
+    canvas.forSmishing{
+        width: 50vh;
+        height: 96vh;
+    }
+    div.menuForBadPackets{
+        flex-direction: row;
+    }
+}
+/*Devices with a width smaller than 600px*/
+@media screen and (max-width: 600px){
+    div.column{
+        font-size: 1.5vh;
+    }
+    canvas.forSmishing{
+        width: 35vh;
+        height: 86vh;
+    }
+    button.function{
+        padding: 5%
+    }
+    canvas.forBadPackets{
+        width: 60vh;
+        height: 40vh;
+    }
+    div.menuForBadPackets{
+        flex-direction: column;
+    }
+}
 div.menu{
-    width: 75%;
+    width: 85%;
     height: 50%;
     text-align: center;
     border: 10px solid black;
     margin: auto;
     float: center;
     background-color: white;
-    padding-bottom: 20px;
+    padding-bottom: 10px;
     padding-right: 10px;
     padding-left: 10px;
     margin-top: 5px;
+    margin-bottom: 5px;
 }
 div.form{
-    margin-top: 5px;
     width: 75%;
-    height: 75vh;
+    height: 75%;
     text-align: left;
     margin: auto;
     float: center;
+    padding-bottom: 10px;
+    padding-right: 10px;
+    padding-left: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 button.selection{
-    width: 140px;
+    width: 40%;
     padding: 1%;
     background-color: lime;
     border: 2px solid black;
@@ -38,6 +79,7 @@ button.function{
     font-size: 0.9rem;
 }
 input.submit{
+    width: auto;
     background-color: lime;
     border: 2px solid black;
     margin: 2px;
@@ -49,26 +91,35 @@ div.score{
 }
 body{
     background-color: blue;
+    height: 100%;
 }
 canvas.forSmishing{
     border: 1px solid black;
     background-color: white;
+    background-size: 100% 100%;
 }
 button.submit{
-    width: 55px;
-    padding: 1%;
+    width: auto;
     background-color: lime;
     border: 2px solid black;
     margin: 2px;
+    font-family: 'Tahoma';
+    color: black;
+    font-size: 0.9rem;
 }
 div.column{
-    width: 50px;
-    float: left;
+    width: auto;
+    height: auto;
     text-align: left;
+    margin-top: 5px;
+    margin-left: 5px;
+    margin-bottom: 5px;
+    margin-right: 5px;
 }
 canvas.forBadPackets{
     display: block;
     background: black;
+    margin-top: 10px;
 }
 div.forBadPackets{
     display: flex;
@@ -76,29 +127,34 @@ div.forBadPackets{
     align-items: center;
     flex-direction: column;
     background: #1a1a1a;
-    width: 850px;
-    height: 675px;
+    width: 87%;
+    height: 50%;
     overflow: hidden;
     margin-left: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 div.badPacketsScore{
     margin-left: 10px; 
     margin-top: 10px;
+    margin-bottom: 0px;
     color: white; 
     font-size: 20px;
     align-self: flex-start;
+    font-family: 'Tahoma';
 }
 div.menuForBadPackets{
-    width: 1000px;
-    height: 700px;
+    width: 90%;
+    height: 60%;
     text-align: left;
     border: 10px solid black;
     margin: auto;
     float: center;
     background-color: white;
     display: flex;
-    flex-direction: row;
     align-items: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 button.badPackets{
     width: 120px;
@@ -121,9 +177,11 @@ h1{
 }
 h2{
     color: black;
+    
 }
 h3{
     color: black;
+    
 }
 h4{
     color: black;
@@ -131,7 +189,13 @@ h4{
     font-weight: bold; 
     font-size: 1.1rem;
 }
-
 p{
     color: black;
+    font-family: 'Tahoma';
+}
+div.flexBox{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    float: center;
 }

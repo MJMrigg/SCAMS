@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+    <meta name="viewport" content="width=device-width, initial-scale:1.0'">
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale:1.0'">        
         <script>
             //Dynamically add scores to the scoreboard
             async function addScores(){
@@ -36,21 +38,23 @@
             }
         </script>
         <link rel="stylesheet" href="../styles.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
     </head>
     <body>
-        <div class="menu" style="height: 415px">
+        <div class="menu" style="height: 75dvh;">
             <h1>Certified Cybersecurity Geniuses</h1>
-            <div class="form" id="scoreBoard" style="width:225px">
+            <div id="scoreBoard" class="flexBox">
                 <div id="places" class = "column">
                     <div><u>Rank</u></div>
                 </div>
-                <div id="usernames" class = "column" style="width:125px">
+                <div id="usernames" class = "column">
                     <div><u>Player Name</u></div>
                 </div>
                 <div id="scores" class = "column">
                     <div><u>Score</u></div>
                 </div>
-            </div>
+            </div><br>
             <button class="selection" onclick="window.location.href='home.html'">Return Home</button>
         </div>
         <script>addScores();</script>

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
+    <meta name="viewport" content="width=device-width, initial-scale:1.0'"> 
+    <head>       
         <script id="2dVertexShader" type="notjs">
             attribute vec4 a_position;
             attribute vec3 a_color;
@@ -54,7 +55,6 @@
             void main(){
                 gl_Position = translation(rotation(scaleTransformation(a_position)));
                 fragColor = a_color;
-                gl_PointSize = 10.0;
             }
         </script>
         <script id="2dFragmentShader" type="notjs">
@@ -66,9 +66,11 @@
         </script>
         <script src="classes.js"></script>
         <link rel="stylesheet" href="../../styles.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
     </head>
     <body>
-        <div class="menu" style="height: 890px">
+        <div class="menu" style="height: auto">
             <h1 id="stage"></h1>
             <p id="score"></p>
             <p>Click on the arrows that point point to parts of the message that look suspicious.</p>
@@ -81,9 +83,10 @@
                 var mymain = new main;
     
                 canvas.addEventListener("click", main.leftClick);
+                canvas.addEventListener("touchstart", main.leftClick);
             </script>
-            <button class="submit" onclick="mymain.submit(1)">Submit</button><br>
-            <button class="selection" onclick="window.location.href='../menu.html'">Save and Quit</button>
+            <button class="submit" onclick="mymain.submit(1)" >Submit</button><br>
+            <button class="selection" onclick="window.location.href='../menu.html'" style="width: auto; padding: 0.3%;">Save and Quit</button>
         </div>
     </body>
 </html>

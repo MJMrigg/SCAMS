@@ -43,19 +43,19 @@
         <script>
             function setInformation(){
                 //User Information
-                if(JSON.stringify(sessessionStorage.getItem("loggedIn")) == null){
+                if(JSON.stringify(sessionStorage.getItem("loggedIn")) == null){
                     sessionStorage.setItem("loggedIn",JSON.stringify(false)); //User does not start logged in
                 }
-                if(JSON.stringify(sessessionStorage.getItem("currentScore")) == null){
+                if(JSON.stringify(sessionStorage.getItem("currentScore")) == null){
                     sessionStorage.setItem("currentScore",JSON.stringify(0)); //User's score for this run
                 }
-                if(JSON.stringify(sessessionStorage.getItem("level1Stage")) == null){
+                if(JSON.stringify(sessionStorage.getItem("level1Stage")) == null){
                     sessionStorage.setItem("level1Stage",JSON.stringify(false)); //User's stage on smishing level(0 is the tutorial)
                 }
-                if(JSON.stringify(sessessionStorage.getItem("highScore")) == null){
+                if(JSON.stringify(sessionStorage.getItem("highScore")) == null){
                     sessionStorage.setItem("highScore",JSON.stringify(0)); //User's highest score
                 }
-                if(JSON.stringify(sessessionStorage.getItem("permissionsLevelStage")) == null){
+                if(JSON.stringify(sessionStorage.getItem("permissionsLevelStage")) == null){
                     sessionStorage.setItem("permissionsLevelStage",JSON.stringify(-1)); //User's stage on permissions level(-1 is the tutorial)
                 }
             }

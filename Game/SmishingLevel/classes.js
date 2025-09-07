@@ -187,7 +187,7 @@ class main{
             document.getElementById("stage").innerText = "Message "+this.stage+"/50";
             document.getElementById("score").innerText = "Current Score: "+JSON.parse(sessionStorage.getItem("currentScore"));
             this.tutorial = false;
-            canvas.style.background = "url('srcimgs/stage"+this.stage+".png')"; //Set background image
+            canvas.style.backgroundImage = "url('srcimgs/stage"+this.stage+".png')"; //Set background image
         }/*else{ //If this is the tutorial
             this.tutorial = true;
             this.tutorialPoints = [];
