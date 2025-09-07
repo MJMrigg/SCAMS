@@ -13,6 +13,9 @@
     div.menuForBadPackets{
         flex-direction: row;
     }
+    div.flexPhishing{
+        flex-direction: row;
+    }
 }
 /*Devices with a width smaller than 600px*/
 @media screen and (max-width: 600px){
@@ -32,6 +35,13 @@
     }
     div.menuForBadPackets{
         flex-direction: column;
+    }
+    div.flexPhishing{
+        flex-direction: column;
+    }
+    img.phishingIMG{
+        object-position: 0 0;
+        object-fit: cover;
     }
 }
 div.menu{
@@ -181,7 +191,7 @@ h2{
 }
 h3{
     color: black;
-    
+    font-family: 'Tahoma'
 }
 h4{
     color: black;
@@ -198,4 +208,33 @@ div.flexBox{
     justify-content: center;
     width: 100%;
     float: center;
+}
+b{
+    color: black;
+    font-family: 'Tahoma';
+}
+div.flexPhishing{
+    display: flex;
+    justify-content: center;
+    float: center;
+}
+div.forVishing{
+    width: 80%; 
+    height: auto; 
+    border: 10px solid #000; 
+    background: lightgrey;
+}
+div.vishingBox{
+    width: auto; 
+    height: auto; 
+    border: 2px solid #000; 
+    font-size:25px;
+}
+div.vishingBottom{
+    width: 80%;
+    border: 10px solid #000; 
+    background: white
+}
+img.phishingIMG{
+
 }

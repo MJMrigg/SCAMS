@@ -1,5 +1,8 @@
 <html>
     <!-- Vishing level tutorial -->
+    <meta name="viewport" content="width=device-width, initial-scale:1.0'">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
     <head>
         <script>
             class main{
@@ -53,18 +56,18 @@
     </head>
     <body>
 	    <center>
-            <div class = "menu" style="height: 400px;">
+            <div class = "menu" style="height: auto; width: 90%;">
                 <center>
-                    <div style = "width: 490px; height: 300px; border: 10px solid #000; background: lightgrey;">
+                    <div class="forVishing">
                         <div id = "callerID" style = "border: 1px solid #000; font-size:30px;text-align:center">Phone Number!</div>
-                        <div id = "transcript" style = "width: 490px; height: 300px; border: 2px solid #000; font-size:25px;">
+                        <div id = "transcript" class = "vishingBox">
                             This is a test transcript! It can be either a voicemail transcript or a call transcript between two people!
                         </div>
                     </div>
                 </center>
                 
                 <center>
-                    <div style = "width: 490px; border: 10px solid #000; background: white;">
+                    <div class ="vishingBottom">
                         <b>Specific part to look for!</b><br>
                         <div id="optSel">
                             <input type = "radio" id = "OptionSel1T" name = "company">
@@ -72,12 +75,12 @@
                             <input type = "radio" id = "OptionSel1F" name ="company">
                             <label for = "OptionSel1">Wrong</label>
                         </div>
-                        <button onclick="m.next()" id="nextBtn" class="selection">Next</button>
-                        
-                        <button onclick="window.location.href='Vishing.html'" class="selection">No Tutorial For Me!</button>
-                        <button onclick="window.location.href = '../menu.html'" class="selection">Back to Main Menu</button>
+                        <div class="flexPhishing">
+                            <button onclick="m.next()" id="nextBtn" class="selection">Next</button>
+                            <button onclick="window.location.href='Vishing.html'" class="selection">No Tutorial For Me!</button>
+                            <button onclick="window.location.href = '../menu.html'" class="selection">Back to Main Menu</button>
+                        </div>
                     </div>
-                    
                 </center>  
             
             </div>
