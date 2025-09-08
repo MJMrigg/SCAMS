@@ -313,8 +313,8 @@ app.post("/forgot", async(request, response) => {
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-          user: "riggmatthew25@gmail.com",
-          pass: "" //Need create password
+          user: "riggmatthew25@gmail.com", //Need create official SCAMS email
+          pass: "fvcs eexf chwf ltha"
           //www.youtube.com/watch?v=fF-07yFTq5o
         },
       });
@@ -327,7 +327,6 @@ app.post("/forgot", async(request, response) => {
       };
       //Send the email
       result = await transporter.sendMail(mailOptions);
-      console.log(result);
       //Need create email for SCAMS
     }
     //Return the document
