@@ -321,7 +321,7 @@ app.post("/forgot", async(request, response) => {
       //Create email information
       const mailOptions = {
         from: 'riggmatthew25@gmail.com',
-        to: 'evanhambre@gmail.com',
+        to: result[0].email,
         subject: 'SCAMS User Information Request',
         text: 'Hello '+result[0].username+"!\n\nWe were recently made aware that you requested your account information. You will find that information below:\n\nUsername: "+result[0].username+"\nPassword: "+result[0].password+"\n\nIf you did not request this information, it may mean that your account has been compromised. We suggest you login and change your information right away, as well as respond to this email so that we can know about any issues we may have in our security system.\n\nHave a great day!\n\n-SCAMS"
       };
