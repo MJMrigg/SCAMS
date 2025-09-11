@@ -1,2 +1,2 @@
 ipconfig
-node Server/server.js
+node server.js
