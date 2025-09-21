@@ -40,17 +40,15 @@
 			
 			async getQuestionBank(){
 				//this.questionBank;
-				try{
-					const query = await fetch("/getVishing", {
-						method:"POST"
-						//that SHOULD be the only thing needed
-					})
-					console.log("Bank successfully got!");
-					
-				}catch(Error){
-					alert(Error+"Failed to get question bank");
-				}
-				const questions = await response.json();
+				var startTime = Date.now(); //Get start and end times to calcuate rtt
+				const query = await fetch("/getVishing", {
+					method:"POST",
+					//that SHOULD be the only thing needed
+				})
+				const questions = await query.json();
+				var endTime = Date.now();
+				var rtt = endTime - startTime;
+				console.log("/getVishing Request RTTs:\nServer-Database Request RTT: "+questions.pop()+"ms\nClient-Server Request RTT: "+rtt+"ms\n");
 				this.questionBank = questions;
 				for(var i = 0;i<this.questionBank.length-1;i++){
 					this.alreadyDone[i]=false;

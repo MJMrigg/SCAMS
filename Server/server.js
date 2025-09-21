@@ -98,7 +98,10 @@ app.post("/login", async(request, response) =>{
       password: {$eq: data.password}
     };
     //Send document to mongo and store result
+    var startTime = Date.now(); //Get start and end times to calculate rtt
     var result = await collection.find(document).toArray();
+    var endTime = Date.now();
+    var rtt = endTime-startTime;
     //Update document
     if(result[0] == undefined){ //If the document was not in the database, return null
       document = {
@@ -116,6 +119,7 @@ app.post("/login", async(request, response) =>{
         smishingLevelStage: result[0].smishingLevelStage
       };
     }
+    document.rtt = rtt; //Add sever-database request rtt to document
     //Return the document
     response.status(200).json(document);
 
@@ -198,13 +202,17 @@ app.post("/checkUsername",async(request,response)=>{
       username: {$eq: data.username}
     };
     //Send document to mongo and store result
+    var startTime = Date.now(); //Get start and end times to calculate rtt
     var result = await collection.find(document).toArray();
+    var endTime = Date.now();
+    var rtt = endTime - startTime;
     //Update document
     if(result[0] == undefined){ //If the document was not in the database, return null
       document = {result: false};
     }else{ //If the document was in the database, return all of the user's data
       document = {result: true};
     }
+    document.rtt = rtt; //Add server-database request rtt to document
     //Return the document
     response.status(200).json(document);
   }catch(err){
@@ -234,13 +242,17 @@ app.post("/checkEmail",async(request,response)=>{
       email: {$eq: data.email}
     };
     //Send document to mongo and store result
+    var startTime = Date.now(); //Get start and end times to calculate rtt
     var result = await collection.find(document).toArray();
+    var endTime = Date.now();
+    var rtt = endTime-startTime; 
     //Update document
     if(result[0] == undefined){ //If the document was not in the database, return null
       document = {result: false};
     }else{ //If the document was in the database, return all of the user's data
       document = {result: true};
     }
+    document.rtt = rtt;
     //Return the document
     response.status(200).json(document);
   }catch(err){
@@ -267,13 +279,17 @@ app.post("/getScoreBoard", async(request,response) =>{
     //Create document to be sent to mongo
     var document = {};
     //Send document to mongo and store result
+    var startTime = Date.now(); //Use start and end time to get rtt
     var result = await collection.find(document).sort({highScore:-1}).limit(10).toArray();
-    //Add all 10 scores and their unsernames to the document
+    var endTime = Date.now();
+    var rtt = endTime - startTime;
+    //Add all 10 scores and their unsernames to the document, along with the rtt
     document = {};
     for(let i = 0; i < Math.min(result.length, 10); i++){ //Just in case there are less then 10 scores in the database
       document["highScore"+i] = result[i].highScore;
       document["username"+i] = result[i].username;
     }
+    document.rtt = rtt;
     //Return the document
     response.status(200).json(document);
   }catch(err){
@@ -352,8 +368,13 @@ app.post("/getVishing", async(request,response) =>{
     const db = client.db(dataBase);
     const collection = db.collection(dbCollection);
 	var filter = {type: "voicemail"};
-	const questions = await collection.find(filter).toArray();
+  var startTime = Date.now(); //Get start and end times to calculate rtt
+	var questions = await collection.find(filter).toArray();
+  var endTime = Date.now();
+  var rtt = endTime - startTime;
+  questions.push(rtt); //Add server-database rtt to response
 	//return questions;
+  console.log(questions);
 	response.status(200).json(questions);
   }catch(err){
     console.error(`[Error] ${err}`);
@@ -376,8 +397,12 @@ app.post("/getVishingCall", async(request,response) =>{
     const db = client.db(dataBase);
     const collection = db.collection(dbCollection);
 	var filter = {type: "call"};
+  var startTime = Date.now(); //Get start and end times to calculate rtt
 	const questions = await collection.find(filter).toArray();
+  var endTime = Date.now();
+  var rtt = endTime - startTime;
 	//return questions;
+  questions.rtt = rtt; //Add server-database rtt to response
 	response.status(200).json(questions);
   }catch(err){
     console.error(`[Error] ${err}`);
@@ -399,8 +424,12 @@ app.post("/getPhishing", async(request,response) =>{
     var dbCollection = "PhishingBank"
     const db = client.db(dataBase);
     const collection = db.collection(dbCollection);
+  var startTime = Date.now(); //Get start and end times to calculate rtt
 	const questions = await collection.find({}).toArray();
+  var endTime = Date.now();
+  var rtt = endTime - startTime;
 	//return questions;
+  questions.rtt = rtt; //Add server-database rtt to response
 	response.status(200).json(questions);
   }catch(err){
     console.error(`[Error] ${err}`);
@@ -422,7 +451,11 @@ app.post("/getCommon", async(request,response) =>{
     var dbCollection = "CommonAttackBank"
     const db = client.db(dataBase);
     const collection = db.collection(dbCollection);
+  var startTime = Date.now(); //Get start and end times to calculate rtt
 	const questions = await collection.find({}).toArray();
+  var endTime = Date.now();
+  var rtt = endTime - startTime;
+  questions.rtt = rtt; //Add server-database rtt to response
 	return questions;
   }catch(err){
     console.error(`[Error] ${err}`);
@@ -452,7 +485,10 @@ app.post("/getSmishing", async(request, response) => {
       stage: {$eq: data.stage}
     };
     //Send document to mongo and store result as array
+    var startTime = Date.now(); //Get start and end times to calculate rtt
     var result = await collection.find(document).toArray();
+    var endTime = Date.now();
+    var rtt = endTime - startTime;
     //Update document with data from result
     document = {
       stage: result[0].stage,
@@ -461,6 +497,7 @@ app.post("/getSmishing", async(request, response) => {
       takeaway: result[0].takeaway
     };
     //Return the document
+    document.rtt = rtt; //Add server-database rtt to response
     response.status(200).json(document);
   }catch(err){
     console.error(`[Error] ${err}`);

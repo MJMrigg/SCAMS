@@ -210,7 +210,11 @@ class main{
             body: JSON.stringify(data),
         });
         //Get response from post request that contains all the data that was post
+        var startTime = Date.now(); //Get start and end times
         var result = await query.json();
+        var endTime = Date.now(); 
+        var rtt = endTime - startTime;
+        console.log("/getSmishing Request RTTs:\nServer-Database Request RTT: "+result.rtt+"ms\nClient-Server Request RTT: "+rtt+"ms\n");
         this.pointsFound = 0; //Number of suspicious parts of the message found
         this.realPoints = 0; //Number of arrows that really point to suspicious parts
         //Get arrow coordinates and if its a real or fake arrow and set up arrows

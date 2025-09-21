@@ -40,7 +40,11 @@
                         body: JSON.stringify({})
                     });
 					//const data = await response.json();
+					var startTime = Date.now(); //Get start and end times to calculate rtt
 					const data = await response.json();
+					var endTime = Date.now();
+					var rtt = endTime - startTime;
+					console.log("/getCommon Request RTTs:\nServer-Database Request RTT: "+data.rtt+"ms\nClient-Server Request RTT: "+rtt+"ms\n");
 					console.log(data);
 					var i = Math.floor(Math.random()*data.length);
 					console.log(i);

@@ -33,7 +33,11 @@
                         body: JSON.stringify(data)
                     });
                     //Get response
+                    var startTime = Date.now(); //Get the start and end times to calculate rtt
                     var response = await query.json();
+                    var endTime = Date.now();
+                    var rtt = endTime - startTime;
+                    console.log("/checkEmail Request RTTs:\nServer-Database Request RTT: "+response.rtt+"ms\nClient-Server Request RTT: "+rtt+"ms\n");
                     if(response.result == true){ //If they already have an account
                         throw "Error: Account already exisits";
                     }
@@ -56,7 +60,11 @@
                         body: JSON.stringify(data)
                     });
                     //Get response
+                    var startTime = Date.now(); //Get the start and end times to calculate rtt
                     var response = await query.json();
+                    var endTime = Date.now();
+                    var rtt = endTime - startTime;
+                    console.log("/checkUsername Request RTTs:\nServer-Database Request RTT: "+response.rtt+"ms\nClient-Server Request RTT: "+rtt+"ms\n");
                     if(response.result == true){ //If the username is already taken
                         throw "Error: Username already taken";
                     }
