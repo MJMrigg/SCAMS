@@ -1,2 +1,0 @@
-ipconfig
-nodemon server.js
