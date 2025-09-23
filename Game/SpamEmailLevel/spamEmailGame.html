@@ -14,6 +14,7 @@
 				this.playerAns[3]=false;
 				this.playerAns[4]=false;
 				this.gameFinish = false;
+				this.maxScore = 0;
 				this.correctAnsNum = 0;
 				this.currIndex = 0;
 				
@@ -239,18 +240,25 @@
 				this.playerAns[3] = false;
 				this.playerAns[4] = false;
 
-
+				//the three main
 				document.getElementById("emailAd").style.color = "black";
 				document.getElementById("subjectLine").style.color = "black";
 				document.getElementById("emailBod").style.color = "black";
+
+				//the two additional
 				document.getElementById("feelOff").style.color = "black";
 				document.getElementById("spellingErr").style.color = "black";
 	
 				document.getElementById("pdf").style.color = "black";
 
-				document.getElementById("emailAd").checked = false;
+				/*document.getElementById("emailAd").checked = false;
 				document.getElementById("subjectLine").checked = false;
-				document.getElementById("emailBod").checked = false;
+				document.getElementById("emailBod").checked = false;*/
+
+				var rad = document.querySelectorAll('input[type="radio"]');
+				for(var i = 0;i<rad.length;i++){
+					rad[i].checked = false;
+				}
 
 				document.getElementById("feelOff").style="display:none";
 				document.getElementById("spellingErr").style="display:none";
@@ -270,6 +278,12 @@
 				/*for(var i = 0; i<this.playerAns.length;i++){
 					this.playerAns[i]=null;
 				}*/
+				for(var i = 0; i<this.playerAns.length;i++){
+					this.playerAns[i]=null;
+				}
+				this.playerAns[3]=false;
+				this.playerAns[4]=false;
+
 				this.goButton.innerText = "Submit Answers";
 				this.goButton.onclick = () => this.submitAnswers();
 				this.ansResult.innerText = " ";
@@ -322,6 +336,7 @@
 			</div>
 			<button id="confirm" class="selection" onclick = "m.submitAnswers()">Confirm Selection</button>
 			<div id = "results" style = "height:auto;"><br></div>
+			<div id="score" style="height: auto;"><br></div>
 
 			<div id = "finishedDisplay" style = "font-size:25px;text-align:center"></div>
 			<br>
