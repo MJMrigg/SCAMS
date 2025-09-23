@@ -330,9 +330,10 @@ app.post("/forgot", async(request, response) => {
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-          user: "riggmatthew25@gmail.com", //Need create official SCAMS email
-          pass: "fvcs eexf chwf ltha"
+          user: "cybereducationgame@gmail.com",
+          pass: "zejv ocaw bgac inhb"
           //www.youtube.com/watch?v=fF-07yFTq5o
+          //2FA must be on for this to work
         },
       });
       //Create email information
