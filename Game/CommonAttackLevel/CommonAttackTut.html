@@ -5,14 +5,15 @@
             class main{
                 constructor(){
                     this.currentPart = 0;
-                    this.tutPic = this.document.getElementById("pic");
-                    this.head = this.document.getElementById("head");
+                    this.tutPic = document.getElementById("pic");
+                    alert("Welcome to the Common Attack Level tutorial! This will test your knowledge on all of the attacks you experience on a daily basis!");
+                    //this.head = this.document.getElementById("head");
 
-                    this.text1 = this.document.getElementById("inTxt1");
-                    this.text2 = this.document.getElementById("inTxt2");
-                    this.text3 = this.document.getElementById("inTxt3");
+                    //this.text1 = this.document.getElementById("inTxt1");
+                    //this.text2 = this.document.getElementById("inTxt2");
+                    //this.text3 = this.document.getElementById("inTxt3");
                 }
-                onclick(){
+                /*onclick(){
                     if(this.currentPart == 3){
                     //get rid of button and button function
                     //would be 
@@ -20,76 +21,74 @@
                         this.currentPart++;
                         updateScreen();
                     }
-                }
+                }*/
                 updateScreen(){
-                    //do as base64 or actual file img?
-                    this.head.innerText="Tutorial In Progress";
-                    if(this.currentPart==1){
-                        if(this.currentType = "Smish"){
-                            this.tutPic.src = "";//first picture
 
-                        }else if(this.currentType=="Vish"){
-                            this.tutPic.src = "";//first picture
+                    //start with vishing
+                    //next is phishing
+                    //final is smishing
 
-                        }else if(this.currentType=="Phish"){
-                            this.tutPic.src = "";//first picture
+                    if(this.currentPart==1){//vishingcall:    correct show: asks yes no questions, personal info, odd payment methods
+                        alert("These are the options for a vishing call transcript. Green is correct!");
 
-                        }else{
-                            this.tutPic.src="";//first picture or should it only have 1?
-                        }
-                    }else if(this.currentPart==2){
-                        if(this.currentType = "Smish"){
-                            this.tutPic.src = "";//second picture
+                    }else if(this.currentPart==2){//wrong show
+                        alert("And red is incorrect!");
 
-                        }else if(this.currentType=="Vish"){
-                            this.tutPic.src = "";//second picture
+                    }else if(this.currentPart==3){//vishingmail: //emergency, personal info, odd claims
+                        alert("These are the options for a vishing voicemail transcript. Green is correct!");
 
-                        }else if(this.currentType=="Phish"){
-                            this.tutPic.src = "";//second picture
-                            
-                        }else{
-                            this.tutPic.src="";//second picture
-                        }
-                    }else{
-                        if(this.currentType = "Smish"){
-                            this.tutPic.src = "";//third and final
-
-                        }else if(this.currentType=="Vish"){
-                            this.tutPic.src = "";//third and final
-
-                        }else if(this.currentType=="Phish"){
-                            this.tutPic.src = "";//third and final
-                            
-                        }else{
-                            this.tutPic.src="";//third and final
-                        }
                     }
-			}
+                   
+                    else if(this.currentPart==4){//wrong
+                        alert("And red is incorrect!");
+
+                    }else if(this.currentPart==5){//email correct sus subject, odd body (spelling err or feels off), sender add
+                        alert("These are the options for the phishing examples. Green is correct!");
+
+                    }
+                    else if(this.currentPart==6){//email wrong
+                        alert("And red is incorrect!");
+
+                    }else if(this.currentPart==7){//smish correct sus body, sus body (link, typos, claims)
+                        alert("These are the types of options to expect when getting a smishing example. Green is correct!");
+
+
+                    }else if (this.currentPart==8){//smish wrong
+                        alert("And red is incorrect!");
+
+                    }else{//done!
+                        alert("You're all done with the tutorial! These are gonna come at random. Good luck!");
+                        document.getElementById("nextBtn").onclick="";
+                    }
+			    }
+                next(){
+                    if(this.currentPart==9){
+                        //done, no more next function
+                    }
+                    this.currentPart++;
+                    this.updateScreen();
+                }
             }
         </script>
         <link rel="stylesheet" href="../../styles.css">
     </head>
     <body>
 	    <div class = "menu" style="height: 380px;">
-            <h1 id="head">This is the tutorial for the Common Attack Level!</h1>
-
-            <h3 id="inTxt1">In this level, your new knowledge will be put to the test! You'll encounter 3 different types of attacks.</h3>
-            <h3 id="inTxt2">These include Phishing, Smishing, and App permissions. The most obvious attacks that you experience on a day to day basis.</h3>
-            <h3 id="inTxt3">These will be in random order, so be prepared!</h3>
+            
             <img id="pic" src = "" alt = "Loading image! Please wait." width = "150" height="100" hidden/><br><!--Hidden until start-->
             <div id="SmishingTut">
                 <!--Give user example of different yes and nos for a Smishing level that clues for different suspicious parts
                     like Vishing and Phishing but now for Smishing
                 -->
+
             </div>
             <div id="VishingTut">
                 <!--Give user example of the different yes and nos of normal Vishing Level-->
+
             </div>
             <div id="PhishingTut">
                 <!--Give user example of the different yes and nos of normal Phishing level-->
-            </div>
-            <div id="AppTut">
-                <!--Give user example of the different checkboxes of what to give app-->
+
             </div>
             <button onclick="m.next()" id="nextBtn" class="selection">Next</button>
             <button onclick="window.location.href = 'CommonAttackLevel.html'" class="selection">No Tutorial for Me!</button>
