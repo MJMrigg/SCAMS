@@ -202,6 +202,7 @@ class main{
         var data = {
             stage: this.stage
         }
+        var startTime = Date.now(); //Get start and end times to calculate RTT
         var query = await fetch("/getSmishing",{
             method:"POST",
             headers:{
@@ -210,7 +211,6 @@ class main{
             body: JSON.stringify(data),
         });
         //Get response from post request that contains all the data that was post
-        var startTime = Date.now(); //Get start and end times
         var result = await query.json();
         var endTime = Date.now(); 
         var rtt = endTime - startTime;

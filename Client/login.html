@@ -35,7 +35,7 @@
                     var startTime = Date.now(); //Get start and end times to calculate rtt
                     var response = await query.json();
                     var endTime = Date.now();
-                    var rtt = endTime-startTimer;
+                    var rtt = endTime-startTime;
                     console.log("/login Request RTTs:\nServer-Database Request RTT: "+response.rtt+"ms\nClient-Server Request RTT: "+rtt+"ms\n");
                     //Go through the response's data
                     if(response.user_id == null){ //If it was a user without an account

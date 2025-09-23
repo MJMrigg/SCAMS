@@ -119,6 +119,7 @@ app.post("/login", async(request, response) =>{
         smishingLevelStage: result[0].smishingLevelStage
       };
     }
+    console.log(document);
     document.rtt = rtt; //Add sever-database request rtt to document
     //Return the document
     response.status(200).json(document);
@@ -374,7 +375,6 @@ app.post("/getVishing", async(request,response) =>{
   var rtt = endTime - startTime;
   questions.push(rtt); //Add server-database rtt to response
 	//return questions;
-  console.log(questions);
 	response.status(200).json(questions);
   }catch(err){
     console.error(`[Error] ${err}`);
@@ -402,7 +402,7 @@ app.post("/getVishingCall", async(request,response) =>{
   var endTime = Date.now();
   var rtt = endTime - startTime;
 	//return questions;
-  questions.rtt = rtt; //Add server-database rtt to response
+  questions.push(rtt); //Add server-database rtt to response
 	response.status(200).json(questions);
   }catch(err){
     console.error(`[Error] ${err}`);
@@ -425,11 +425,11 @@ app.post("/getPhishing", async(request,response) =>{
     const db = client.db(dataBase);
     const collection = db.collection(dbCollection);
   var startTime = Date.now(); //Get start and end times to calculate rtt
-	const questions = await collection.find({}).toArray();
+	var questions = await collection.find({}).toArray();
   var endTime = Date.now();
   var rtt = endTime - startTime;
 	//return questions;
-  questions.rtt = rtt; //Add server-database rtt to response
+  questions.push(rtt); //Add server-database rtt to response
 	response.status(200).json(questions);
   }catch(err){
     console.error(`[Error] ${err}`);

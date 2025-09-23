@@ -18,7 +18,7 @@
 				this.currIndex = 0;
 				
 				this.ansResult = document.getElementById("results");
-				//this.score = document.getElementById("score");
+				this.score = document.getElementById("score");
 				this.goButton = document.getElementById("confirm");
 
 
@@ -41,7 +41,6 @@
 			
 			changeVal(opt, chosen){
 				if(opt==0){
-					console.log("emailAdd");
 					if(chosen == 1){
 						this.playerAns[0] = true;
 					}else{
@@ -49,7 +48,6 @@
 					}
 				}
 				else if(opt==1){
-					console.log("emailSubject");
 					if(chosen == 1){
 						this.playerAns[1] = true;
 					}else{
@@ -142,31 +140,23 @@
 			async getQuestionBank(){
 				try {
 					//const response = await fetch('SSE_MobileSecurityGame.PhishingBank.json');
+					var startTime = Date.now(); //Get start and end times to calculate rtt
 					const response = await fetch("/getPhishing",{
                         method: "POST",
                         "Content-Type": "application/json",
                         body: JSON.stringify({})
                     });
 					//const data = await response.json();
-					var startTime = Date.now(); //Get start and end times to calculate rtt
-					const data = await response.json();
+					var data = await response.json();
 					var endTime = Date.now();
 					var rtt = endTime - startTime;
-					console.log("/getPhishing Request RTTs:\nServer-Database Request RTT: "+data.rtt+"ms\nClient-Server Request RTT: "+rtt+"ms\n");
-					console.log(data);
-					var i = Math.floor(Math.random()*data.length);
-					console.log(i);
-					console.log(data[i]);
-					console.log(data[i].senderAdd==this.playerAns[0])
-					this.changeImage(data[i].imagebase64);
-					console.log(data.length);
+					console.log("/getPhishing Request RTTs:\nServer-Database Request RTT: "+data.pop()+"ms\nClient-Server Request RTT: "+rtt+"ms\n");
+					this.changeImage(data[0].imagebase64);
 					for(let i = 0; i<data.length;i++){
 						this.alreadyDone.push(data[i]);
 						this.questionBank.push(data[i]);
 					}
 					this.currIndex = i;
-					console.log(this.alreadyDone.length);
-					console.log(this.questionBank.length);
 				} catch (error) {
 					console.error("Error fetching question bank:", error);
 				}
