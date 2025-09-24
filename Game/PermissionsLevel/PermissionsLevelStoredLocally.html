@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale:1.0'">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+<head>
+  <meta charset="UTF-8" />
+  <title>SCAMS Permissions Level</title>
+  <link rel="stylesheet" href="../../styles.css">
+  <script>
+    class main{
+      constructor(){
+        // Array of all apps with app name, correct choices, image link, and a brief explanation for their answer
+        // Easy to add more apps to be tested on or change the number of apps tested at a time
+        this.allApps = [
+          {
+            name: "Maps",
+            correctPermissions: { location: true, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3fada8ae-cf13-4956-813d-15e430538649/djkovwb-5ef0ad13-552e-40ae-9e0a-32872743c95d.png/v1/fit/w_400,h_400,q_70,strp/map_icon_by_rgrant3734_djkovwb-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDAwIiwicGF0aCI6IlwvZlwvM2ZhZGE4YWUtY2YxMy00OTU2LTgxM2QtMTVlNDMwNTM4NjQ5XC9kamtvdndiLTVlZjBhZDEzLTU1MmUtNDBhZS05ZTBhLTMyODcyNzQzYzk1ZC5wbmciLCJ3aWR0aCI6Ijw9NDAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.0qPSN91C9EQlkRMb85V1m4d_4sF55I-cdgvAdg7F-r4",
+            explanation: "A map app typically requires your location so it can show you where you are, which is good if you are lost, but it does not rely on any other information to do so.",
+            creator: "rgrant3734",
+            link: "https://www.deviantart.com/rgrant3734/art/Map-Icon-1183610747"
+          },
+          {
+            name: "Calculator",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3fada8ae-cf13-4956-813d-15e430538649/djkovv9-c6b1ef40-170e-4354-a6bd-bf0451b9f662.png/v1/fit/w_400,h_400,q_70,strp/calculator_icon_by_rgrant3734_djkovv9-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDAwIiwicGF0aCI6IlwvZlwvM2ZhZGE4YWUtY2YxMy00OTU2LTgxM2QtMTVlNDMwNTM4NjQ5XC9kamtvdnY5LWM2YjFlZjQwLTE3MGUtNDM1NC1hNmJkLWJmMDQ1MWI5ZjY2Mi5wbmciLCJ3aWR0aCI6Ijw9NDAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.Z0mZXun3iBDOw7f7C1dohwbKXspB8fVOwBKO5yFkh3w",
+            explanation: "A calculator app does not use any extra information to complete it's tasks.",
+            creator: "rgrant3734",
+            link: "https://www.deviantart.com/rgrant3734/art/Calculator-Icon-1183610709"
+          },
+          {
+            name: "Contacts",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: true },
+            image: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3fada8ae-cf13-4956-813d-15e430538649/djkovvq-c031f99f-2bb9-4406-80df-c00c0e6f5157.png/v1/fit/w_400,h_400,q_70,strp/contacts_icon_by_rgrant3734_djkovvq-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDAwIiwicGF0aCI6IlwvZlwvM2ZhZGE4YWUtY2YxMy00OTU2LTgxM2QtMTVlNDMwNTM4NjQ5XC9kamtvdnZxLWMwMzFmOTlmLTJiYjktNDQwNi04MGRmLWMwMGMwZTZmNTE1Ny5wbmciLCJ3aWR0aCI6Ijw9NDAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.msrBwCW0pZeui8BnoX44qo9YNKLqQISSIQEaTds41pw",
+            explanation: "A contacts app holds information about your contacts, nothing more.",
+            creator: "rgrant3734",
+            link: "https://www.deviantart.com/rgrant3734/art/Contacts-Icon-1183610726"
+          },
+          {
+            name: "Mail",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3fada8ae-cf13-4956-813d-15e430538649/djkovv1-00b3e3c2-18d8-46dd-a128-2e454ad3dba4.png/v1/fit/w_400,h_400,q_70,strp/mail_icon_by_rgrant3734_djkovv1-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDAwIiwicGF0aCI6IlwvZlwvM2ZhZGE4YWUtY2YxMy00OTU2LTgxM2QtMTVlNDMwNTM4NjQ5XC9kamtvdnYxLTAwYjNlM2MyLTE4ZDgtNDZkZC1hMTI4LTJlNDU0YWQzZGJhNC5wbmciLCJ3aWR0aCI6Ijw9NDAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.GE3k0iBrOxj17-IanRevIga_cNgecx7ASdXQvsJ0lKI",
+            explanation: "As convenient as it is for Mail to access your photos, it is safer to send them from the Gallery app instead.",
+            creator: "rgrant3734",
+            link: "https://www.deviantart.com/rgrant3734/art/Gallery-1183647754"
+          },
+          {
+            name: "Messages",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: true },
+            image: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3fada8ae-cf13-4956-813d-15e430538649/djkovvi-62fd76ce-c523-4d20-b0dd-9858581a9144.png/v1/fit/w_400,h_400,q_70,strp/messages_icon_by_rgrant3734_djkovvi-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDAwIiwicGF0aCI6IlwvZlwvM2ZhZGE4YWUtY2YxMy00OTU2LTgxM2QtMTVlNDMwNTM4NjQ5XC9kamtvdnZpLTYyZmQ3NmNlLWM1MjMtNGQyMC1iMGRkLTk4NTg1ODFhOTE0NC5wbmciLCJ3aWR0aCI6Ijw9NDAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.rE26I14DnOn3ckpld25_psvZ8Wxhm868GKSj7mVpwjs",
+            explanation: "Having access to your contacts allows for you to find the person you want to talk to easier, and while allowing photos is more convenient, it is safer to share them from your gallery app.",
+            creator: "rgrant3734",
+            link: "https://www.deviantart.com/rgrant3734/art/Messages-Icon-1183610718"
+          },
+          {
+            name: "Phone",
+            correctPermissions: { location: false, camera: false, microphone: true, photos: false, contacts: true },
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTs1QeSh9OFysWK3OYLPBAYILhjRYwPyyrKC39VZGmWiuUYZGNQIcA0aGSK5p8vChB6enQ&usqp=CAU",
+            explanation: "The Phone and Contacts Apps are often owned by the same person, so its okay for your Phone Apps to access your Contacts, and you need the microphone to talk to the other person.",
+            creator: "Gator Studios",
+            link: "https://icon-icons.com/icon/phone-sound/66014"
+          },
+          {
+            name: "Music",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3fada8ae-cf13-4956-813d-15e430538649/djkovw4-88c44db9-c06d-4c8b-81cf-e5b5a19f8320.png/v1/fit/w_400,h_400,q_70,strp/music_icon_by_rgrant3734_djkovw4-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDAwIiwicGF0aCI6IlwvZlwvM2ZhZGE4YWUtY2YxMy00OTU2LTgxM2QtMTVlNDMwNTM4NjQ5XC9kamtvdnc0LTg4YzQ0ZGI5LWMwNmQtNGM4Yi04MWNmLWU1YjVhMTlmODMyMC5wbmciLCJ3aWR0aCI6Ijw9NDAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.12P_FXt1CZF-JaEyBrU6YzK-N983IYgHQ1QxYo2LaAY",
+            explanation: "Music appications generally only play audio for you and do not require any other permissions.",
+            creator: "rgrant3734",
+            link: "https://www.deviantart.com/rgrant3734/art/Music-Icon-1183610740"
+          },
+          {
+            name: "Calendar",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3fada8ae-cf13-4956-813d-15e430538649/djkpofk-377c2262-4fc7-4414-b39b-13002120fcbf.png/v1/fit/w_400,h_400,q_70,strp/calendar_by_rgrant3734_djkpofk-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDAwIiwicGF0aCI6IlwvZlwvM2ZhZGE4YWUtY2YxMy00OTU2LTgxM2QtMTVlNDMwNTM4NjQ5XC9kamtwb2ZrLTM3N2MyMjYyLTRmYzctNDQxNC1iMzliLTEzMDAyMTIwZmNiZi5wbmciLCJ3aWR0aCI6Ijw9NDAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.mFPsOk_3iiAxBP210oC6tuxX-owQadwBrNg9omTo1Yg",
+            explanation: "A calendar app does not require other permissions to run.",
+            creator: "rgrant3734",
+            link: "https://www.deviantart.com/rgrant3734/art/Calendar-1183647728"
+          },
+          {
+            name: "Clock",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3fada8ae-cf13-4956-813d-15e430538649/djkpofx-b6c3e1b2-18e8-4d9e-9291-80555ce144e1.png/v1/fit/w_400,h_400,q_70,strp/clock_by_rgrant3734_djkpofx-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDAwIiwicGF0aCI6IlwvZlwvM2ZhZGE4YWUtY2YxMy00OTU2LTgxM2QtMTVlNDMwNTM4NjQ5XC9kamtwb2Z4LWI2YzNlMWIyLTE4ZTgtNGQ5ZS05MjkxLTgwNTU1Y2UxNDRlMS5wbmciLCJ3aWR0aCI6Ijw9NDAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.i2xb1B4wz6u63G6kIkn9uCfIdZ6cRJdWxayI9CdwgNc",
+            explanation: "The clock app does not need any permissions to operate.",
+            creator: "rgrant3734",
+            link: "https://www.deviantart.com/rgrant3734/art/Clock-1183647741"
+          },
+          {
+            name: "Camera",
+            correctPermissions: { location: false, camera: true, microphone: true, photos: true, contacts: false },
+            image: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3fada8ae-cf13-4956-813d-15e430538649/djkpof3-c2bd819d-ccbc-4661-95be-e355b524cc1e.png/v1/fit/w_400,h_400,q_70,strp/camera_by_rgrant3734_djkpof3-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDAwIiwicGF0aCI6IlwvZlwvM2ZhZGE4YWUtY2YxMy00OTU2LTgxM2QtMTVlNDMwNTM4NjQ5XC9kamtwb2YzLWMyYmQ4MTlkLWNjYmMtNDY2MS05NWJlLWUzNTViNTI0Y2MxZS5wbmciLCJ3aWR0aCI6Ijw9NDAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.b3bKUAJvfwIelboiqWQeg9t2SLEhcbqq8wNgE-f-MJY",
+            explanation: "A camera app needs the camera to take pictures, and microphone for videos.",
+            creator: "rgrant3734",
+            link: "https://www.deviantart.com/rgrant3734/art/Camera-1183647711"
+          },
+          {
+            name: "Gallery",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: true, contacts: false },
+            image: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3fada8ae-cf13-4956-813d-15e430538649/djkpoga-99eb60fa-3f08-41d5-8c33-1f5454a49c6b.png/v1/fit/w_400,h_400,q_70,strp/gallery_by_rgrant3734_djkpoga-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDAwIiwicGF0aCI6IlwvZlwvM2ZhZGE4YWUtY2YxMy00OTU2LTgxM2QtMTVlNDMwNTM4NjQ5XC9kamtwb2dhLTk5ZWI2MGZhLTNmMDgtNDFkNS04YzMzLTFmNTQ1NGE0OWM2Yi5wbmciLCJ3aWR0aCI6Ijw9NDAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.dDDYjojov6pCcgWNA1Bg0AjoyvyTE1Isr7z1Iitjl8I",
+            explanation: "The gallery keeps track of photos, but it does not require access to any other permissions to operate.",
+            creator: "rgrant3734",
+            link: "https://www.deviantart.com/rgrant3734/art/Gallery-1183647754"
+          },
+          {
+            name: "Web Browser",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSM5o16mHudG5rc8yeJF85yLY8TfhvvhfqtMQ&s",
+            explanation: "While it is convenient to be able to say your web search, it is not neccessary for the web browser to function.",
+            creator: "the Papirus Dev Team",
+            link: "https://www.iconarchive.com/show/papirus-apps-icons-by-papirus-team/internet-web-browser-icon.html"
+          },
+          {
+            name: "Voice Memos",
+            correctPermissions: { location: false, camera: false, microphone: true, photos: false, contacts: false},
+            image: "https://cdn.iconscout.com/icon/free/png-256/free-voice-memos-icon-download-in-svg-png-gif-file-formats--ios-13-ios13-ipad-os-ui-14-pack-user-interface-icons-1575942.png",
+            explanation: "Voice Memos only needs your microphone to record your voice, nothing more.",
+            creator: "Icon Mafia",
+            link: "https://iconscout.com/free-icon/voice-memos-1859954_1575942"
+          },
+          {
+            name: "Find My Phone",
+            correctPermissions: { location: true, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJ24K_9ZibL-cfWIPjaCqBJb7KUGbHHUkTTw&s",
+            explanation: "Find My Phone only needs your location to help you find your phone.",
+            creator: "Icon Mafia",
+            link: "https://iconscout.com/free-icon/find-my-iphone-1859961_1575949"
+          },
+          {
+            name: "Health App",
+            correctPermissions: { location: true, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/2b/9e/a5/2b9ea56a-71f3-d003-4e37-730464745e56/AppIcon-0-0-1x_U007ephone-0-11-0-85-220.png/256x256bb.jpg",
+            explanation: "The Health App uses your location to track your exercise, especially on watches.",
+            creator: "Appbloom LLC",
+            link: "https://appadvice.com/app/wellhero-heart-health-monitor/6448857042",
+          },
+          {
+            name: "Files",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://s.cafebazaar.ir/images/icons/com.simple.filemanager-c91ab861-3282-49e5-a7bf-277518fdb5b4_512x512.png?x-img=v1/resize,h_256,w_256,lossless_false/optimize",
+            explanation: "The Files app is designed to access documents and app files, not photos.",
+            creator: "Sniper.Tech2020",
+            link: "https://cafebazaar.ir/app/com.simple.filemanager?l=en"
+          },
+          {
+            name: "App Store",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-WTbCi9dSsTA0vY4yk7HiKCE0ziPTJPyylg&s",
+            explanation: "The App Store app does not require any of these to function.",
+            creator: "Flat-icons.com",
+            link: "https://iconscout.com/free-icon/app-store-6512366_5415985"
+          },
+          {
+            name: "FaceBook",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://i.pinimg.com/564x/c9/78/46/c978465b22ba034a8bf73a7f7f80dcca.jpg",
+            explanation: "You can share photos and videos onto FaceBook from the Gallery app. If you livestream, FaceBook will need your camera and microphone, but only give it those permissions if you plan to livestream regularily. While it is convenient to give FaceBook your contacts so it can find their accounts for you, its safer to look for them yourself.",
+            creator: "Iconfinder",
+            link: "https://www.pinterest.com/pin/864128247240819009/"
+          },
+          {
+            name: "TikTok",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://cdn.iconscout.com/icon/free/png-256/free-tiktok-logo-icon-download-in-svg-png-gif-file-formats--social-media-multimedia-pack-logos-icons-2738031.png",
+            explanation: "You can share photos and videos onto TikTok from the Gallery app. If you livestream, TikTok will need your camera and microphone, but only give it those permissions if you plan to livestream regularily. While it is convenient to give TikTok your contacts so it can find their accounts for you, its safer to look for them yourself.",
+            creator: "Yesternight Supply",
+            link: "https://iconscout.com/free-icon/tiktok-3271922_2738031"
+          },
+          {
+            name: "Spotify",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://cdn.iconscout.com/icon/free/png-256/free-spotify-icon-download-in-svg-png-gif-file-formats--logo-ios-app-mobile-ios17-pack-network-communication-icons-8050354.png",
+            explanation: "Spotify does not need any of these permissions to function.",
+            creator: "Flat-icons.com",
+            link: "https://iconscout.com/free-icon/spotify-9908171_8050354"
+          },
+          {
+            name: "Netflix",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://cdn.iconscout.com/icon/free/png-256/free-netflix-logo-icon-download-in-svg-png-gif-file-formats--application-website-social-media-pack-logos-icons-2738021.png",
+            explanation: "Netflix does not need any of these permissions to function.",
+            creator: "Yesternight Supply",
+            link: "https://iconscout.com/free-icon/netflix-3271955_2738021"
+          },
+          {
+            name: "Uber",
+            correctPermissions: { location: true, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://play-lh.googleusercontent.com/AQtSF5Sl18yp3mQ2tcbOrBLekb7cyP3kyg5BB1uUuc55zfcnbkCDLHFTBwZfYiu1aDI=s256-rw",
+            explanation: "Uber can use your location to help you plan your ride if you don't know where you are.",
+            creator: "Uber Technologies, Inc",
+            link: "https://play.google.com/store/apps/dev?id=7908612043055486674&pli=1"
+          },
+          {
+            name: "Translator App",
+            correctPermissions: { location: false, camera: true, microphone: true, photos: false, contacts: false },
+            image: "https://cdn.iconscout.com/icon/free/png-256/free-translate-icon-download-in-svg-png-gif-file-formats--language-translator-translation-ios-ios14-14-pack-user-interface-icons-2365238.png",
+            explanation: "Translator needs the camera to translate things like signs and papers, and needs the microhpone to help you have real time conversation.",
+            creator: "Icon Mafia",
+            link: "https://iconscout.com/free-icon/translate-2844889_2365238"
+          },
+          {
+            name: "Video Chat App",
+            correctPermissions: { location: false, camera: true, microphone: true, photos: false, contacts: false },
+            image: "https://cdn-icons-png.freepik.com/512/5323/5323414.png",
+            explanation: "Your Video Chat App requires your camera so that other people can see you and microphone so that other people can hear you.",
+            creator: "apien",
+            link: "https://www.freepik.com/icon/video-chat_5323414",
+          },
+          {
+            name: "Instagram",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://cdn-icons-png.freepik.com/256/168/168941.png",
+            explanation: "You can share photos and videos onto Instagram from the Gallery app. If you livestream, Instagram will need your camera and microphone, but only give it those permissions if you plan to livestream regularily. While it is convenient to give Instagram your contacts so it can find their accounts for you, its safer to look for them yourself. ",
+            creator: "Freepik",
+            link: "https://www.freepik.com/icon/instagram_168941#fromView=resource_detail&position=4"
+          },
+          {
+            name: "YouTube",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://cdn-icons-png.flaticon.com/256/255/255337.png",
+            explanation: "Unlike most social media apps, you can't share photos and videos from the Gallery app, you have to do it by giving YouTube access to your photos and videos, but this can be configured so that it can only access certain photos and videos. Also, only do that if you plan on posting regularily. If you livestream, YouTube will need your camera and microphone, but only give it those permissions if you plan to livestream regularily.",
+            creator: "Roundicons",
+            link: "https://www.flaticon.com/free-icon/youtube_255337"
+          },
+          {
+            name: "Duolingo: Language Lessons",
+            correctPermissions: { location: false, camera: false, microphone: true, photos: false, contacts: false },
+            image: "https://play-lh.googleusercontent.com/Rz4JVKiQM7ZnLYTEzwzpvWROphw5Wo6kh3vnx8HhgHTaOzsknlTLmXUsknurSqTqUj0=s256-rw",
+            explanation: "Duolingo needs your microphone to teach you how to speak languages. Also, NEVER EVER EVER GIVE DUOLINGO YOUR LOCATION.",
+            creator: "Duolingo",
+            link: "https://play.google.com/store/apps/dev?id=6957685454452609502"
+          },
+          {
+            name: "Card Game App",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://cdn-icons-png.flaticon.com/256/10972/10972104.png",
+            explanation: "Card Game Apps do not need any of these permissions to function.",
+            creator: "Anggara",
+            link: "https://www.flaticon.com/free-icon/card-game_10972104"
+          },
+          {
+            name: "QR Reader App",
+            correctPermissions: { location: false, camera: true, microphone: false, photos: false, contacts: false },
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZx-3gVhp2DQ0FAijaDx9YVborSVlUJoHF0w&s",
+            explanation: "QR Reader needs the camera to scan QR codes.",
+            creator: "Bilal Elmoussaoui",
+            link: "https://flathub.org/apps/com.belmoussaoui.Decoder"
+          },
+          {
+            name: "WhatsApp",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "whatsApp.png",
+            explanation: "You can share photos and videos onto WhatsApp from the Gallery app. While it is convenient to give WhatsApp your contacts so it can find their accounts for you, its safer to look for them yourself.",
+            creator: "Pixel perfect",
+            link: "https://www.freepik.com/icon/whatsapp_779120"
+          },
+          {
+            name: "Password Storage App",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://cdn1.iconfinder.com/data/icons/programs/512/key-password-pin-code-gray-app-512.png",
+            explanation: "Your Passwords Storage App does not require any of these to function.",
+            creator: "Lolenko Svetlana",
+            link: "https://www.iconfinder.com/icons/1600980/app_code_gray_key_password_pin_icon"
+          },
+          {
+            name: "Weather Radar App",
+            correctPermissions: { location: true, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://play-lh.googleusercontent.com/djRrVzE8nTiT7-TDeOchMrx8bUFukHiEhk9VC_iA8JyWTObEgjDf9_JtcvESzJwJnw=s256-rw",
+            explanation: "The Weather Radar needs your location to notify you of weather and other natural disasters in your area.",
+            creator: "ACME AtronOmatic LLC",
+            link: "https://play.google.com/store/apps/details?id=com.acmeaom.android.myradar"
+          },
+          {
+            name: "LinkedIn",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: true, contacts: false },
+            image: "https://cdn.iconscout.com/icon/free/png-256/free-linkedin-logo-icon-download-in-svg-png-gif-file-formats--media-work-social-pack-logos-icons-2738017.png",
+            explanation: "Unliked most social media apps, you can't post photos or videos onto LinkedIn from the Gallery.",
+            creator: "Yesternight Supply",
+            link: "https://iconscout.com/free-icon/linkedin-3271951_2738017"
+          },
+          {
+            name: "Shein",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/24/57/a9/2457a9db-3885-773b-38ef-f54fc781a761/AppIcon-0-0-1x_U007emarketing-0-8-0-0-85-220.png/256x256bb.jpg",
+            explanation: "Shein is infamous for stealing user identities, so the less permissions you give it, the better.",
+            creator: "ROADGET BUSINESS PTE. LTD.",
+            link: "https://appadvice.com/app/shein-shopping-online/878577184"
+          },
+          {
+            name: "Video Editing App",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: true, contacts: false },
+            image: "https://cdn-icons-png.flaticon.com/256/8152/8152756.png",
+            explanation: "Video Editing Apps need your photos so that you can upload photos and videos. If you want to create a new photo or video, it's safer to use your camera and let the Video Editing App access it through your Gallery.",
+            creator: "Hilmy Abiyyu A.",
+            link: "https://www.flaticon.com/free-icon/video-editing_8152756"
+          },
+          {
+            name: "Discord",
+            correctPermissions: { location: false, camera: false, microphone: true, photos: false, contacts: false },
+            image: "https://cdn-icons-png.freepik.com/256/15047/15047560.png",
+            explanation: "You can share photos and videos to Discord from the Gallery App. While Discord does allow you to make calls, for safety, don't turn on your camera unless you know the people you are calling really well.",
+            creator: "Enamo Studios",
+            link: "https://www.freepik.com/icon/games_15047560#fromView=keyword&page=1&position=0&uuid=70cb2251-7c0e-4de2-9018-41c5b5ceee7c"
+          },
+          {
+            name: "PayPal",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://cdn-icons-png.flaticon.com/256/323/323416.png",
+            explanation: "As convenient as it is to give PayPal access to your contacts, its safer to add those to PayPal manually. Also, PayPal used to have a feature where you could take pictures of things and attach them to payments/requests, however, since this is gone, PayPal no longer needs access to your camera to function. Turn that off if you haven't already.",
+            creator: "Freepik",
+            link: "https://www.flaticon.com/free-icon/paypal_323416"
+          },
+          {
+            name: "Notes App",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://cdn-icons-png.flaticon.com/256/3387/3387271.png",
+            explanation: "As convenient as giving the Notes App access to your photos is, it's safer to add them from the Gallery App.",
+            creator: "Smashicons",
+            link: "https://www.flaticon.com/free-icon/notepad_3387271",
+          },
+          {
+            name: "Telegram",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://cdn.imgbin.com/20/11/22/telegram-logo-telegram-paper-plane-icon-KZftf9zV.jpg",
+            explanation: "As convenient as giving Telegram access to your photos is, it's safer to add them from the Gallery App.",
+            creator: "provcomserv",
+            link: "https://imgbin.com/png/KZftf9zV/telegram-logo-telegram-paper-plane-icon-png"
+          },
+          {
+            name: "Pinterest",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://cdn-icons-png.flaticon.com/256/255/255321.png",
+            explanation: "As convenient as giving Pinterest access to your photos is, it's safer to add them from the Gallery App.",
+            creator: "Roundicons",
+            link: "https://www.flaticon.com/free-icon/pinterest_255321"
+          },
+          {
+            name: "Uber Eats",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://cdn.iconscout.com/icon/free/png-256/free-uber-eats-logo-icon-download-in-svg-png-gif-file-formats--food-delivery-order-online-logos-icons-1369417.png",
+            explanation: "While it is convenient to have Uber Eats access your location, it's safer to just type your address into it each time you place an order.",
+            creator: "Tricky Design Studio",
+            link: "https://iconscout.com/free-icon/uber-eats-1613370_1369417"
+          },
+          {
+            name: "Threads",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://cdn-1.webcatalog.io/catalog/threads-net/threads-net-icon-filled-256.png?v=1751851462190",
+            explanation: "While it is convenient to have Threads access your contacts to find their accounts, its safer to look for them manually. It's also safer to post photos and videos onto Threads using the Gallery App instead of giving Threads access to them.",
+            creator: "Meta",
+            link: "https://webcatalog.io/en/apps/threads-net"
+          },
+          {
+            name: "ChatGPT",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://cdn.iconscout.com/icon/free/png-256/free-chatgpt-icon-download-in-svg-png-gif-file-formats--ai-technology-artificial-intelligence-pack-science-icons-7576880.png?f=webp",
+            explanation: "While ChatGPT can analyze photos and videos, that feature is only part of the paid GPT-4o model, so unless you have that, don't give it access to your photos.",
+            creator: "Sadjad",
+            link: "https://iconscout.com/free-icon/chatgpt-9296588_7576880"
+          },
+          {
+            name: "Magnifier App",
+            correctPermissions: { location: false, camera: true, microphone: false, photos: false, contacts: false },
+            image: "https://cdn-icons-png.flaticon.com/256/5272/5272056.png",
+            explanation: "The Magnifier App needs your camera so that it can magnify things.",
+            creator: "zero_wing",
+            link: "https://www.flaticon.com/free-icon/magnifying-glass_5272056"
+          },
+          {
+            name: "Tinder",
+            correctPermissions: { location: false, camera: true, microphone: false, photos: true, contacts: false },
+            image: "https://cdn.iconscout.com/icon/free/png-256/free-tinder-logo-icon-download-in-svg-png-gif-file-formats--social-media-pack-logos-icons-3365464.png",
+            explanation: "Tinder needs your camera to verify your age, but once that's done, turn the permission off. Also, you can't post photos on Tinder from the Gallery App.",
+            creator: "Flat-icons.com",
+            link: "https://iconscout.com/free-icon/tinder-4069945_3365464"
+          },
+          {
+            name: "Song Idenitifer App",
+            correctPermissions: { location: false, camera: false, microphone: true, photos: false, contacts: false },
+            image: "https://s.cafebazaar.ir/images/icons/com.findsong.recognise.musicdiscovery-0649de73-cd3f-427f-b129-595cd5993593_512x512.png?x-img=v1/resize,h_256,w_256,lossless_false/optimize",
+            explanation: "The Song Finder App only needs the microphone to listen to and identify songs.",
+            creator: "music discovery app",
+            link: "https://cafebazaar.ir/app/com.findsong.recognise.musicdiscovery?l=en"
+          },
+          {
+            name: "Airdrop",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://cdn-icons-png.freepik.com/256/7664/7664345.png",
+            explanation: "You can airdrop photos using the Gallery App.",
+            creator: "BomSymbols",
+            link: "https://www.freepik.com/icon/airdrop_7664345"
+          },
+          {
+            name: "Google Docs",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: true, contacts: false},
+            image: "https://cdn-icons-png.freepik.com/256/17504/17504674.png?semt=ais_hybrid",
+            explanation: "If you want to put a photo in your document, Google Docs will need access to your photos.",
+            creator: "sonnycandra",
+            link: "https://www.freepik.com/icon/files_17504674#fromView=keyword&page=1&position=24&uuid=cfe35355-51f6-434e-b2f2-d1c5d4fc2cc6"
+          },
+          {
+            name: "SnapChat",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://www.shareicon.net/data/256x256/2017/05/22/886192_ghost_512x512.png",
+            explanation: "Your location is not required for SnapChat to function. You can share photos and videos onto SnapChat from the Gallery app. If you livestream, SnapChat will need your camera and microphone, but only give it those permissions if you plan to livestream regularily. While it is convenient to give FaceBook your contacts so it can find their accounts for you, its safer to look for them yourself.",
+            creator: "Vectto",
+            link: "https://www.shareicon.net/snapchat-snapchat-logo-ghost-mobile-app-886192"
+          },
+          {
+            name: "Game Center",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://cdn.iconscout.com/icon/free/png-256/free-game-center-icon-download-in-svg-png-gif-file-formats--app-apple-application-ios-16-pack-user-interface-icons-5415919.png?f=webp&w=256",
+            explanation: "As convenient as letting the Game Center access your contacts to find your friends, it's safer to just manually add them.",
+            creator: "Flat-icons.com",
+            link: "https://iconscout.com/free-icon/game-center-6512390_5415919"
+          },
+          {
+            name: "Amazon",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://i.pinimg.com/736x/62/cd/50/62cd5058fe6866bb94941aa2fb001d7d.jpg",
+            explanation: "As convenient as letting Amazon access your location for shipping is, it's safer to type in your address manually. Also, only let it access your photos if your plan to sell things on Amazon regularily.",
+            creator: "Olivia Taylor",
+            link: "https://www.pinterest.com/pin/123849058493172640/"
+          },
+          {
+            name: "Google Drive",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://cdn-icons-png.flaticon.com/256/2875/2875333.png",
+            explanation: "You can upload photos to Google Drive from your Gallery app, which is safer.",
+            creator: "Freepik",
+            link: "https://www.flaticon.com/free-icon/google-drive_2875333?related_id=2875406&origin=search"
+          },
+          {
+            name: "Your Phone's Virtual Assistant",
+            correctPermissions: { location: false, camera: false, microphone: false, photos: false, contacts: false },
+            image: "https://cdn-icons-png.flaticon.com/256/4355/4355361.png",
+            explanation: "In an ideal cybersecurity world, your phone's virtual assistant wouldn't have access to any of this, but if you do give it access, just make sure your virtual assistant can't be used on your lockscreen.",
+            creator: "Aysel",
+            link: "https://www.flaticon.com/free-icon/voice-assistant_4355361"
+          }
+        ];
+        // Get the apps to display based on the stage
+        this.stage = JSON.parse(sessionStorage.getItem("permissionsLevelStage"));
+        if(this.stage == -1){ //If they are at the start of the level, do the tutorial
+          this.doTutorial();
+          this.selectedApps = this.allApps.sort().splice(0,1);
+        }else{ //Else, go to the stage they were at
+          this.selectedApps = this.allApps.sort().slice(1+(5*this.stage), 6+(5*this.stage));
+        }
+        this.createAppUI();
+      }
+      // Have the player read the tutorial text using the alert function
+      doTutorial(){
+        alert("Welcome to the App Permissions Level! In this level, you will be giving apps permission to access certain parts of your phone like your contacts, photos, and microphone.");
+        alert("Each app will be displayed using a picture and its name. Below it will be check boxes with options next to them. Each option is a part of your phone and checking the box next to it gives the app permission to access that part of the phone.");
+        alert("This is the tutorial level, so it should be an easy one. This first app is an app that takes all data is has permission to access and sends it to a shady third party. You must decide which parts of your phone, if any, the app should have access to.");
+        alert("Once you're done, click the \"Confirm Settings\" button to confirm that the app will have access to this part of your phone. After that, the correct answers will be revealed and you will see what you got right and wrong.");
+      }
+      // Creates the container that the different app sections reside in
+      createAppUI() {
+        // Add title and description to screen
+        const titleContainer = document.getElementById("title");
+        const title = document.createElement("div");
+        title.className = "app-container";
+        title.innerHTML = `<h1>Settings/General/App Permissions</h1>
+      <h5>Whenever you open a new app on your phone, you have probably been given an alert box that asks you for 
+    permissions on your location, camera, etc. Giving these permissions tends to be easy by pressing 1 button, 
+    but have you ever thought about what the app was and how it relates to the permissions that you are giving them? 
+    For this level, you are tasked to give only the correct permissions to the apps that are displayed.</h5>
+    <h2>How to Play:</h2>
+    <h5>Below are a list of apps identified by their name and picture. Below each app is a list of checkboxes.
+      Each checkbox is a part of your phone you are giving the app permission to access. You must give each app the correct permissions
+      and only the correct permissions.</h5>
+      <h5>Note: You are giving the app the minimum permissions it needs to function, not the most convenient permissions.</h5>`;
+        titleContainer.appendChild(title);
+        // Add apps to screen
+        const appsContainer = document.getElementById("apps");
+        this.selectedApps.forEach((app, index) => { // For each selected app
+          const div = document.createElement("div"); // div to contain app
+          div.className = "app-container";
+          div.innerHTML = `<img src="${app.image}" width="70" height="70"></img>
+          <h1 style='display:inline;'>${app.name}</h1>
+            ${this.checkbox("camera", index)}
+            ${this.checkbox("location", index)}
+            ${this.checkbox("microphone", index)}
+            ${this.checkbox("photos", index)}
+            ${this.checkbox("contacts", index)}
+          <p>Credits to <a href=${app.link}>${app.creator}</a> for this image.</p>`;
+          appsContainer.appendChild(div);
+        });
+        // Remove next stage button
+        const confirmSettings = document.getElementById("confirm-settings");
+        confirmSettings.remove();
+        // Add submit button
+        const buttonHolder = document.getElementById("button-holder");
+        const submit = document.createElement("button");
+        submit.style = "width: 200px;";
+        submit.className = "function";
+        submit.innerHTML = "Confirm Settings";
+        submit.id = "confirm-settings";
+        buttonHolder.appendChild(submit);
+        submit.addEventListener("click", () => this.submitChoices());
+      }
+      // Creates the checkboxes that are used for selecting permissions
+      checkbox(permission, appIndex) {
+        return `<div style="margin-bottom: 10px;">
+          <label>
+            <input type="checkbox" data-app="${appIndex}" data-permission="${permission}" />
+            Allow ${permission.charAt(0).toUpperCase() + permission.slice(1)}
+          </label>
+        </div>`;
+      }
+    // Gets the users choices and compares them to the correct answers and displays the ones they got right/wrong along with an explanation for that app
+    submitChoices() {
+        // ???
+        const checkboxes = document.querySelectorAll("input[type=checkbox]");
+        const userChoices = {};
+        checkboxes.forEach(cb => {
+          const appIndex = cb.dataset.app;
+          const perm = cb.dataset.permission;
+          if (!userChoices[appIndex]) userChoices[appIndex] = {};
+          userChoices[appIndex][perm] = cb.checked;
+        });
+        // See what the player got correct and incorrect and create the divs to show those results
+        let score = 0;
+        let total = this.selectedApps.length * 5;
+        let feedback = "<h2 style='margin-top: 0'>Results:</h2>";
+        this.selectedApps.forEach((app, i) => {
+          feedback += `<li><strong>${app.name}</strong>:`;
+          Object.entries(app.correctPermissions).forEach(([perm, correct]) => {
+          const userValue = userChoices[i]?.[perm] || false; //This is an if statement
+          if (userValue === correct) {
+            score++;
+            feedback += ` <span style="color: green">✓ ${perm}</span>`;
+          } else {
+            feedback += ` <span style="color: red">✗ ${perm}</span>`;
+          }
+          });
+          feedback += `</ul><p>${app.explanation}</p></li>`;
+        });
+        feedback += `</ul><p>Your Score: ${score}/${total}</p>
+        <p>It is important to make sure that you know what information you are giving to your apps. Limit what you want to share to certain apps to better protect your data.</p>`;
+        // Add results to screen
+        const resultsContainer = document.getElementById("results");
+        const results = document.createElement("div");
+        results.className = "app-container";
+        results.innerHTML = feedback;
+        resultsContainer.appendChild(results);
+        // Get the player's score and save it to the session storage if this is not the tutorial
+        if(this.stage != -1){
+          var currentScore = JSON.parse(sessionStorage.getItem("currentScore")) + score;
+          sessionStorage.setItem("currentScore", JSON.stringify(currentScore));
+        }
+        // Remove submit button
+        const confirmSettings = document.getElementById("confirm-settings");
+        confirmSettings.remove();
+        // Add next stage button
+        const buttonHolder = document.getElementById("button-holder");
+        const nextStage = document.createElement("button");
+        nextStage.style = "width: 200px;";
+        nextStage.className = "function";
+        nextStage.innerHTML = "Next Stage";
+        nextStage.id = "confirm-settings";
+        buttonHolder.appendChild(nextStage);
+        nextStage.addEventListener("click", () => this.nextStage());
+      }
+      // Get stage from session storage and then use that number to advance to the next stage
+      nextStage(){
+        if(this.stage >= this.allApps.length/5-1){ // If this was the final stage, take the player back to the menu
+          sessionStorage.setItem("permissionsLevelStage",JSON.stringify(0));
+          alert("You completed the app permissions level! Returning to the menu.");
+          window.location.href = "../menu.html";
+        }else{ // If it wasn't, clear the screen and add the next set of apps
+          this.stage += 1;
+          sessionStorage.setItem("permissionsLevelStage",JSON.stringify(this.stage));
+          document.getElementById("apps").innerHTML = "";
+          document.getElementById("title").innerHTML = "";
+          document.getElementById("results").innerHTML = "";
+          this.selectedApps = this.allApps.sort().slice(1+(5*this.stage), 6+(5*this.stage));
+          this.createAppUI();
+          document.getElementById('body').scrollIntoView();
+        }
+      }
+    }
+  </script>
+</head>
+<body id="body">
+  <div class="menu" style="height: auto">
+    <div id="title"></div>
+  </div><br>
+  <div id="apps-menu" class="menu" style="height: auto">
+    <div id="apps"></div>
+    <div id="results"></div>
+    <div id="button-holder">
+      <button id="confirm-settings" class="function" onclick="mymain.submitChoices()">Confirm Settings</button><br>
+    </div>
+    <button class="function" onclick="window.location.href='../menu.html'" style="margin-bottom: 10px; width: 200px">Save and Quit</button>
+  </div>
+
+  <script>
+    var mymain = new main;
+  </script>
+</body>
+</html>

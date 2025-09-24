@@ -456,8 +456,9 @@ app.post("/getCommon", async(request,response) =>{
 	const questions = await collection.find({}).toArray();
   var endTime = Date.now();
   var rtt = endTime - startTime;
-  questions.rtt = rtt; //Add server-database rtt to response
-	return questions;
+  questions.push(rtt); //Add server-database rtt to response
+	//return questions;
+  response.status(200).json(questions);
   }catch(err){
     console.error(`[Error] ${err}`);
   }finally{
@@ -502,6 +503,48 @@ app.post("/getSmishing", async(request, response) => {
     response.status(200).json(document);
   }catch(err){
     console.error(`[Error] ${err}`);
+  }
+});
+
+//Get the questions for the Permissions level
+app.post("/getPermissions", async(request, response) => {
+  //Get body data
+  var data = request.body;
+  //Connect to MongoDB
+  const client = new MongoClient(uri);
+  await client.connect();
+  //Try to run queries on mongo
+  try{
+    //Connect to the proper database and collection
+    var dataBase = "SSE_MobileSecurityGame";
+    var dbCollection = "PermissionsBank";
+    const db = client.db(dataBase);
+    const collection = db.collection(dbCollection);
+
+    //Get data for which questions to fetch
+    //Each stage has 5 questions. So to get the questions for that stage, multiply the stage by 5
+    //Then ask for all questions less then or equal to the that number
+    //Then retrieve the first five questions
+    var highestQuestion = data.stage*5;
+    var limit = 5;
+    if(highestQuestion > 50){ //If this is the last question, only retrive it alone
+      limit = 1;
+    }
+    var startTime = Date.now(); //Get start and end time to calculate RTT
+    var result = await collection.find({question:{$lte: highestQuestion}}).sort({question:-1}).limit(limit).toArray();
+    var endTime = Date.now();
+    var rtt = startTime - endTime;
+
+    //Place result into a json document along with server-database rtt
+    var document = {
+      questions: result,
+      rtt: rtt
+    }
+    
+    //Return the document
+    response.status(200).send(document);
+  }catch(err){
+    console.log(`[Error] ${err}`);
   }
 });
 
