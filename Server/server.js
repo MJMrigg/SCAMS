@@ -345,7 +345,6 @@ app.post("/forgot", async(request, response) => {
       };
       //Send the email
       result = await transporter.sendMail(mailOptions);
-      //Need create email for SCAMS
     }
     //Return the document
     response.status(200).json(document);
@@ -353,6 +352,7 @@ app.post("/forgot", async(request, response) => {
     console.error(`[Error] ${err}`);
   }
 });
+
 
 //for the question banks
 
