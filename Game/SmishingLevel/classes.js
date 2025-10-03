@@ -170,7 +170,20 @@ class main{
    	    this.webgl = new webgl();
         this.objects = []; //Parts of the message that are suspicious
         this.end = false; //This stage has not ended
-        this.setUpStage();
+        this.getAllQuestions(); //Get entire bank of questions from server
+        this.setUpStage(); //Set up first stage
+    }
+    async getAllQuestions(){
+        //Get entire bank of smishing questions from server
+        var startTime = Date.now(); //Get start and end times to calculate RTT
+        var query = await fetch("/getSmishingAll",{
+            method: "POST",
+            "Content-Type": "application/json",
+            body: JSON.stringify({})
+        });
+        //Get response from post request that contains all the data that was post
+        var result = await query.json();
+        var endTime = Date.now(); 
     }
     //Set up the stage
     async setUpStage(){

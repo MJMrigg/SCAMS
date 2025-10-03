@@ -506,6 +506,37 @@ app.post("/getSmishing", async(request, response) => {
   }
 });
 
+app.post("/getSmishingAll", async(request, response) => {
+
+  //Connect to MongoDB
+  const client = new MongoClient(uri);
+  await client.connect();
+  //Try to run queries with mongo
+  try{
+    //Connect to the proper database and collection
+    var dataBase = "SSE_MobileSecurityGame";
+    var dbCollection = "SmishingBank"
+    const db = client.db(dataBase);
+    const collection = db.collection(dbCollection);
+
+    //Send document to mongo and store result as array
+    var startTime = Date.now(); //Get start and end times to calculate rtt
+    var result = await collection.find({}).toArray();
+    var endTime = Date.now();
+    var rtt = endTime - startTime;
+    //Update document with data from result
+    var document = {};
+    for(var i = 0; i < result.length; i++){
+      document["Question"+i] = result[i];
+    }
+    //Return the document
+    document.rtt = rtt; //Add server-database rtt to response
+    response.status(200).json(document);
+  }catch(err){
+    console.error(`[Error] ${err}`);
+  }
+});
+
 //Get the questions for the Permissions level
 app.post("/getPermissions", async(request, response) => {
   //Get body data
