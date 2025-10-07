@@ -1,13 +1,15 @@
 class Voicemail_Gen{
-	constructor(type){
+	constructor(prompt, ans1, ans2, ans3){
 		this.done = false;
 		
-		this.type = type;
-		this.transcript = "Not implemented yet!";
-		this.correctAnswers = [false,true,true];
+		var type = 4;
+		//this.transcript = "Not implemented yet!";
+		this.transcript = prompt;
+		//this.correctAnswers = [false,true,true];
+		this.correctAnswers = [ans1,ans2,ans3];
 		//r1 is reason for company claiming, r2 is reason for requesting personal info, r3 is reason for fake urgency
 		//r4 is reason for all correct message
-		this.ansReasons = ["r1","r2","r3","r4"];
+		//this.ansReasons = ["r1","r2","r3","r4"];
 		this.callerID = "(123)-456-7890";
 		if(type == 0){
 			this.callerID = "(123)-000-0000";
