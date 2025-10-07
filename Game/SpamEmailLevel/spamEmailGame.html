@@ -1,5 +1,7 @@
 <html>
 <head>
+	<script src = "email.js"></script>
+
 	<meta name="viewport" content="width=device-width, initial-scale:1.0'">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
@@ -25,6 +27,8 @@
 
 
 				this.questionBank = [];
+
+				this.emails = [];
 				this.alreadyDone = [];
 				//this.getQuestionBank();
 				//var len = this.questionBank.length;
@@ -96,8 +100,8 @@
 			}
 			
 			submitAnswers(){
-				console.log("Pressed");
-				console.log("Yes and No value: " + this.playerAns);
+				//console.log("Pressed");
+				//console.log("Yes and No value: " + this.playerAns);
 				console.log(this.correctAnsNum);
 				var allAns = true;
 				for(var i = 0; i<this.playerAns.length-1;i++){
@@ -117,16 +121,16 @@
 						this.ansResult.innerText = "Not Quite!";
 					}
 					var doneCount = 0;
-					for(let i =0; i<this.questionBank.length;i++){
+					for(let i =0; i<this.emails.length;i++){
 						if(this.alreadyDone[i]){
 							doneCount++;
 						}
 					}
-					if(doneCount==this.questionBank.length){
+					if(this.checkDone){
 						for(let i = 0;i<this.questionBank.length;i++){
 							this.alreadyDone[i]=false;
 							//resets game
-							this.currIndex=Math.floor(Math.random()*this.questionBank.length);
+							this.currIndex=Math.floor(Math.random()*this.emails.length);
 						}
 					}else{
 						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
@@ -137,6 +141,14 @@
 					this.goButton.onclick = () => this.nextQuestion();
 				}
 			}
+			checkDone(){
+				for(var i = 0;i<this.alreadyDone.length-1;i++){
+					if(!this.alreadyDone.length[i]){
+						return false;
+					}
+				}
+				return true;
+			}
 			
 			async getQuestionBank(){
 				try {
@@ -144,20 +156,33 @@
 					var startTime = Date.now(); //Get start and end times to calculate rtt
 					const response = await fetch("/getPhishing",{
                         method: "POST",
-                        "Content-Type": "application/json",
-                        body: JSON.stringify({})
+                        //"Content-Type": "application/json",
+                        //body: JSON.stringify({})
                     });
 					//const data = await response.json();
-					var data = await response.json();
+					const questions = await response.json();
 					var endTime = Date.now();
 					var rtt = endTime - startTime;
-					console.log("/getPhishing Request RTTs:\nServer-Database Request RTT: "+data.pop()+"ms\nClient-Server Request RTT: "+rtt+"ms\n");
-					this.changeImage(data[0].imagebase64);
-					for(let i = 0; i<data.length;i++){
-						this.alreadyDone.push(data[i]);
-						this.questionBank.push(data[i]);
+					console.log("/getPhishing Request RTTs:\nServer-Database Request RTT: "+questions.pop()+"ms\nClient-Server Request RTT: "+rtt+"ms\n");
+					//this.changeImage(data[0].imagebase64);
+					this.questionBank = questions;
+					for(var i = 0;i<this.questionBank.length-1;i++){
+						this.alreadyDone[i]=false;
 					}
-					this.currIndex = i;
+					while(this.questionBank.length != 0){
+						//this.alreadyDone.push(data[i]);
+						//this.questionBank.push(data[i]);
+						
+						var curr = this.questionBank.length;
+						var data = this.questionBank[curr-1];
+						//console.log(data);
+
+						var ans = [data.senderAdd, data.emailSubject, data.emailBody, data.spellingErrors, data.soundsOff, data.pdfIncluded];
+						this.emails.push(new email(data.imagebase64, ans));
+						this.questionBank.pop();
+					}
+					this.currIndex = Math.floor(Math.random()*this.emails.length);
+					this.updateScreen();
 				} catch (error) {
 					console.error("Error fetching question bank:", error);
 				}
@@ -169,49 +194,44 @@
 			
 			checkAllAns(){
 				console.log(this.playerAns);
-				//console.log(this.calls[this.callCurrentIndex].correctAnswers);
+				console.log(this.emails[this.currIndex].corAns);
 				var allCor = false;
 				var levelCor = 0;
-				if(this.questionBank[this.currIndex].senderAdd==this.playerAns[0]){
-					levelCor++;
-					document.getElementById("emailAd").style.color = "green";
-				}else{
-					document.getElementById("emailAd").style.color = "red";
-				}
-				
-				if(this.questionBank[this.currIndex].emailSubject==this.playerAns[1]){
-					levelCor++;
-					document.getElementById("subjectLine").style.color = "green";
-				}else{
-					document.getElementById("subjectLine").style.color = "red";
-				}
+				for(var i = 0; i<6;i++){
+					if(this.emails[this.currIndex].checkCorrect(i, this.playerAns[i])){
+						this.correctAnsNum++;
+						levelCor++;
+						if(i==0){
+							document.getElementById("emailAd").style.color = "green";
 
-				if(this.questionBank[this.currIndex].emailBody==this.playerAns[2]){
-					levelCor++;
-					document.getElementById("emailBod").style.color = "green";
-				}else{
-					document.getElementById("emailBod").style.color = "red";
-				}
+						}else if(i==1){
+							document.getElementById("subjectLine").style.color = "green";
+						}else if(i==2){
+							document.getElementById("emailBod").style.color = "green";
+						}else if(i==3){
+							document.getElementById("spellingErr").style.color = "green";
+						}else if(i==4){
+							document.getElementById("feelOff").style.color = "green";
+						}else{
+							document.getElementById("pdf").style.color = "green";
+						}
+						
+					}else{
+						if(i==0){
+							document.getElementById("emailAd").style.color = "red";
 
-				if(this.questionBank[this.currIndex].spellingErrors==this.playerAns[3]){
-					levelCor++;
-					document.getElementById("spellingErr").style.color = "green";
-				}else{
-					document.getElementById("spellingErr").style.color = "red";
-				}
-
-				if(this.questionBank[this.currIndex].soundsOff==this.playerAns[4]){
-					levelCor++;
-					document.getElementById("feelOff").style.color = "green";
-				}else{
-					document.getElementById("feelOff").style.color = "red";
-				}
-
-				if(this.questionBank[this.currIndex].pdfIncluded==this.playerAns[5]){
-					levelCor++;
-					document.getElementById("pdf").style.color = "green";
-				}else{
-					document.getElementById("pdf").style.color = "red";
+						}else if(i==1){
+							document.getElementById("subjectLine").style.color = "red";
+						}else if(i==2){
+							document.getElementById("emailBod").style.color = "red";
+						}else if(i==3){
+							document.getElementById("spellingErr").style.color = "red";
+						}else if(i==4){
+							document.getElementById("feelOff").style.color = "red";
+						}else{
+							document.getElementById("pdf").style.color = "red";
+						}
+					}
 				}
 
 				console.log(this.correctAnsNum);
@@ -228,8 +248,11 @@
 			
 			nextQuestion(){
 				//var len = this.questionBank.length;
+				//while(this.alreadyDone[this.currIndex]){
+				this.alreadyDone[this.currIndex] = true;
+
 				while(this.alreadyDone[this.currIndex]){
-					this.currIndex = Math.floor(Math.random()*this.questionBank.length);
+					this.currIndex = Math.floor(Math.random()*this.emails.length);
 				}
 				for(var i = 0;i<6;i++){
 					//clears player's current answer array
@@ -260,6 +283,8 @@
 					rad[i].checked = false;
 				}
 
+				document.getElementById("emailAdditional").style = "display:none";
+
 				document.getElementById("feelOff").style="display:none";
 				document.getElementById("spellingErr").style="display:none";
 
@@ -268,13 +293,15 @@
 	
 				document.getElementById("pdf").checked = false;
 
+				this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
+
 				this.updateScreen();
 			}
 			
 			updateScreen(){
 				//this.changeImage();
 				
-				this.changeImage(this.questionBank[this.currIndex].imagebase64);
+				this.changeImage(this.emails[this.currIndex].imgUrl);
 				/*for(var i = 0; i<this.playerAns.length;i++){
 					this.playerAns[i]=null;
 				}*/
@@ -287,6 +314,8 @@
 				this.goButton.innerText = "Submit Answers";
 				this.goButton.onclick = () => this.submitAnswers();
 				this.ansResult.innerText = " ";
+				//this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
+
 			}
 		}
 	</script>
@@ -347,7 +376,7 @@
 		<script>
 			var m = new main();
 			m.getQuestionBank();
-			m.changeImage();
+			//m.changeImage();
 		</script>
 	</div>
 </body>
