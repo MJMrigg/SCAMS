@@ -1,27 +1,23 @@
 <html>
     <!-- Common Attack Tutorial -->
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale:1'">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
         <script>
             class main{
                 constructor(){
                     this.currentPart = 0;
                     this.tutPic = document.getElementById("pic");
                     alert("Welcome to the Common Attack Level tutorial! This will test your knowledge on all of the attacks you experience on a daily basis!");
-                    //this.head = this.document.getElementById("head");
 
-                    //this.text1 = this.document.getElementById("inTxt1");
-                    //this.text2 = this.document.getElementById("inTxt2");
-                    //this.text3 = this.document.getElementById("inTxt3");
+                    this.optTxt = document.getElementById("SmishingTut");
+                    this.optCall = document.getElementById("VishingCallTut");
+                    this.optVoice = document.getElementById("VishingMailTut");
+                    this.optEmail = document.getElementById("PhishingTut");
+
                 }
-                /*onclick(){
-                    if(this.currentPart == 3){
-                    //get rid of button and button function
-                    //would be 
-                    }else{
-                        this.currentPart++;
-                        updateScreen();
-                    }
-                }*/
+
                 updateScreen(){
 
                     //start with vishing
@@ -29,42 +25,71 @@
                     //final is smishing
 
                     if(this.currentPart==1){//vishingcall:    correct show: asks yes no questions, personal info, odd payment methods
+                        this.optTxt.style = "display:none";
+                        this.optVoice.style = "display:none";
+                        this.optEmail.style = "display:none";
+                        this.optCall.style = "display:block";
                         alert("These are the options for a vishing call transcript. Green is correct!");
+                        this.optCall.style.color = "green";
 
                     }else if(this.currentPart==2){//wrong show
                         alert("And red is incorrect!");
+                        this.optCall.style.color = "red";
 
                     }else if(this.currentPart==3){//vishingmail: //emergency, personal info, odd claims
+                        this.optTxt.style = "display:none";
+                        this.optEmail.style = "display:none";
+                        this.optCall.style = "display:none";
+                        this.optVoice.style = "display:block";
                         alert("These are the options for a vishing voicemail transcript. Green is correct!");
-
+                        this.optVoice.style.color = "green";
                     }
                    
                     else if(this.currentPart==4){//wrong
                         alert("And red is incorrect!");
+                        this.optVoice.style.color = "red";
 
                     }else if(this.currentPart==5){//email correct sus subject, odd body (spelling err or feels off), sender add
+                        this.optCall.style = "display:none";
+				        this.optTxt.style = "display:none";
+                        this.optVoice.style = "display:none";
+                        this.optEmail.style = "display:block";
                         alert("These are the options for the phishing examples. Green is correct!");
-
+                        this.optEmail.style.color = "green";
                     }
                     else if(this.currentPart==6){//email wrong
                         alert("And red is incorrect!");
+                        this.optEmail.style.color = "red";
 
                     }else if(this.currentPart==7){//smish correct sus body, sus body (link, typos, claims)
+                        this.optEmail.style = "display:none";
+                        this.optCall.style = "display:none";
+                        this.optVoice.style = "display:none";
+                        this.optTxt.style = "display: block";
+                        
                         alert("These are the types of options to expect when getting a smishing example. Green is correct!");
+
+                        this.optTxt.style.color = "green";
 
 
                     }else if (this.currentPart==8){//smish wrong
+                        
                         alert("And red is incorrect!");
+                        this.optTxt.style.color = "red";
+
 
                     }else{//done!
                         alert("You're all done with the tutorial! These are gonna come at random. Good luck!");
-                        document.getElementById("nextBtn").onclick="";
+                        ///document.getElementById("nextBtn").onclick="window.location.href = 'CommonAttackLevel.html'";
+                        document.getElementById("nextBtn").style = "display:none";
+                        document.getElementById("tutSkip").innerText = "Start!";
                     }
 			    }
                 next(){
-                    if(this.currentPart==9){
+                    /*if(this.currentPart==9){
                         //done, no more next function
-                    }
+
+                    }*/
                     this.currentPart++;
                     this.updateScreen();
                 }
@@ -73,25 +98,134 @@
         <link rel="stylesheet" href="../../styles.css">
     </head>
     <body>
-	    <div class = "menu" style="height: 380px;">
+	    <div class = "menu" style="height: auto;">
             
             <img id="pic" src = "" alt = "Loading image! Please wait." width = "150" height="100" hidden/><br><!--Hidden until start-->
-            <div id="SmishingTut">
+            <div id="SmishingTut" style = "display:none">
                 <!--Give user example of different yes and nos for a Smishing level that clues for different suspicious parts
                     like Vishing and Phishing but now for Smishing
                 -->
+                <div id="SmishphoneNum" for="SmishphoneNum" style="border: 1px solid #000">
+                    <center><b>Weird Phone Number</b><br>
+                    <input type="radio" id="SmishnumT" name="Smishnum">
+                    <label for = "OptionSel1">Yes</label>
+                    <input type="radio" id="SmishnumF" name="Smishnum">
+                    <label for = "OptionSel1">No</label>
+                    </center>
+                </div>
+                <div id="Smishbody" for="Smishbody" style="border: 1px solid #000">
+                    <center><b>Weird Message Body</b><br>
+                    <input type="radio" id="SmishbodyT" name="Smishbody">
+                    <label for = "OptionSel1">Yes</label>
+                    
+                    <input type="radio" id="SmishbodyF" name="Smishbody">
+                    <label for = "OptionSel1">No</label>
+
+                    <div id="SmishAddOpt" name ="SmishAddOpt">
+                        <input type = "checkbox" name="link">Link</input>
+                        <input type="checkbox" name = "typos">Typos</input>
+                        <input type="checkbox" name="falseClaim">False Claim</input>
+                    </div>
+                    </center>
+                </div>
 
             </div>
-            <div id="VishingTut">
+            <div id="VishingCallTut" style = "display:none">
                 <!--Give user example of the different yes and nos of normal Vishing Level-->
-
+                <div id="personalInfoCall" name = "personalInfoCall" style="border: 1px solid #000;">
+                    <center><b>Asks for Personal Information</b><br>
+                    <input type="radio" id="persCallT" name="numCall">
+                    <label for = "OptionSel1">Yes</label>
+                    <input type="radio" id="persCallF" name="numCall">
+                    <label for = "OptionSel1">No</label>
+                    </center>
+                </div>
+                <div id="susYesNo" name = "susYesNo" style="border: 1px solid #000;">
+                    <center><b>Suspicious Yes and No Questions</b><br>
+                    <input type="radio" id="susYesNoT" name="susYesNo">
+                    <label for = "OptionSel1">Yes</label>
+                    <input type="radio" id="susYesNoF" name="susYesNo">
+                    <label for = "OptionSel1">No</label>
+                    </center>
+                </div>
+                <div id="payMethodCall" name = "payMethodCall" style="border: 1px solid #000;">
+                    <center><b>Asks for an Odd Payment Method</b><br>
+                    <input type="radio" id="payMethodCallT" name="payMethodCall">
+                    <label for = "OptionSel1">Yes</label>
+                    <input type="radio" id="payMethodCallF" name="payMethodCall">
+                    <label for = "OptionSel1">No</label>
+                    </center>
+                </div>
             </div>
-            <div id="PhishingTut">
+            <div id="VishingMailTut" style = "display:none">
+                <div id = "companyClaim" style = "border: 1px solid #000;">
+                    <center><b>Suspicious claim to be a company</b><br>
+                        <input type = "radio" id = "OptionSel1" name = "company">
+                        <label for = "OptionSel1">Yes</label>
+                        <input type = "radio" id = "OptionSel1" name ="company">
+                        <label for = "OptionSel1">No</label>
+                    </center>
+                </div>
+                <div id = "personalInfoCall" style = "border: 1px solid #000;">
+                    <center><b>Asks for personal information</b><br>
+                    <input type = "radio" id = "OptionSel1" name = "personalInfoCall">
+                    <label for = "OptionSel1">Yes</label>
+                    <input type = "radio" id = "OptionSel1" name = "personalInfoCall">
+                    <label for = "OptionSel1">No</label>
+                    </center>
+                </div>
+                <div id = "urgentClaim" style = "border: 1px solid #000;">
+                    <center><b>Details it as an urgent matter</b><br>
+                    <input type = "radio" id = "OptionSel1" name = "urgent">
+                    <label for = "OptionSel1">Yes</label>
+                    <input type = "radio" id = "OptionSel1" name = "urgent">
+                    <label for = "OptionSel1">No</label>
+                    </center>
+                </div>
+            </div>
+            <div id="PhishingTut" style = "display:none">
                 <!--Give user example of the different yes and nos of normal Phishing level-->
-
+                <div id = "emailAd" for = "emailAd" style = "border: 1px solid #000;">
+                    <center><b>Weird Email Address</b><br>
+                    <input type = "radio" id = "emailAdT" name = "emailAdd">
+                    <label for = "OptionSel1">Yes</label>
+                    <input type = "radio" id = "emailAdF" name ="emailAdd">
+                    <label for = "OptionSel1">No</label>
+                </div>
+            
+                <div id = "subjectLine" for = "subjectLine" style = "border: 1px solid #000;">
+                    <center><b>Weird Email Subject Line</b><br>
+                    <input type = "radio" id = "subT" name = "subject">
+                    <label for = "OptionSel1">Yes</label>
+                    <input type = "radio" id = "subF" name = "subject">
+                    <label for = "OptionSel1">No</label>
+                </div>
+            
+                <div id = "emailBod" for = "emailBod" style = "border: 1px solid #000;">
+                    <center><b>Weird Email Body</b><br>
+                    <input type = "radio" id = "bodT" name = "emailBod">
+                    <label for = "OptionSel1">Yes</label>
+                    <input type = "radio" id = "bodF" name = "emailBod">
+                    <label for = "OptionSel1">No</label>
+                    
+                    <div id="emailAdditional">
+                        <input type = "checkbox" value = "spellingErr" id = "spellingErr">Spelling mistakes</input>
+                        <input type = "checkbox"value="feelOff" id="feelOff">Sounds off</input>
+                    </div>
+                    
+                    </center>
+                </div>
+                <div id = "pdf" for = "pdf"style = "border: 1px solid #000;">
+                    <center><b>PDF Included</b><br>
+                    <input type = "radio" id = "pdfIn" name = "yesNo">
+                    <label for = "OptionSel1">Yes</label>
+                    <input type = "radio" id = "pdfIn" name = "yesNo">
+                    <label for = "OptionSel1">No</label>
+                    </center>
+                </div>
             </div>
             <button onclick="m.next()" id="nextBtn" class="selection">Next</button>
-            <button onclick="window.location.href = 'CommonAttackLevel.html'" class="selection">No Tutorial for Me!</button>
+            <button onclick="window.location.href = 'CommonAttackLevel.html'" class="selection" id="tutSkip">No Tutorial for Me!</button>
             <button onclick="window.location.href = '../menu.html'" class="selection">Back to Main Menu</button>
         </div>
         <script>

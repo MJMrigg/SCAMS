@@ -1,0 +1,20 @@
+{
+    "type": "text",
+    "imagebase64":"",
+    "emailSubject":false,
+    "emailBody":false,
+    "spellingErrors":false, 
+    "soundsOff":false, 
+    "pdfIncluded":false,
+    "callPersonal":false,
+    "callPayment":false, 
+    "callYesNo":false, 
+    "voiceCompany":false, 
+    "voicePersonal":false,
+    "voiceUrgent":false, 
+    "textNumber":true,
+    "textBody":true,
+    "textLink":true, 
+    "textTypo":true,
+    "textClaim":true
+}

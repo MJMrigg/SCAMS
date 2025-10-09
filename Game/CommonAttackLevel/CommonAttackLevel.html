@@ -1,31 +1,49 @@
 <html>
 
 <head>
+	<script src = "Voicemail_classes.js"></script>
+	<script src = "Smish_classes.js"></script>
+	<script src = "Call_classes.js"></script>
+	<script src = "email.js"></script>
 	<meta name="viewport" content="width=device-width, initial-scale:1'">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
-	<script>
-		var smishPic = "";
-	</script>
-	<script>
-		var emailPic = "";
-	</script>
+	
 	<script>
 	class main{
 		constructor(){
+			this.image = '';
+			this.questionImg = document.getElementById("pic");
+			this.questionImg.src = 'data:image/png;base64,'+ this.image;
+
 			this.gameBank=[];//collection of ALL data
-			this.gameCall=[];//filtered for vishing calls
-			this.gameSmish=[];//filtered for smishing
-			this.gameVoice=[];//filtered for vishing voicemails
-			this.gamePerm=[];//filtered for app permissions
 
-			this.playerAns = [];
+			this.playerAns = [null];//length will change with each type, starts will just 1 to initialize
 
-			this.optPerm = this.document.getElementById();
-			this.optTxt = this.document.getElementById();
-			this.optCall = this.document.getElementById();
-			this.optVoice = this.document.getElementById();
+			this.optTxt = document.getElementById("textOpt");
+			this.optCall = document.getElementById("callOpt");
+			this.optVoice = document.getElementById("voicemailOpt");
+			this.optEmail = document.getElementById("emailOpt");
+
+			this.ansResult = document.getElementById("results");
+			this.score = document.getElementById("score");
+			this.goButton = document.getElementById("confirm");
+
+			this.gameFinish = false;
+			this.maxScore = 0;
+			this.correctAnsNum = 0;
+			this.currentIndex = 0;
+			this.alreadyDone = [];
+
 		}
+
+		changeImage(str){
+				//this.image = this.questionBank[this.currIndex].imagebase64;
+				this.image = str;
+				this.questionImg = document.getElementById("pic");
+				this.questionImg.src = 'data:image/png;base64,'+ this.image;
+		}
+
 		changeOptType(type){
 			//reset array size and clear answers
 			for(var i = 0; i<this.playerAns.length;i++){
@@ -79,7 +97,6 @@
 					const response = await fetch("/getCommon",{
                         method: "POST",
                         "Content-Type": "application/json",
-                        body: JSON.stringify({})
                     });
 					//const data = await response.json();
 					var startTime = Date.now(); //Get start and end times to calculate rtt
@@ -87,31 +104,37 @@
 					var endTime = Date.now();
 					var rtt = endTime - startTime;
 					console.log("/getCommon Request RTTs:\nServer-Database Request RTT: "+data.rtt+"ms\nClient-Server Request RTT: "+rtt+"ms\n");
-					console.log(data);
-					var i = Math.floor(Math.random()*data.length);
-					console.log(i);
-					console.log(data[i]);
-					console.log(data[i].senderAdd==this.playerAns[0])
-					this.changeImage(data[i].imagebase64);
-					console.log(data.length);
-					for(let i = 0; i<data.length;i++){
+
+					this.questions = data;
+
+					for(let i = 0; i<this.questions.length-1;i++){
 						this.alreadyDone.push(data[i]);
-						this.gameBank.push(data[i]);
 					}
-					this.currIndex = i;
-					console.log(this.alreadyDone.length);
-					console.log(this.gameBank.length);
-					this.gameCall=this.gameBank();//filter for calls
-					this.gamePerm=this.gameBank();//filter for permissions
-					this.gameSmish=this.gameBank();//filter for smishing
-					this.gameVoice=this.gameBank();//filter for voicemail
+					while(this.questions.length != 0){
+						var curr = this.questions.length;
+						var currData = this.questions[curr-1];
+						if(currData.type == "voice"){
+							this.gameBank.push(new Voicemail_Gen(currData.imagebase64, currData.voiceCompany, currData.voicePersonal, currData.voiceUrgent));
+						}else if(currData.type == "email"){
+
+							var ans = [currData.senderAdd, currData.emailSubject, currData.emailBody, currData.spellingErrors, currData.soundsOff, currData.pdfIncluded];
+							this.gameBank.push(new email(currData.imagebase64, ans));
+						}else if(currData.type == "text"){
+							var ans = [currData.textNumber, currData.textBody, currData.textLink, currData.textTypo, currData.textClaim]
+							this.gameBank.push(new Smish_Class(currData.imagebase64, ans));
+						}else{//for calls
+							this.gameBank.push(new Call_Gen(currData.imagebase64, currData.callPersonal, currData.callPayment, currData.callYesNo));
+						}
+						
+						this.questions.pop();
+					}
+
+					this.currentIndex = Math.floor(Math.random()*this.gameBank.length);
+					this.updateScreen();
+
 				} catch (error) {
 					console.error("Error fetching question bank:", error);
 				}
-				//const questions = 'PhishingQA.json';
-				//this.questionBank = JSON.parse(questions);
-				//console.log("Did it work? "+ this.questionBank["senderAdd"]);
-				
 			}
 
 		checkBoxClick(type, option, checked){
@@ -119,10 +142,16 @@
 			if(type==0){//Smish
 				if(option==0){
 					this.playerAns[2]=checked;
+				}else if(option==1){
+					this.playerAns[3]=checked;
+				}else{
+					this.playerAns[4]=checked;
 				}
 			}else{//Email
 				if(option==0){
 					this.playerAns[3]=checked;
+				}else{
+					this.playerAns[4]=checked;
 				}
 			}
 		}
@@ -142,6 +171,10 @@
 							//they say yes
 							this.playerAns[1]=true;
 							//open up additional options
+							document.getElementById("SmishAddOpt").style = "display:block";
+							document.getElementById("link").style="display:block";
+							document.getElementById("typos").style="display:block";
+							document.getElementById("falseClaim").style="display:block";
 
 						}else{
 							//they say no
@@ -153,7 +186,10 @@
 							this.playerAns[4]=false;
 
 							//close additional options if they were there
-
+							document.getElementById("SmishAddOpt").style = "display:none";
+							document.getElementById("link").style="display:none";
+							document.getElementById("typos").style="display:none";
+							document.getElementById("falseClaim").style="display:none";
 
 						}
 					}
@@ -260,6 +296,178 @@
 					}
 				}
 			}
+
+			submitAnswers(){
+				//console.log("Pressed");
+				//console.log("Yes and No value: " + this.playerAns);
+				console.log(this.correctAnsNum);
+				var allAns = true;
+				for(var i = 0; i<this.playerAns.length-1;i++){
+					if(this.playerAns[i]==null){
+						allAns = false;
+					}
+				}
+				if(!allAns){
+					this.ansResult.innerText = "Please answer all questions before submitting!";
+				}else{
+					var check = this.checkAllAns();//check answers to display proper result message
+					//var nextIndex = this.mailCurrentIndex + 1;//makes next index a temporary variable
+					//console.log("next index: "+nextIndex);
+					if(check){
+						this.ansResult.innerText = "Fantastic!";
+					}else{
+						this.ansResult.innerText = "Not Quite!";
+					}
+					var doneCount = 0;
+					for(let i =0; i<this.gameBank.length;i++){
+						if(this.alreadyDone[i]){
+							doneCount++;
+						}
+					}
+					if(this.checkDone){
+						for(let i = 0;i<this.gameBank.length;i++){
+							this.alreadyDone[i]=false;
+							//resets game
+							this.currentIndex=Math.floor(Math.random()*this.gameBank.length);
+						}
+					}else{
+						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
+						this.goButton.innerText = "Next level";
+						this.goButton.onclick = () => this.nextQuestion();
+					}
+					this.goButton.innerText = "Next level";
+					this.goButton.onclick = () => this.nextQuestion();
+				}
+			}
+
+			checkDone(){
+				for(var i = 0;i<this.alreadyDone.length-1;i++){
+					if(!this.alreadyDone.length[i]){
+						return false;
+					}
+				}
+				return true;
+			}
+
+
+			nextQuestion(){
+				//var len = this.questionBank.length;
+				//while(this.alreadyDone[this.currIndex]){
+				this.alreadyDone[this.currentIndex] = true;
+
+				while(this.alreadyDone[this.currentIndex]){
+					this.currentIndex = Math.floor(Math.random()*this.gameBank.length);
+				}
+				for(var i = 0;i<6;i++){
+					//clears player's current answer array
+					this.playerAns[i] = null;
+				}
+				
+
+				this.playerAns[3] = false;
+				this.playerAns[4] = false;
+
+				//emails
+				document.getElementById("emailAd").style.color = "black";
+				document.getElementById("subjectLine").style.color = "black";
+				document.getElementById("emailBod").style.color = "black";
+				document.getElementById("feelOff").style.color = "black";
+				document.getElementById("spellingErr").style.color = "black";
+				document.getElementById("pdf").style.color.color = "black";
+
+				//texts
+				document.getElementById("SmishAddOpt").style.color = "black";
+				document.getElementById("link").style.color="black";
+				document.getElementById("typos").style.color="black";
+				document.getElementById("falseClaim").style.color="black";
+
+				//voicemails
+
+				//calls
+
+				var rad = document.querySelectorAll('input[type="radio"]');
+				for(var i = 0;i<rad.length;i++){
+					rad[i].checked = false;
+				}
+
+				document.getElementById("emailAdditional").style = "display:none";
+
+				document.getElementById("feelOff").style="display:none";
+				document.getElementById("spellingErr").style="display:none";
+
+				document.getElementById("feelOff").checked = false;
+				document.getElementById("spellingErr").checked = false;
+	
+				document.getElementById("pdf").checked = false;
+
+				this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
+
+				this.updateScreen();
+			}
+
+			checkAllAns(){
+				console.log(this.playerAns);
+				console.log(this.gameBank[this.currIndex].corAns);
+				var allCor = false;
+				var levelCor = 0;
+				for(var i = 0; i<this.playerAns.length;i++){
+					if(this.gameBank[this.currIndex].checkCorrect(i, this.playerAns[i])){
+						this.correctAnsNum++;
+						levelCor++;
+						if(i==0){
+							document.getElementById("emailAd").style.color = "green";
+
+						}else if(i==1){
+							document.getElementById("subjectLine").style.color = "green";
+						}else if(i==2){
+							document.getElementById("emailBod").style.color = "green";
+						}else if(i==3){
+							document.getElementById("spellingErr").style.color = "green";
+						}else if(i==4){
+							document.getElementById("feelOff").style.color = "green";
+						}else{
+							document.getElementById("pdf").style.color = "green";
+						}
+						
+					}else{
+						if(i==0){
+							document.getElementById("emailAd").style.color = "red";
+
+						}else if(i==1){
+							document.getElementById("subjectLine").style.color = "red";
+						}else if(i==2){
+							document.getElementById("emailBod").style.color = "red";
+						}else if(i==3){
+							document.getElementById("spellingErr").style.color = "red";
+						}else if(i==4){
+							document.getElementById("feelOff").style.color = "red";
+						}else{
+							document.getElementById("pdf").style.color = "red";
+						}
+					}
+				}
+			}
+
+			updateScreen(){
+				//this.changeImage();
+				
+				this.changeImage(this.gameBank[this.currentIndex].imgUrl);
+				this.changeOptType(this.gameBank[this.currentIndex].type);
+				/*for(var i = 0; i<this.playerAns.length;i++){
+					this.playerAns[i]=null;
+				}*/
+				for(var i = 0; i<this.playerAns.length;i++){
+					this.playerAns[i]=null;
+				}
+				this.playerAns[3]=false;
+				this.playerAns[4]=false;
+
+				this.goButton.innerText = "Submit Answers";
+				this.goButton.onclick = () => this.submitAnswers();
+				this.ansResult.innerText = " ";
+				//this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
+
+			}
 	}
 	</script>
 </head>
@@ -280,18 +488,18 @@
 		<div id = "textOpt" style = "display:none">
 			<div id="SmishphoneNum" for="SmishphoneNum" style="border: 1px solid #000">
 				<center><b>Weird Phone Number</b><br>
-				<input type="radio" id="SmishnumT" name="Smishnum" onclick="m.changeVal(0,0,0)">
+				<input type="radio" id="SmishnumT" name="Smishnum" onclick="m.changeVal(0,0,1)">
 				<label for = "OptionSel1">Yes</label>
-				<input type="radio" id="SmishnumF" name="Smishnum" onclick="m.changeVal(0,0,1)">
+				<input type="radio" id="SmishnumF" name="Smishnum" onclick="m.changeVal(0,0,0)">
 				<label for = "OptionSel1">No</label>
 				</center>
 			</div>
 			<div id="Smishbody" for="Smishbody" style="border: 1px solid #000">
 				<center><b>Weird Message Body</b><br>
-				<input type="radio" id="SmishbodyT" name="Smishbody" onclick="m.changeVal(0,1,0)">
+				<input type="radio" id="SmishbodyT" name="Smishbody" onclick="m.changeVal(0,1,1)">
 				<label for = "OptionSel1">Yes</label>
 				
-				<input type="radio" id="SmishbodyF" name="Smishbody" onclick="m.changeVal(0,1,1)">
+				<input type="radio" id="SmishbodyF" name="Smishbody" onclick="m.changeVal(0,1,0)">
 				<label for = "OptionSel1">No</label>
 
 				<div id="SmishAddOpt" name ="SmishAddOpt" onclick="m.changeVal" style="display:none">
@@ -398,6 +606,11 @@
 			</div>
 
 		</div>
+
+		<button id="confirm" class="selection" onclick = "m.submitAnswers()">Confirm Selection</button>
+		<div id = "results" style = "height:auto;"><br></div>
+		<div id="score" style="height: auto;"><br></div>
+		<div id = "finishedDisplay" style = "font-size:25px;text-align:center"></div>
 		<button id="returnLevel" class = "selection" onclick = "window.location.href = '../menu.html'">Return to Level screen</button><br>
 
 	</div>
