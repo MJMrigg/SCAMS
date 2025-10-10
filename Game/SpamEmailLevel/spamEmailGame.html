@@ -138,7 +138,7 @@
 						}
 						var newIndex = Math.floor(Math.random()*this.emails.length);
 						while(newIndex==this.currIndex){
-							newIndex = Math.floor(Math.random()*this.gameBank.length);
+							newIndex = Math.floor(Math.random()*this.emails.length);
 						}
 						this.currIndex=newIndex;
 						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
