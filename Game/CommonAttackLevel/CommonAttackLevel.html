@@ -34,7 +34,7 @@
 			this.correctAnsNum = 0;
 			this.currentIndex = 0;
 			this.alreadyDone = [];
-
+			this.getQuestionBank();
 		}
 
 		changeImage(str){
@@ -59,12 +59,16 @@
 				
 				//2 that must be answered, 3 optional
 				this.playerAns.push(null,null,false,false,false);
+				this.questionImg.style.height = "50%";
+				this.questionImg.style.width = "50%";
 
 			}else if(type == 'email'){//phishing: 12, 6 different choices
 				this.optCall.style = "display:none";
 				this.optTxt.style = "display:none";
 				this.optVoice.style = "display:none";
 				this.optEmail.style = "display:block";
+				this.questionImg.style.height = "50%";
+				this.questionImg.style.width = "100%";
 
 				//3 that must be answered, 2 optional, 1 must be answered
 				this.playerAns.push(null,null,null,false,false,null);
@@ -76,6 +80,8 @@
 
 				this.optCall.style = "display:block";
 
+				this.questionImg.style.height = "50%";
+				this.questionImg.style.width = "100%";
 				//3 that must be answered
 				this.playerAns.push(null,null,null);
 
@@ -85,6 +91,9 @@
 				this.optCall.style = "display:none";
 				this.optVoice.style = "display:block";
 
+				this.questionImg.style.height = "50%";
+				this.questionImg.style.width = "100%";
+
 				//3 that must be answered
 				this.playerAns.push(null,null,null);
 			}
@@ -92,18 +101,19 @@
 		}
 
 		async getQuestionBank(){
+				console.log("Getting questions");
 				try {
 					//const response = await fetch('SSE_MobileSecurityGame.PhishingBank.json');
+					var startTime = Date.now(); //Get start and end times to calculate rtt
 					const response = await fetch("/getCommon",{
                         method: "POST",
                         "Content-Type": "application/json",
                     });
 					//const data = await response.json();
-					var startTime = Date.now(); //Get start and end times to calculate rtt
 					const data = await response.json();
 					var endTime = Date.now();
 					var rtt = endTime - startTime;
-					console.log("/getCommon Request RTTs:\nServer-Database Request RTT: "+data.rtt+"ms\nClient-Server Request RTT: "+rtt+"ms\n");
+					console.log("/getCommon Request RTTs:\nServer-Database Request RTT: "+data.pop()+"ms\nClient-Server Request RTT: "+rtt+"ms\n");
 
 					this.questions = data;
 
@@ -114,6 +124,7 @@
 						var curr = this.questions.length;
 						var currData = this.questions[curr-1];
 						if(currData.type == "voice"){
+							var ans = [currData.voiceCompany, currData.voicePersonal, currData.voiceUrgent];
 							this.gameBank.push(new Voicemail_Gen(currData.imagebase64, currData.voiceCompany, currData.voicePersonal, currData.voiceUrgent));
 						}else if(currData.type == "email"){
 
@@ -123,6 +134,7 @@
 							var ans = [currData.textNumber, currData.textBody, currData.textLink, currData.textTypo, currData.textClaim]
 							this.gameBank.push(new Smish_Class(currData.imagebase64, ans));
 						}else{//for calls
+							var ans = [currData.callPersonal, currData.callPayment, currData.callYesNo];
 							this.gameBank.push(new Call_Gen(currData.imagebase64, currData.callPersonal, currData.callPayment, currData.callYesNo));
 						}
 						
@@ -175,6 +187,9 @@
 							document.getElementById("link").style="display:block";
 							document.getElementById("typos").style="display:block";
 							document.getElementById("falseClaim").style="display:block";
+							this.playerAns[2]=false;
+							this.playerAns[3]=false;
+							this.playerAns[4]=false;
 
 						}else{
 							//they say no
@@ -219,6 +234,7 @@
 							document.getElementById("emailAdditional").style = "display:block";
 							document.getElementById("feelOff").style="display:block";
 							document.getElementById("spellingErr").style="display:block";
+
 						}else{
 							//they say no
 							this.playerAns[2]=false;
@@ -328,8 +344,15 @@
 						for(let i = 0;i<this.gameBank.length;i++){
 							this.alreadyDone[i]=false;
 							//resets game
-							this.currentIndex=Math.floor(Math.random()*this.gameBank.length);
 						}
+						var newIndex = Math.floor(Math.random()*this.gameBank.length);
+						while(newIndex==this.currentIndex){
+							newIndex = Math.floor(Math.random()*this.gameBank.length);
+						}
+						this.currentIndex=newIndex;
+						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
+						this.goButton.innerText = "Next level";
+						this.goButton.onclick = () => this.nextQuestion();
 					}else{
 						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
 						this.goButton.innerText = "Next level";
@@ -376,14 +399,23 @@
 				document.getElementById("pdf").style.color.color = "black";
 
 				//texts
+				document.getElementById("SmishphoneNum").style.color = "black";
+				document.getElementById("Smishbody").style.color = "black";
 				document.getElementById("SmishAddOpt").style.color = "black";
+
 				document.getElementById("link").style.color="black";
 				document.getElementById("typos").style.color="black";
 				document.getElementById("falseClaim").style.color="black";
 
-				//voicemails
-
 				//calls
+				document.getElementById("personalInfoCall").style.color="black";
+				document.getElementById("susYesNo").style.color="black";
+				document.getElementById("payMethodCall").style.color="black";
+
+				//voicemails
+				document.getElementById("companyClaim").style.color="black";
+				document.getElementById("personalInfoVoice").style.color="black";
+				document.getElementById("urgentClaim").style.color="black";
 
 				var rad = document.querySelectorAll('input[type="radio"]');
 				for(var i = 0;i<rad.length;i++){
@@ -397,8 +429,16 @@
 
 				document.getElementById("feelOff").checked = false;
 				document.getElementById("spellingErr").checked = false;
-	
-				document.getElementById("pdf").checked = false;
+
+				document.getElementById("link").style="display:none";
+				document.getElementById("typos").style="display:none";
+				document.getElementById("falseClaim").style="display:none";
+
+				document.getElementById("link").checked = false;
+				document.getElementById("typos").checked = false;
+				document.getElementById("falseClaim").checked = false;
+
+				//document.getElementById("pdf").checked = false;
 
 				this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
 
@@ -407,45 +447,138 @@
 
 			checkAllAns(){
 				console.log(this.playerAns);
-				console.log(this.gameBank[this.currIndex].corAns);
+				//console.log(this.gameBank[this.currIndex].corAns);
 				var allCor = false;
 				var levelCor = 0;
 				for(var i = 0; i<this.playerAns.length;i++){
-					if(this.gameBank[this.currIndex].checkCorrect(i, this.playerAns[i])){
+					if(this.gameBank[this.currentIndex].checkCorrect(i, this.playerAns[i])){
 						this.correctAnsNum++;
 						levelCor++;
 						if(i==0){
-							document.getElementById("emailAd").style.color = "green";
+							if(this.gameBank[this.currentIndex].type == "text"){
+								document.getElementById("SmishphoneNum").style.color = "green";
+
+							}else if(this.gameBank[this.currentIndex].type == "voice"){
+								document.getElementById("companyClaim").style.color="green";
+							}else if(this.gameBank[this.currentIndex].type == "call"){
+
+							}else{
+								document.getElementById("emailAd").style.color = "green";
+							}
 
 						}else if(i==1){
-							document.getElementById("subjectLine").style.color = "green";
+							if(this.gameBank[this.currentIndex].type == "text"){
+								document.getElementById("Smishbody").style.color = "green";
+							
+							}else if(this.gameBank[this.currentIndex].type == "voice"){
+								document.getElementById("personalInfoVoice").style.color="green";
+
+							}else if(this.gameBank[this.currentIndex].type == "call"){
+
+							}else{
+								document.getElementById("subjectLine").style.color = "green";
+							}
+							
 						}else if(i==2){
-							document.getElementById("emailBod").style.color = "green";
+							if(this.gameBank[this.currentIndex].type == "text"){
+								document.getElementById("link").style.color="green";
+
+							}else if(this.gameBank[this.currentIndex].type == "voice"){
+
+							}else if(this.gameBank[this.currentIndex].type == "call"){
+
+							}else{
+								document.getElementById("emailBod").style.color = "green";
+							}
+							
 						}else if(i==3){
-							document.getElementById("spellingErr").style.color = "green";
+							if(this.gameBank[this.currentIndex].type == "text"){
+								document.getElementById("typos").style.accentColor="green";
+
+							}else{
+								document.getElementById("spellingErr").style.color = "green";
+							}
+							
 						}else if(i==4){
-							document.getElementById("feelOff").style.color = "green";
+							if(this.gameBank[this.currentIndex].type == "text"){
+								document.getElementById("falseClaim").style.color="green";
+							}else{
+								document.getElementById("feelOff").style.color = "green";
+							}
+							
 						}else{
 							document.getElementById("pdf").style.color = "green";
+							
+							
 						}
 						
 					}else{
 						if(i==0){
-							document.getElementById("emailAd").style.color = "red";
+							if(this.gameBank[this.currentIndex].type == "text"){
+								document.getElementById("SmishphoneNum").style.color = "red";
+
+							}else if(this.gameBank[this.currentIndex].type == "voice"){
+								document.getElementById("companyClaim").style.color="red";
+							}else if(this.gameBank[this.currentIndex].type == "call"){
+
+							}else{
+								document.getElementById("emailAd").style.color = "red";
+							}
+
 
 						}else if(i==1){
-							document.getElementById("subjectLine").style.color = "red";
+							if(this.gameBank[this.currentIndex].type == "text"){
+								document.getElementById("Smishbody").style.color = "red";
+							}else if(this.gameBank[this.currentIndex].type == "voice"){
+								document.getElementById("personalInfoVoice").style.color="red";
+							}else if(this.gameBank[this.currentIndex].type == "call"){
+								document.getElementById("susYesNo").style.color = "red";
+							}else{//email
+								document.getElementById("subjectLine").style.color = "red";
+							}
+							
 						}else if(i==2){
-							document.getElementById("emailBod").style.color = "red";
+							if(this.gameBank[this.currentIndex].type == "text"){
+								document.getElementById("link").style.accentColor="red";
+								document.getElementById("link").style.color = "red";
+
+							}else if(this.gameBank[this.currentIndex].type == "voice"){
+
+							}else if(this.gameBank[this.currentIndex].type == "call"){
+
+							}else{//email
+								document.getElementById("emailBod").style.color = "red";
+
+							}
+
 						}else if(i==3){
-							document.getElementById("spellingErr").style.color = "red";
+							if(this.gameBank[this.currentIndex].type == "text"){
+								document.getElementById("typos").style.accentColor="red";
+
+							}else{
+								document.getElementById("spellingErr").style.color = "red";
+							}
+							
 						}else if(i==4){
-							document.getElementById("feelOff").style.color = "red";
+							if(this.gameBank[this.currentIndex].type == "text"){
+
+							}else{
+								document.getElementById("feelOff").style.color = "red";
+							}
+							
 						}else{
 							document.getElementById("pdf").style.color = "red";
+							
 						}
 					}
 				}
+				if(levelCor==this.playerAns.length){
+					allCor = true;
+				}
+				this.maxScore += 6;
+				var currentScore = JSON.parse(sessionStorage.getItem("currentScore")) + levelCor;
+				sessionStorage.setItem("currentScore", JSON.stringify(currentScore));
+				return allCor;
 			}
 
 			updateScreen(){
@@ -475,15 +608,8 @@
 <body>
 	<link rel="stylesheet" href="../../styles.css">
 
-	<div class = "menu" style="height: auto; width:700px;">
-		<!--for testing purposes!-->
-			<button onclick="m.changeOptType('text')">Text</button>
-			<button onclick="m.changeOptType('email')">Email</button>
-			<button onclick="m.changeOptType('call')">Call</button>
-			<button onclick="m.changeOptType('voice')">Voicemail</button>
-		<!--End for testing purposes-->
-
-		<img id="pic" src = "" alt = "Loading image! Please wait." width = "650" height="420" /><br>
+	<div class = "menu" style="height: auto; width: auto;">
+		<img id="pic" src = "" alt = "Loading image! Please wait." width = "50%" height="50%" style="padding-top: 2px;"/><br>
 
 		<div id = "textOpt" style = "display:none">
 			<div id="SmishphoneNum" for="SmishphoneNum" style="border: 1px solid #000">
@@ -502,10 +628,11 @@
 				<input type="radio" id="SmishbodyF" name="Smishbody" onclick="m.changeVal(0,1,0)">
 				<label for = "OptionSel1">No</label>
 
-				<div id="SmishAddOpt" name ="SmishAddOpt" onclick="m.changeVal" style="display:none">
-					<input type = "checkbox" name="link" onclick="m.checkBoxClick(0,0,this.checked)">Link</input>
-					<input type="checkbox" name = "typos" onclick="m.checkBoxClick(0,1,this.checked)">Typos</input>
-					<input type="checkbox" name="falseClaim" onclick="m.checkBoxClick(0,2,this.checked)">False Claim</input>
+				<div id="SmishAddOpt" style="display:none">
+					<input type = "checkbox" name="link" id = "link" onclick="m.checkBoxClick(0,0,this.checked)"></input>
+					<label for = "link">Link</label>
+					<input type="checkbox" name = "typos" id = "typos" onclick="m.checkBoxClick(0,1,this.checked)">Typos</input>
+					<input type="checkbox" name="falseClaim" id = "falseClaim" onclick="m.checkBoxClick(0,2,this.checked)">False Claim</input>
 				</div>
 				</center>
 			</div>
@@ -553,7 +680,7 @@
 		</div>
 
 		<div id = "callOpt" style="display:none">
-			<div id="personalInfoCall name = "personalInfoCall" style="border: 1px solid #000;">
+			<div id="personalInfoCall" name = "personalInfoCall" style="border: 1px solid #000;">
 				<center><b>Asks for Personal Information</b><br>
 				<input type="radio" id="persCallT" name="numCall" onclick="m.changeVal(2,0,0)">
 				<label for = "OptionSel1">Yes</label>
@@ -582,26 +709,26 @@
 		<div id = "voicemailOpt" style="display:none">
 			<div id = "companyClaim" style = "border: 1px solid #000;">
 				<center><b>Suspicious claim to be a company</b><br>
-					<input type = "radio" id = "OptionSel1" name = "company" onClick = "m.changeVal(3,0,1)">
-					<label for = "OptionSel1">Yes</label>
-					<input type = "radio" id = "OptionSel1" name ="company" onClick = "m.changeVal(3,0,0)">
-					<label for = "OptionSel1">No</label>
+					<input type = "radio" id = "company" name = "company" onClick = "m.changeVal(3,0,1)">
+					<label for = "company">Yes</label>
+					<input type = "radio" id = "company" name ="company" onClick = "m.changeVal(3,0,0)">
+					<label for = "company">No</label>
 				</center>
 			</div>
-			<div id = "personalInfoCall" style = "border: 1px solid #000;">
+			<div id = "personalInfoVoice" style = "border: 1px solid #000;">
 				<center><b>Asks for personal information</b><br>
-				<input type = "radio" id = "OptionSel1" name = "personalInfoCall" onClick = "m.changeVal(3,1,1)">
-				<label for = "OptionSel1">Yes</label>
-				<input type = "radio" id = "OptionSel1" name = "personalInfoCall" onClick = "m.changeVal(3,1,0)">
-				<label for = "OptionSel1">No</label>
+				<input type = "radio" id = "personalInfoVoice" name = "personalInfoVoice" onClick = "m.changeVal(3,1,1)">
+				<label for = "personalInfoVoice">Yes</label>
+				<input type = "radio" id = "personalInfoVoice" name = "personalInfoVoice" onClick = "m.changeVal(3,1,0)">
+				<label for = "personalInfoVoice">No</label>
 				</center>
 			</div>
 			<div id = "urgentClaim" style = "border: 1px solid #000;">
 				<center><b>Details it as an urgent matter</b><br>
-				<input type = "radio" id = "OptionSel1" name = "urgent"onClick = "m.changeVal(2,1)">
-				<label for = "OptionSel1">Yes</label>
-				<input type = "radio" id = "OptionSel1" name = "urgent"onClick = "m.changeVal(2,0)">
-				<label for = "OptionSel1">No</label>
+				<input type = "radio" id = "urgent" name = "urgent"onClick = "m.changeVal(2,1)">
+				<label for = "urgent">Yes</label>
+				<input type = "radio" id = "urgent" name = "urgent"onClick = "m.changeVal(2,0)">
+				<label for = "urgent">No</label>
 				</center>
 			</div>
 

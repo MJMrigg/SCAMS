@@ -7,6 +7,7 @@ class email{
         this.corAns = ans;
     }
     checkCorrect(index, value){
+        console.log(this.corAns[index]);
 		if(value == this.corAns[index]){
 			return true;
 		}

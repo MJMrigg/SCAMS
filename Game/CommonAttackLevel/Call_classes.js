@@ -21,7 +21,9 @@ class Call_Gen{
 		
 	}
 	checkCorrect(index, value){
+		console.log(this.correctAnswers[index]);
 		if(value == this.correctAnswers[index]){
+			
 			return true;//checks if it matches listed correct answers
 		}else{
 			return false;

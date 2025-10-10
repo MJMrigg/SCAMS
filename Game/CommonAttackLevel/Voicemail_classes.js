@@ -16,6 +16,7 @@ class Voicemail_Gen{
 		
 	}
 	checkCorrect(index, value){
+		console.log(this.correctAnswers[index]);
 		if(value == this.correctAnswers[index]){
 			return true;
 		}

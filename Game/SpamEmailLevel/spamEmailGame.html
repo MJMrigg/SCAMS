@@ -135,8 +135,15 @@
 						for(let i = 0;i<this.emails.length;i++){
 							this.alreadyDone[i]=false;
 							//resets game
-							this.currIndex=Math.floor(Math.random()*this.emails.length);
 						}
+						var newIndex = Math.floor(Math.random()*this.emails.length);
+						while(newIndex==this.currIndex){
+							newIndex = Math.floor(Math.random()*this.gameBank.length);
+						}
+						this.currIndex=newIndex;
+						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
+						this.goButton.innerText = "Next level";
+						this.goButton.onclick = () => this.nextQuestion();
 					}else{
 						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
 						this.goButton.innerText = "Next level";
