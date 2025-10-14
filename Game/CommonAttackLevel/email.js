@@ -1,6 +1,7 @@
 class email{
     constructor(img, ans){
         //this.imgUrl = '';
+        this.type = "email";
         this.imgUrl = img;
         this.done = false;
         //this.corAns = [null, null, null, false, false, null];

@@ -131,16 +131,17 @@
 							doneCount++;
 						}
 					}
-					if(this.checkDone){
+					if(this.checkDone()){
 						for(let i = 0;i<this.emails.length;i++){
 							this.alreadyDone[i]=false;
 							//resets game
 						}
-						var newIndex = Math.floor(Math.random()*this.emails.length);
-						while(newIndex==this.currIndex){
-							newIndex = Math.floor(Math.random()*this.emails.length);
+						var newIndex = Math.floor(Math.random()*this.gameBank.length);
+						while(newIndex==this.currIndex || this.alreadyDone[newIndex]==true){
+							newIndex = Math.floor(Math.random()*this.gameBank.length);
 						}
 						this.currIndex=newIndex;
+
 						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
 						this.goButton.innerText = "Next level";
 						this.goButton.onclick = () => this.nextQuestion();
@@ -154,7 +155,7 @@
 				}
 			}
 			checkDone(){
-				for(var i = 0;i<this.alreadyDone.length-1;i++){
+				for(var i = 0;i<this.alreadyDone.length;i++){
 					if(!this.alreadyDone.length[i]){
 						return false;
 					}
@@ -262,10 +263,12 @@
 				//var len = this.questionBank.length;
 				//while(this.alreadyDone[this.currIndex]){
 				this.alreadyDone[this.currIndex] = true;
-
-				while(this.alreadyDone[this.currIndex]){
-					this.currIndex = Math.floor(Math.random()*this.emails.length);
+				
+				var newIndex = Math.floor(Math.random()*this.gameBank.length);
+				while(newIndex==this.currIndex || this.alreadyDone[newIndex]==true){
+					newIndex = Math.floor(Math.random()*this.gameBank.length);
 				}
+				this.currIndex=newIndex;
 				for(var i = 0;i<6;i++){
 					//clears player's current answer array
 					this.playerAns[i] = null;

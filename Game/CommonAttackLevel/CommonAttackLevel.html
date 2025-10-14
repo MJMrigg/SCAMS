@@ -46,9 +46,20 @@
 
 		changeOptType(type){
 			//reset array size and clear answers
-			for(var i = 0; i<this.playerAns.length;i++){
+			while(this.playerAns.length!=0){
 				this.playerAns.pop();
 			}
+
+			//close additional options if they were there
+			document.getElementById("SmishAddOpt").style = "display:none";
+			document.getElementById("link").style="display:none";
+			document.getElementById("typos").style="display:none";
+			document.getElementById("falseClaim").style="display:none";
+
+			//close additional options if they were there
+			document.getElementById("emailAdditional").style = "display:none";
+			document.getElementById("feelOff").style="display:none";
+			document.getElementById("spellingErr").style="display:none";
 
 			//change for smishing
 			if(type == 'text'){// smishing: 12, 5 different choices
@@ -56,6 +67,7 @@
 				this.optCall.style = "display:none";
 				this.optVoice.style = "display:none";
 				this.optTxt.style = "display: block";
+
 				
 				//2 that must be answered, 3 optional
 				this.playerAns.push(null,null,false,false,false);
@@ -117,8 +129,8 @@
 
 					this.questions = data;
 
-					for(let i = 0; i<this.questions.length-1;i++){
-						this.alreadyDone.push(data[i]);
+					for(let i = 0; i<this.questions.length;i++){
+						this.alreadyDone.push(false);
 					}
 					while(this.questions.length != 0){
 						var curr = this.questions.length;
@@ -140,8 +152,10 @@
 						
 						this.questions.pop();
 					}
-
+					
 					this.currentIndex = Math.floor(Math.random()*this.gameBank.length);
+					console.log(this.gameBank.length);
+					console.log(this.gameBank[this.currentIndex]);
 					this.updateScreen();
 
 				} catch (error) {
@@ -317,8 +331,9 @@
 				//console.log("Pressed");
 				//console.log("Yes and No value: " + this.playerAns);
 				console.log(this.correctAnsNum);
+				console.log(this.playerAns);
 				var allAns = true;
-				for(var i = 0; i<this.playerAns.length-1;i++){
+				for(var i = 0; i<this.playerAns.length;i++){
 					if(this.playerAns[i]==null){
 						allAns = false;
 					}
@@ -329,22 +344,27 @@
 					var check = this.checkAllAns();//check answers to display proper result message
 					//var nextIndex = this.mailCurrentIndex + 1;//makes next index a temporary variable
 					//console.log("next index: "+nextIndex);
+					//this.alreadyDone[this.currentIndex] = true;
 					if(check){
 						this.ansResult.innerText = "Fantastic!";
 					}else{
 						this.ansResult.innerText = "Not Quite!";
 					}
-					var doneCount = 0;
+					/*var doneCount = 0;
 					for(let i =0; i<this.gameBank.length;i++){
 						if(this.alreadyDone[i]){
 							doneCount++;
 						}
-					}
-					if(this.checkDone){
-						for(let i = 0;i<this.gameBank.length;i++){
+					}*/
+					console.log(this.alreadyDone);
+
+					if(this.checkDone()){
+						for(let i = 0;i<this.alreadyDone.length;i++){
 							this.alreadyDone[i]=false;
 							//resets game
 						}
+						console.log(this.alreadyDone);
+
 						var newIndex = Math.floor(Math.random()*this.gameBank.length);
 						while(newIndex==this.currentIndex){
 							newIndex = Math.floor(Math.random()*this.gameBank.length);
@@ -354,6 +374,7 @@
 						this.goButton.innerText = "Next level";
 						this.goButton.onclick = () => this.nextQuestion();
 					}else{
+						console.log("Hit!");
 						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
 						this.goButton.innerText = "Next level";
 						this.goButton.onclick = () => this.nextQuestion();
@@ -364,11 +385,13 @@
 			}
 
 			checkDone(){
-				for(var i = 0;i<this.alreadyDone.length-1;i++){
-					if(!this.alreadyDone.length[i]){
+				for(var i = 0;i<this.alreadyDone.length;i++){
+					if(!this.alreadyDone[i]){
+						console.log("Return false for checkDone");
 						return false;
 					}
 				}
+				console.log("Return true for checkDone");
 				return true;
 			}
 
@@ -376,11 +399,15 @@
 			nextQuestion(){
 				//var len = this.questionBank.length;
 				//while(this.alreadyDone[this.currIndex]){
-				this.alreadyDone[this.currentIndex] = true;
+				console.log("nextQuestion called");
+				//this.alreadyDone[this.currentIndex] = true;
 
-				while(this.alreadyDone[this.currentIndex]){
-					this.currentIndex = Math.floor(Math.random()*this.gameBank.length);
+				var newIndex = Math.floor(Math.random()*this.gameBank.length);
+				while(newIndex==this.currentIndex || this.alreadyDone[newIndex]==true){
+					newIndex = Math.floor(Math.random()*this.gameBank.length);
 				}
+				this.currentIndex=newIndex;
+				console.log("New index: "+ this.currentIndex);
 				for(var i = 0;i<6;i++){
 					//clears player's current answer array
 					this.playerAns[i] = null;
@@ -396,7 +423,7 @@
 				document.getElementById("emailBod").style.color = "black";
 				document.getElementById("feelOff").style.color = "black";
 				document.getElementById("spellingErr").style.color = "black";
-				document.getElementById("pdf").style.color.color = "black";
+				document.getElementById("pdf").style.color = "black";
 
 				//texts
 				document.getElementById("SmishphoneNum").style.color = "black";
@@ -583,9 +610,13 @@
 
 			updateScreen(){
 				//this.changeImage();
-				
+
 				this.changeImage(this.gameBank[this.currentIndex].imgUrl);
 				this.changeOptType(this.gameBank[this.currentIndex].type);
+
+				console.log(this.gameBank.length);
+				console.log(this.gameBank[this.currentIndex]);
+
 				/*for(var i = 0; i<this.playerAns.length;i++){
 					this.playerAns[i]=null;
 				}*/
@@ -641,7 +672,7 @@
 		<div id = "emailOpt" style="display:none">
 			<div id = "emailAd" for = "emailAd" style = "border: 1px solid #000;">
 				<center><b>Weird Email Address</b><br>
-				<input type = "radio" id = "emailAdT" name = "emailAdd" onClick = "m.changeVal(1,1,1)">
+				<input type = "radio" id = "emailAdT" name = "emailAdd" onClick = "m.changeVal(1,0,1)">
 				<label for = "OptionSel1">Yes</label>
 				<input type = "radio" id = "emailAdF" name ="emailAdd" onClick = "m.changeVal(1,0,0)">
 				<label for = "OptionSel1">No</label>
@@ -663,8 +694,8 @@
 				<label for = "OptionSel1">No</label>
 				
 				<div id="emailAdditional" style="display:none">
-					<input type = "checkbox" value = "spellingErr" id = "spellingErr"onclick="m.changeCheck(1, 0,this.checked)">Spelling mistakes</input>
-					<input type = "checkbox"value="feelOff" id="feelOff"onclick="m.changeCheck(1, 1,this.checked)">Sounds off</input>
+					<input type = "checkbox" value = "spellingErr" id = "spellingErr"onclick="m.checkBoxClick(1, 0,this.checked)">Spelling mistakes</input>
+					<input type = "checkbox"value="feelOff" id="feelOff"onclick="m.checkBoxClick(1, 1,this.checked)">Sounds off</input>
 				</div>
 				
 				</center>

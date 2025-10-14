@@ -1,10 +1,11 @@
 {
-    "type": "text",
+    "type": "email",
     "imagebase64":"",
-    "emailSubject":false,
-    "emailBody":false,
+    "senderAdd":true,
+    "emailSubject":true,
+    "emailBody":true,
     "spellingErrors":false, 
-    "soundsOff":false, 
+    "soundsOff":true, 
     "pdfIncluded":false,
     "callPersonal":false,
     "callPayment":false, 
@@ -12,9 +13,9 @@
     "voiceCompany":false, 
     "voicePersonal":false,
     "voiceUrgent":false, 
-    "textNumber":true,
-    "textBody":true,
-    "textLink":true, 
-    "textTypo":true,
-    "textClaim":true
+    "textNumber":false,
+    "textBody":false,
+    "textLink":false, 
+    "textTypo":false,
+    "textClaim":false
 }
