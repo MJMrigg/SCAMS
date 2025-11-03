@@ -123,6 +123,12 @@
                     });
 					//const data = await response.json();
 					const data = await response.json();
+
+					const dataString = JSON.stringify(data);
+					const size = new TextEncoder().encode(dataString).length;
+
+					console.log("File size in bytes is: "+size);
+					
 					var endTime = Date.now();
 					var rtt = endTime - startTime;
 					console.log("/getCommon Request RTTs:\nServer-Database Request RTT: "+data.pop()+"ms\nClient-Server Request RTT: "+rtt+"ms\n");
