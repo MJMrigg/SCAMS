@@ -21,7 +21,7 @@ app.get("/", (request, response) => {
 
 //Mongo information
 //const uri = "mongodb+srv://SSEconnection:RememberThis@cluster0.3jlg2.mongodb.net/"; //Old database
-const uri = "mongodb+srv://evanhambre:R0SEBID25@cluster0.zlbvlpq.mongodb.net/"
+const uri = "mongodb+srv://evanhambre:R0SEBID25@cluster0.zlbvlpq.mongodb.net/";
 
 //Create an account via a post request based on the parameters in the request and send the account data back via a response
 app.post("/createAccount", async(request, response) => {
