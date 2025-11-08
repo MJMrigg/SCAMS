@@ -55,6 +55,7 @@
             void main(){
                 gl_Position = translation(rotation(scaleTransformation(a_position)));
                 fragColor = a_color;
+                gl_PointSize = 5.0;
             }
         </script>
         <script id="2dFragmentShader" type="notjs">
@@ -83,7 +84,7 @@
                 var mymain = new main;
     
                 canvas.addEventListener("click", main.leftClick);
-                canvas.addEventListener("touchstart", main.leftClick);
+                //canvas.addEventListener("touchstart", main.leftClick);
             </script>
             <button class="submit" onclick="mymain.submit(1)" >Submit</button><br>
             <button class="selection" onclick="window.location.href='../menu.html'" style="width: auto; padding: 0.3%;">Save and Quit</button>

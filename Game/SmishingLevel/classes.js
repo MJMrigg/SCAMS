@@ -55,10 +55,10 @@ class object{
         this.indexBuffer = gl.createBuffer(); //Create buffer used to send index data to GPU
 	    this.color = null; //Store what the color is(Different for each type of box)
         this.primitiveType = null; //Store what to render the object as
-        this.loc = []; //Store x,y,z coordinates
-        this.rot = []; //Store x,y,z rotations
-        this.scale = []; //Store x,y,z scale factors
-        this.collissionRadius = null; //Collision Radii used to determine if the player clicked on the object
+        this.loc = [0,0,0]; //Store x,y,z coordinates
+        this.rot = [0,0,0]; //Store x,y,z rotations
+        this.scale = [1,1,1]; //Store x,y,z scale factors
+        this.collissionRadius = [0.1,0.1,0.1]; //Collision Radii used to determine if the player clicked on the object
         this.bounds = null; //Bounds = How far away players can click until the game doesn't consider the object clicked
     }
     //Bind the vertices to the buffer
@@ -107,7 +107,7 @@ class object{
         offset = 0;
         //Draw Shape
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-        gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_BYTE, offset);
+        gl.drawElements(this.primitiveType, this.indices.length, gl.UNSIGNED_BYTE, offset);
     }
 }
 //Tutorial point class to specify where the player should click during the tutorial.
@@ -148,7 +148,7 @@ class arrow extends object{
         this.indices.push(
             0, 1, 2,
             3, 4, 5,
-            4, 5, 6
+            4, 5, 6,
         );
         this.bindBuffer();
         this.collissionRadius = [0.1, 0.15, 0.0];
@@ -272,6 +272,9 @@ class main{
     //Get the coordinates where the mouse clicked and see if the player clicked on an arrow
     click(event){
         var coordinates = this.convert(event); //Convert to canvas coordinates
+        if(coordinates[0] == NaN || coordinates[1] == NaN){ //If the coordinates are invalid, return
+            return;
+        }
         for(let i = 0; i < this.objects.length; i++){ //For every arrow, check to see if it was clicked
             if(!this.pointClicked(this.objects[i], coordinates)){ //If it wasn't, move on to the next one
                 continue;
@@ -286,15 +289,18 @@ class main{
             this.renderAll(); //Re-render object
         }
     }
-	convert(event){ //Convert window coordinates to canvas coordinates
+	convert(event){ //Convert window coordinates to canvas coordinates to webgl coordinates
 		var clickX = event.clientX;
         var clickY = event.clientY;
     	var rect = canvas.getBoundingClientRect();
+        console.log(rect);
     	var realX = clickX - rect.left;
        	var realY = clickY - rect.top;
-    	var x = -1 + 2*(realX/canvas.width);
-    	var y = -1 + 2*((canvas.height - realY)/canvas.height);
-		return [x,y];
+        console.log(realX+" "+realY);
+    	var x = -1 + 2*realX/rect.width;
+    	var y = -1 + 2*(rect.height-realY)/rect.height;
+        console.log(x+" "+y);
+		return [x,y]; //WHY - It's the dynamic web sizing in styles.css. It's messing with the viewport creation.
 	}
     renderAll(){
         //Clear the screen and then render all objects
@@ -315,6 +321,7 @@ class main{
     pointClicked(point, curser){
         var xDistance = Math.abs(point.loc[0]-curser[0]);
         var yDistance = Math.abs(point.loc[1]-curser[1]);
+        //console.log(point.loc[0]+" "+curser[0]+" "+point.collissionRadius[0]+" "+point.loc[1]+" "+curser[1]+" "+point.collissionRadius[1]);
         return (xDistance <= point.collissionRadius[0] && yDistance <= point.collissionRadius[1]);
     }/*
     //Set tutorial message based on which part of the tutorial the player is at
