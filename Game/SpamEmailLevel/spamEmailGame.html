@@ -186,7 +186,7 @@
 					//this.changeImage(data[0].imagebase64);
 					this.questionBank = questions;
 					for(var i = 0;i<this.questionBank.length-1;i++){
-						this.alreadyDone[i]=false;
+						this.alreadyDone.push(false);
 					}
 					while(this.questionBank.length != 0){
 						//this.alreadyDone.push(data[i]);
@@ -216,7 +216,7 @@
 				console.log(this.emails[this.currIndex].corAns);
 				var allCor = false;
 				var levelCor = 0;
-				for(var i = 0; i<6;i++){
+				for(var i = 0; i<this.playerAns.length;i++){
 					if(this.emails[this.currIndex].checkCorrect(i, this.playerAns[i])){
 						this.correctAnsNum++;
 						levelCor++;
@@ -270,9 +270,9 @@
 				//while(this.alreadyDone[this.currIndex]){
 				this.alreadyDone[this.currIndex] = true;
 				
-				var newIndex = Math.floor(Math.random()*this.gameBank.length);
+				var newIndex = Math.floor(Math.random()*this.emails.length);
 				while(newIndex==this.currIndex || this.alreadyDone[newIndex]==true){
-					newIndex = Math.floor(Math.random()*this.gameBank.length);
+					newIndex = Math.floor(Math.random()*this.emails.length);
 				}
 				this.currIndex=newIndex;
 				for(var i = 0;i<6;i++){
