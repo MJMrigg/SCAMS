@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
   <meta name="viewport" content="width=device-width, initial-scale:1.0'">
-  <meta name="viewport" content="width=device-width, initial-scale:1.0'">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
   <head>
@@ -15,7 +14,7 @@
                 this.packets = []; //Stores where the packets appear on the screen
                 this.gameStarted = false; //The Game has not yet started
                 this.gameOver = false; //The Game has not yet ended
-                this.tutorial = true; //Start the tutorial
+                this.tutorial = false; //Do not start the tutorial
                 this.tutorialPart = 0; //Start at the beginning of the tutorial
                 this.wait = false; //Don't wait before drawing the next frame
                 this.drawStartScreen(); //Draw the first frame
@@ -29,23 +28,77 @@
             
             //Create a packet and add it to the packets array
             spawnPacket() {
-                const isGolden = Math.random() < 0.05;
+                //Calculate the minimum and maximum X values for spawning packets based on the canvas position
+                var rect = canvas.getBoundingClientRect();
+                var MaxX = (rect.right-Math.max(0,rect.left)) - 60;
+                var MinX = 0;
+                if(rect.left < 0){
+                    MinX = Math.abs(rect.left);
+                }
+                //Create the packet
                 const packet = {
-                    x: Math.random() * (canvas.width - 60),
+                    color: Math.floor(Math.random() * (6 - 0) + 0),
+                    x: Math.random() * MaxX + MinX,
                     y: -30,
                     width: 60,
                     height: 60,
-                    //Golden packets move faster than normal ones
-                    speed: isGolden ? 2.0 + Math.random() * 0.8 : 1.2 + Math.random() * 0.5,
-                    isGolden: isGolden
+                    speed: 2 + Math.random() * 0.5,
+                    text: "",
+                    textColor: "black",
+                    textX: -60,
+                    textY: 0,
                 };
+                //Based on the packet's color, set its text and text location
+                switch(packet.color){
+                    case 0:
+                        break; //Benign packets don't have text
+                    case 1:
+                        packet.text = "Malware";
+                        packet.textX = packet.x + 7;
+                        break;
+                    case 2:
+                        packet.text = "Phishing";
+                        packet.textX = packet.x + 6.75;
+                        break;
+                    case 3:
+                        packet.text = "Spam";
+                        packet.textX = packet.x + 14;
+                        packet.textColor = "black";
+                        break;
+                    case 4:
+                        packet.text = "Vishing";
+                        packet.textX = packet.x + 10;
+                        break;
+                    case 5:
+                        packet.text = "Smishing";
+                        packet.textX = packet.x + 5.25;
+                        packet.textColor = "black";
+                        break;
+                    
+                }
                 this.packets.push(packet);
             }
             
             //Take in a packet and draw it
             drawPacket(packet) {
-                ctx.fillStyle = packet.isGolden ? "gold" : "red";
+                if(packet.color == 0){
+                    ctx.fillStyle = "green"; //Benign packet
+                }else if(packet.color == 1){
+                    ctx.fillStyle = "red"; //General Malware packet
+                }else if(packet.color == 2){
+                    ctx.fillStyle = "blue"; //Phishing packet
+                }else if(packet.color == 3){
+                    ctx.fillStyle = "Yellow"; //Spam packet
+                }else if(packet.color == 4){
+                    ctx.fillStyle = "purple"; //Vishing packet
+                }else if(packet.color == 5){
+                    ctx.fillStyle = "orange"; //Smishing packet
+                }
                 ctx.fillRect(packet.x, packet.y, packet.width, packet.height);
+                //Add packet text
+                ctx.fillStyle = packet.textColor;
+                ctx.font = "12px Arial";
+                ctx.fillText(packet.text, packet.textX, packet.textY);
             }
             
             //Draw the start screen on the canvas
@@ -117,12 +170,18 @@
                 //Draw each packet at their new position
                 this.packets.forEach((packet, index) => {
                     packet.y += packet.speed;
+                    packet.textY += packet.speed; //Move the text down with the packet
                     this.drawPacket(packet);
 
                     //If that new position is below the canvas, take away a point and delete the packet
                     if (packet.y > canvas.height) {
-                        this.lives--;
-                        this.updateScore(-1);
+                        //Take away a life if the packet was not a benign packet
+                        if(packet.color > 0){
+                            this.lives--;
+                        }
+                        //Give the player points for letting a benign packet through, take away points for letting a bad packet through
+                        this.updateScore(packet.color == 0 ? 1 : -1);
+                        //Delete the packet(because JavaScript is memory safe, removing it from the array will do this)
                         this.packets.splice(index, 1);
                         if(this.tutorial) this.handleTutorial(); //If this was the tutorial, handle what happens when the player lets a packet through
                     }
@@ -131,12 +190,13 @@
                 if(this.tutorial){ //If this is the tutorial, handle the tutorial functionality
                     this.handleTutorial();
                 }else{ //If it's not, proceed as normal
-                    if (Math.random() < 0.01) this.spawnPacket(); //Possibly spawn a new packet
+                    if (Math.random() < 0.03 && this.packets.length < 1) this.spawnPacket(); //Possibly spawn a new packet
                 }
             }
 
             //Do the tutorial based on which part of the tutorial the player is on
             handleTutorial(){
+                /*
                 switch(this.tutorialPart){
                     case 0:
                         alert("Welcome to the Bad Packets Defense Tutorial! In this game, network packets that contain malicious content will fall from the top of the screen and you will have to stop them from reaching the bottom and into the vulnerable mobile device.");
@@ -194,7 +254,7 @@
                             this.tutorialPart += 1;
                         }
                         break;
-                }
+                }*/
             }
 
             //Handle when the player clicks on the screen
@@ -217,16 +277,25 @@
                 const rect = canvas.getBoundingClientRect();
                 const clickX = e.clientX - rect.left;
                 const clickY = e.clientY - rect.top;
+                //If the click coordinates are invalid, do nothing
+                if(isNaN(clickX) || isNaN(clickY)){
+                    return;
+                }
 
                 //For each packet, get its information and see if the player clicked it
                 for (let i = 0; i < this.packets.length; i++) {
                     const p = this.packets[i];
+                    console.log(clickX+" "+p.x+" "+(p.x + p.width)+" "+clickY+" "+p.y+" "+(p.y + p.height));
                     //If the player didn't click on the packet, keep going through packets
                     if(clickX < p.x || clickX > p.x + p.width || clickY < p.y || clickY > p.y + p.height){
                         continue;
                     }
                     //If they did, update the score and remove it
-                    this.updateScore(p.isGolden ? 5 : 1);
+                    this.updateScore(p.color == 0 ? -1 : 1);
+                    //If they clicked a benign packet, lose a life
+                    if(p.color == 0){
+
+                    }
                     this.packets.splice(i, 1);
                     if(this.tutorial){ //If this was the tutorial, handle what happens when the player clicks a packet
                         if(!Number.isInteger(this.tutorialPart)) this.tutorialPart += 0.5;
@@ -295,7 +364,7 @@
     <div class="menuForBadPackets">
         <div class="forBadPackets">
             <div id="score" class="badPacketsScore">Score: 0 | Lives: 10</div>
-            <canvas id="gameCanvas" class="forBadPackets" width="800" height="600"></canvas><ul>
+            <canvas id="gameCanvas" class="forBadPackets" width="800" height="600"></canvas>
             <script>
                 const canvas = document.getElementById("gameCanvas");
                 const ctx = canvas.getContext("2d");
@@ -307,10 +376,11 @@
             </script>
         </div>
         <div style="margin-left: 8px;">
-          <button class="badPackets" onclick=mymain.saveAndQuit()>Save and Quit</button><br>
+          <button class="badPackets" onclick=mymain.saveAndQuit()>Save and Quit</button><!--<br>
           <button class="badPackets" onclick="mymain.skipTutorial()">Skip Tutorial</button><br>
-          <button class="badPackets" onclick="mymain.restartTutorial()">Restart Tutorial</button>
+          <button class="badPackets" onclick="mymain.restartTutorial()">Restart Tutorial</button>-->
         </div>
+        
     </div>
   </body>
 </html>

@@ -272,7 +272,7 @@ class main{
     //Get the coordinates where the mouse clicked and see if the player clicked on an arrow
     click(event){
         var coordinates = this.convert(event); //Convert to canvas coordinates
-        if(coordinates[0] == NaN || coordinates[1] == NaN){ //If the coordinates are invalid, return
+        if(isNaN(coordinates[0]) || isNaN(coordinates[1])){ //If the coordinates are invalid, return
             return;
         }
         for(let i = 0; i < this.objects.length; i++){ //For every arrow, check to see if it was clicked
@@ -293,13 +293,10 @@ class main{
 		var clickX = event.clientX;
         var clickY = event.clientY;
     	var rect = canvas.getBoundingClientRect();
-        console.log(rect);
     	var realX = clickX - rect.left;
        	var realY = clickY - rect.top;
-        console.log(realX+" "+realY);
     	var x = -1 + 2*realX/rect.width;
     	var y = -1 + 2*(rect.height-realY)/rect.height;
-        console.log(x+" "+y);
 		return [x,y]; //WHY - It's the dynamic web sizing in styles.css. It's messing with the viewport creation.
 	}
     renderAll(){

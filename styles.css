@@ -7,7 +7,7 @@
         font-size: 3vh;
     }
     canvas.forSmishing{
-        width: 50vh;
+        width: 60svh;
         height: 96vh;
     }
     div.menuForBadPackets{
@@ -31,7 +31,7 @@
     }
     canvas.forBadPackets{
         width: 60vh;
-        height: 40vh;
+        /*height: 40vh;*/
     }
     div.menuForBadPackets{
         flex-direction: column;
@@ -133,7 +133,7 @@ canvas.forBadPackets{
 }
 div.forBadPackets{
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     flex-direction: column;
     background: #1a1a1a;
