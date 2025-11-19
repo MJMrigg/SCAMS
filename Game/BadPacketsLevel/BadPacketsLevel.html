@@ -60,20 +60,21 @@
                     case 2:
                         packet.text = "Phishing";
                         packet.textX = packet.x + 6.75;
+                        packet.textColor = "white";
                         break;
                     case 3:
                         packet.text = "Spam Email";
-                        packet.textX = packet.x + 6;
+                        packet.textX = packet.x+3;
                         packet.textColor = "black";
                         break;
                     case 4:
                         packet.text = "Vishing";
                         packet.textX = packet.x + 10;
+                        packet.textColor = "white";
                         break;
                     case 5:
                         packet.text = "Smishing";
                         packet.textX = packet.x + 5.25;
-                        packet.textColor = "black";
                         break;
                     
                 }
@@ -82,6 +83,7 @@
             
             //Take in a packet and draw it
             drawPacket(packet) {
+                ctx.font = "12px Arial";
                 if(packet.color == 0){
                     ctx.fillStyle = "green"; //Benign packet
                 }else if(packet.color == 1){
@@ -90,6 +92,7 @@
                     ctx.fillStyle = "blue"; //Phishing packet
                 }else if(packet.color == 3){
                     ctx.fillStyle = "Yellow"; //Spam packet
+                    ctx.font = "10px Arial";
                 }else if(packet.color == 4){
                     ctx.fillStyle = "purple"; //Vishing packet
                 }else if(packet.color == 5){
@@ -98,7 +101,6 @@
                 ctx.fillRect(packet.x, packet.y, packet.width, packet.height);
                 //Add packet text
                 ctx.fillStyle = packet.textColor;
-                ctx.font = "12px Arial";
                 ctx.fillText(packet.text, packet.textX, packet.textY);
             }
             
@@ -109,13 +111,13 @@
                 ctx.fillStyle = "white";
                 var rect = canvas.getBoundingClientRect();
                 var centerX = rect.width;
-                var Adjust1 = 180;
+                var Adjust1 = 100;
                 var Adjust2 = 70;
                 var bigFont = "36px Arial";
                 var smallFont = "24px Arial";
                 //Adjust the font sizes and positions for smaller screens
                 if(window.innerWidth < 600){
-                    Adjust1 = 130;
+                    Adjust1 = 80;
                     Adjust2 = 50;
                     bigFont = "26px Arial";
                     smallFont = "14px Arial";
@@ -233,6 +235,41 @@
 
             //Do the tutorial based on which part of the tutorial the player is on
             handleTutorial(){
+                switch(this.tutorialPart){
+                    case 0:
+                        alert("Welcome to the Firewall Ninja Tutorial! In this game, you play as the firewall and have to filter out messages from your user's mobile device.");
+                        //Spawn a good message
+                        this.spawnPacket();
+                        this.packets[this.packets.length-1].color = 0; //Make it a benign packet
+                        this.packets[this.packets.length-1].x = canvas.getClientRects().width / 2;
+                        this.tutorialPart += 1;
+                        break;
+                    case 1:
+                        alert("This is a good message. Do not filter these. Let them fall off the screen and into the user's device.");
+                        this.tutorialPart += 1;
+                        break;
+                    case 2:
+                        if(this.packets.length > 0){
+                            return; //Wait until the first benign packet is gone
+                        }
+                        this.tutorialPart += 1;
+                        break;
+                    case 3:
+                        alert("Excellent! Now, let's look at at some bad messages.");
+                        this.tutorialPart += 1;
+                        break;
+                    case 4:
+                        //Spawn one if each malevolent type
+                        for(var i = 1; i <= 5; i++){
+                            this.spawnPacket();
+                            this.packets[this.packets.length-1].color = i;
+                            this.packets[this.packets.length-1].x = i*(canvas.getClientRects().width / 6);
+                            this.packets[this.packets.length-1].speed = 0.15; //Make them slow that the player can click them-
+                        }
+                        alert("These are the five types malevolent packets, Malware, Phishing, Spam, Vishing, and Smishing. Click on each of these packets to filter them out before they reach the user's device.");
+                        this.tutorialPart += 1;
+                        break;
+                }
                 /*
                 switch(this.tutorialPart){
                     case 0:
@@ -349,11 +386,11 @@
             //Get the score currently in session storage, add the game score, store the result, and leave the game
             saveAndQuit(){
                 var playerCurrentScore = JSON.parse(sessionStorage.getItem("currentScore"));
-                playerCurrentScore += this.score;
+                playerCurrentScore += Math.min(0,this.score);
                 sessionStorage.setItem("currentScore", JSON.stringify(playerCurrentScore));
                 window.location.href = '../menu.html';
             }
-
+            
             //Restart the tutorial
             restartTutorial(){
                 this.tutorial = true;
