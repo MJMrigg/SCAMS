@@ -30,15 +30,16 @@
             spawnPacket() {
                 //Calculate the minimum and maximum X values for spawning packets based on the canvas position
                 var rect = canvas.getBoundingClientRect();
-                var MaxX = (rect.right-Math.max(0,rect.left)) - 60;
+                console.log(rect);
+                var MaxX = Math.min(rect.width, rect.right-Math.max(0,rect.left)) - 100;
                 var MinX = 0;
                 if(rect.left < 0){
-                    MinX = Math.abs(rect.left);
+                    MinX = Math.abs(rect.left)+60;
                 }
                 //Create the packet
                 const packet = {
                     color: Math.floor(Math.random() * (6 - 0) + 0),
-                    x: Math.random() * MaxX + MinX,
+                    x: Math.random() * (MaxX-MinX+1) + MinX,
                     y: -30,
                     width: 60,
                     height: 60,
@@ -106,14 +107,28 @@
                 ctx.fillStyle = "black";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 ctx.fillStyle = "white";
-                ctx.font = "36px Arial";
-                if(this.tutorial){ //If this is the tutorial
-                    ctx.fillText("Bad Packets Tutorial", canvas.width / 2 - 180, canvas.height / 2 - 30);
-                }else{
-                    ctx.fillText("Bad Packets Defense", canvas.width / 2 - 180, canvas.height / 2 - 30);
+                var rect = canvas.getBoundingClientRect();
+                var centerX = rect.width;
+                var Adjust1 = 180;
+                var Adjust2 = 70;
+                var bigFont = "36px Arial";
+                var smallFont = "24px Arial";
+                //Adjust the font sizes and positions for smaller screens
+                if(window.innerWidth < 600){
+                    Adjust1 = 130;
+                    Adjust2 = 50;
+                    bigFont = "26px Arial";
+                    smallFont = "14px Arial";
                 }
-                ctx.font = "24px Arial";
-                ctx.fillText("Click to Start", canvas.width / 2 - 70, canvas.height / 2 + 20);
+                //Draw start text
+                ctx.font = bigFont;
+                if(this.tutorial){ //If this is the tutorial
+                    ctx.fillText("Bad Packets Tutorial", centerX / 2 - Adjust1, canvas.height / 2 - 30);
+                }else{
+                    ctx.fillText("Bad Packets Defense", centerX / 2 - Adjust1, canvas.height / 2 - 30);
+                }
+                ctx.font = smallFont;;
+                ctx.fillText("Click to Start", centerX / 2 - Adjust2, canvas.height / 2 + 20);
             }
 
             //Draw the game over screen on the canvas
@@ -121,11 +136,27 @@
                 ctx.fillStyle = "black";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 ctx.fillStyle = "white";
-                ctx.font = "36px Arial";
-                ctx.fillText("Game Over", canvas.width / 2 - 100, canvas.height / 2 - 40);
-                ctx.font = "24px Arial";
-                ctx.fillText("Final Score: " + this.score, canvas.width / 2 - 80, canvas.height / 2);
-                ctx.fillText("Click to Restart", canvas.width / 2 - 90, canvas.height / 2 + 40);
+                var rect = canvas.getBoundingClientRect();
+                var centerX = rect.width;
+                var Adjust1 = 100;
+                var Adjust2 = 80;
+                var Adjust3 = 90;
+                var bigFont = "36px Arial";
+                var smallFont = "24px Arial";
+                //Adjust the font sizes and positions for smaller screens
+                if(window.innerWidth < 600){
+                    Adjust1 = 60;
+                    Adjust2 = 40;
+                    Adjust3 = 43;
+                    bigFont = "26px Arial";
+                    smallFont = "14px Arial";
+                }
+                //Draw game over text
+                ctx.font = bigFont;
+                ctx.fillText("Game Over", centerX / 2 - Adjust1, canvas.height / 2 - 40);
+                ctx.font = smallFont;
+                ctx.fillText("Final Score: " + this.score, centerX / 2 - Adjust2, canvas.height / 2);
+                ctx.fillText("Click to Restart", centerX / 2 - Adjust3, canvas.height / 2 + 40);
 
                 if(this.tutorial){ //If this was the tutorial, tell the player what happens when they lose
                     this.handleTutorial();
@@ -190,7 +221,7 @@
                 if(this.tutorial){ //If this is the tutorial, handle the tutorial functionality
                     this.handleTutorial();
                 }else{ //If it's not, proceed as normal
-                    if (Math.random() < 0.03 && this.packets.length < 1) this.spawnPacket(); //Possibly spawn a new packet
+                    if (Math.random() < 0.03) this.spawnPacket(); //Possibly spawn a new packet
                 }
             }
 
@@ -275,8 +306,12 @@
 
                 //If the game is in full swing, check to see if the player clicked on a packet
                 const rect = canvas.getBoundingClientRect();
-                const clickX = e.clientX - rect.left;
-                const clickY = e.clientY - rect.top;
+                var clickX = e.clientX - rect.left;
+                //Adjust the clickX if the canvas has been compressed for smaller screens
+                if(rect.left < 0){
+                    clickX = e.clientX + Math.abs(rect.left);
+                }
+                var clickY = e.clientY - rect.top;
                 //If the click coordinates are invalid, do nothing
                 if(isNaN(clickX) || isNaN(clickY)){
                     return;
