@@ -2,4 +2,4 @@ The "Spoof Call and Malware Simulator(SCAMS)" system is a game developed by Flor
 
 To play SCAMS on the web, go to https://scams-195003776313.us-east1.run.app
 
-To host SCAMS on your own server, run the ServerStart.bat file and then go to localhost:3000
+To host SCAMS on your own server, run the ServerStart.bat file and then run the TestSCAMS.bat file.

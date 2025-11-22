@@ -14,9 +14,12 @@
                 this.packets = []; //Stores where the packets appear on the screen
                 this.gameStarted = false; //The Game has not yet started
                 this.gameOver = false; //The Game has not yet ended
-                this.tutorial = false; //Do not start the tutorial
+                this.tutorial = true; //Do not start the tutorial
                 this.tutorialPart = 0; //Start at the beginning of the tutorial
                 this.wait = false; //Don't wait before drawing the next frame
+                //Get the canvas width based on the screen size
+                var rect = canvas.getBoundingClientRect();
+                this.canvasWidth = Math.min(rect.width, rect.right-Math.max(0,rect.left))
                 this.drawStartScreen(); //Draw the first frame
             }
             
@@ -27,18 +30,24 @@
             }
             
             //Create a packet and add it to the packets array
-            spawnPacket() {
+            spawnPacket(highColor, lowColor) {
                 //Calculate the minimum and maximum X values for spawning packets based on the canvas position
-                var rect = canvas.getBoundingClientRect();
-                console.log(rect);
-                var MaxX = Math.min(rect.width, rect.right-Math.max(0,rect.left)) - 100;
+                var MaxX = this.canvasWidth - 100;
                 var MinX = 0;
-                if(rect.left < 0){
-                    MinX = Math.abs(rect.left)+60;
+                var left = canvas.getBoundingClientRect().left;
+                if(left < 0){
+                    MinX = Math.abs(left)+60;
+                }
+                //If there is no min or max color, set them to default values to allow every kind of packet to spawn
+                var minColor = lowColor;
+                var maxColor = highColor;
+                if(minColor === undefined || maxColor === undefined){
+                    minColor = 0;
+                    maxColor = 6;
                 }
                 //Create the packet
                 const packet = {
-                    color: Math.floor(Math.random() * (6 - 0) + 0),
+                    color: Math.floor(Math.random() * (maxColor - minColor) + minColor),
                     x: Math.random() * (MaxX-MinX+1) + MinX,
                     y: -30,
                     width: 60,
@@ -55,28 +64,22 @@
                         break; //Benign packets don't have text
                     case 1:
                         packet.text = "Malware";
-                        packet.textX = packet.x + 7;
+                        packet.textX = 7;
                         break;
                     case 2:
-                        packet.text = "Phishing";
-                        packet.textX = packet.x + 6.75;
+                        packet.text = "Smishing";
+                        packet.textX = 5.25;
                         packet.textColor = "white";
                         break;
                     case 3:
                         packet.text = "Spam Email";
-                        packet.textX = packet.x+3;
-                        packet.textColor = "black";
+                        packet.textX = 3;
                         break;
                     case 4:
                         packet.text = "Vishing";
-                        packet.textX = packet.x + 10;
+                        packet.textX = 10;
                         packet.textColor = "white";
                         break;
-                    case 5:
-                        packet.text = "Smishing";
-                        packet.textX = packet.x + 5.25;
-                        break;
-                    
                 }
                 this.packets.push(packet);
             }
@@ -89,19 +92,17 @@
                 }else if(packet.color == 1){
                     ctx.fillStyle = "red"; //General Malware packet
                 }else if(packet.color == 2){
-                    ctx.fillStyle = "blue"; //Phishing packet
+                    ctx.fillStyle = "blue"; //Smishing packet
                 }else if(packet.color == 3){
                     ctx.fillStyle = "Yellow"; //Spam packet
                     ctx.font = "10px Arial";
                 }else if(packet.color == 4){
                     ctx.fillStyle = "purple"; //Vishing packet
-                }else if(packet.color == 5){
-                    ctx.fillStyle = "orange"; //Smishing packet
                 }
                 ctx.fillRect(packet.x, packet.y, packet.width, packet.height);
                 //Add packet text
                 ctx.fillStyle = packet.textColor;
-                ctx.fillText(packet.text, packet.textX, packet.textY);
+                ctx.fillText(packet.text, packet.x+packet.textX, packet.textY);
             }
             
             //Draw the start screen on the canvas
@@ -111,14 +112,21 @@
                 ctx.fillStyle = "white";
                 var rect = canvas.getBoundingClientRect();
                 var centerX = rect.width;
+                //Adjustments to center the text
                 var Adjust1 = 100;
+                if(this.tutorial){
+                    Adjust1 = 65;
+                }
                 var Adjust2 = 70;
                 var bigFont = "36px Arial";
                 var smallFont = "24px Arial";
                 //Adjust the font sizes and positions for smaller screens
                 if(window.innerWidth < 600){
                     Adjust1 = 80;
-                    Adjust2 = 50;
+                    if(this.tutorial){
+                        Adjust1 = 45;
+                    }
+                    Adjust2 = 40;
                     bigFont = "26px Arial";
                     smallFont = "14px Arial";
                 }
@@ -239,96 +247,85 @@
                     case 0:
                         alert("Welcome to the Firewall Ninja Tutorial! In this game, you play as the firewall and have to filter out messages from your user's mobile device.");
                         //Spawn a good message
-                        this.spawnPacket();
-                        this.packets[this.packets.length-1].color = 0; //Make it a benign packet
-                        this.packets[this.packets.length-1].x = canvas.getClientRects().width / 2;
+                        this.spawnPacket(0,0);
+                        this.packets[this.packets.length-1].x = this.canvasWidth / 2;
                         this.tutorialPart += 1;
                         break;
                     case 1:
+                        //If the packet has reached the center of the screen, slow the message so that the player can propertly see it
+                        if(this.packets[this.packets.length-1].y < canvas.height / 88){
+                            return;
+                        }
+                        var originalSpeed = this.packets[this.packets.length-1].speed; //Keep track of the original packet's speed
+                        this.packets[this.packets.length-1].speed = 0.15;
                         alert("This is a good message. Do not filter these. Let them fall off the screen and into the user's device.");
+                        this.packets[this.packets.length-1].speed = originalSpeed; //Restore the original speed
                         this.tutorialPart += 1;
                         break;
                     case 2:
                         if(this.packets.length > 0){
                             return; //Wait until the first benign packet is gone
                         }
+                        alert("When a good messages reaches the user's mobile device, your score will increase by 1. If you filter a good message, your score will decrease by 1.");
                         this.tutorialPart += 1;
                         break;
                     case 3:
-                        alert("Excellent! Now, let's look at at some bad messages.");
+                        alert("Let's look at at some malevolent messages.");
                         this.tutorialPart += 1;
                         break;
                     case 4:
                         //Spawn one if each malevolent type
-                        for(var i = 1; i <= 5; i++){
-                            this.spawnPacket();
-                            this.packets[this.packets.length-1].color = i;
-                            this.packets[this.packets.length-1].x = i*(canvas.getClientRects().width / 6);
-                            this.packets[this.packets.length-1].speed = 0.15; //Make them slow that the player can click them-
+                        for(var i = 1; i <= 4; i++){
+                            this.spawnPacket(i,i+1);
+                            this.packets[this.packets.length-1].x = (2+i)*(this.canvasWidth / 8);
                         }
-                        alert("These are the five types malevolent packets, Malware, Phishing, Spam, Vishing, and Smishing. Click on each of these packets to filter them out before they reach the user's device.");
-                        this.tutorialPart += 1;
+                        this.tutorialPart += 0.5;
                         break;
-                }
-                /*
-                switch(this.tutorialPart){
-                    case 0:
-                        alert("Welcome to the Bad Packets Defense Tutorial! In this game, network packets that contain malicious content will fall from the top of the screen and you will have to stop them from reaching the bottom and into the vulnerable mobile device.");
-                        //Spawn a red packet for the player to click
-                        this.spawnPacket();
-                        this.packets[this.packets.length-1].isGolden = false;
-                        this.packets[this.packets.length-1].x = canvas.width / 2;
-                        this.tutorialPart += 1;
-                        break;
-                    case 1:
-                        //If the packet has reached the center of the screen, slow the packet and let the player click it.
-                        if(this.packets[this.packets.length-1].y >= canvas.height / 88){
-                            this.tutorialPart += 0.5; //Set the tutorial part to a decimal so that it doesn't trigger the switch until the packet is gone
-                            this.packets[this.packets.length-1].speed = 0.15;
-                            alert("When a packet falls, click it to prevent it from reaching the user's mobile device.");
+                    case 4.5:
+                        //Wait until the packets have gotten to a point on the screen where the player can see them
+                        if(this.packets[this.packets.length-1].y < canvas.height / 88){
+                            return;
                         }
-                        break;
-                    case 2:
-                        alert("When you click a Bad Packet before it enters the user's mobile device, your score will increase by 1. You can see this number in the top left corner of the screen.");
-                        //Spawn a golden packet for the player to click
-                        this.spawnPacket();
-                        this.packets[this.packets.length-1].isGolden = true;
-                        this.packets[this.packets.length-1].x = canvas.width / 2;
-                        this.tutorialPart += 1;
-                        break;
-                    case 3:
-                        //If the packet has reached the center of the screen, slow the packet and let the player click it.
-                        if(this.packets[this.packets.length-1].y >= canvas.height / 88){
-                            this.tutorialPart += 0.5;
-                            this.packets[this.packets.length-1].speed = 0.15;
-                            alert("Golden Packets have especially dangerous malware. Stop them from reaching the user's mobile device for 5 points.");
+                        alert("These are bad messages. Click on them to filter them before they reach the user's mobile device.");
+                        this.tutorialPart += 0.5;
+                        //Make all the packets slow so the player can click them
+                        for(var i = 0; i < this.packets.length; i++){
+                            this.packets[i].speed = 0.15;
                         }
-                        break;
-                    case 4:
-                        //Spawn a really fast packet so that the user can see what happens when a packet enters the user's mobile device
-                        this.spawnPacket();
-                        this.packets[this.packets.length-1].speed = 20.0;
-                        this.packets[this.packets.length-1].x = canvas.width / 2;
-                        this.tutorialPart += 1;
                         break;
                     case 5:
-                        if(this.packets.length == 0){
-                            alert("Oh no! A packet got through to the user's mobile device! When that happens, you will lose a life. When you lose all 10 lives, the user's phone is so full of malware, its unsuable and all hackers have access to their data.");
-                            this.tutorialPart += 1;
-                            //Show the player what happens when they lose all their lives
-                            for(let i = 0; i < 10; i++){
-                                this.spawnPacket();
-                                this.packets[this.packets.length-1].speed = 20.0; //Make them so fast, there's no way they can click it
-                            }
+                        if(this.packets.length > 0){
+                            return; //Wait until the player has clicked all of the packets
                         }
+                        alert("When you click on a bad message, your score will increase by 1.");
+                        //Spawn a malevolet packet that is too fast for the player to click
+                        this.spawnPacket(1,5);
+                        this.packets[this.packets.length-1].speed = 30.0; //Make it really fast
+                        this.packets[this.packets.length-1].x = this.canvasWidth / 2;
+                        this.tutorialPart += 1;
                         break;
                     case 6:
+                        if(this.packets.length > 0){
+                            return; //Wait until the packet is gone
+                        }
+                        alert("Oh no! A bad message got through to the user's mobile device! When that happens, you will lose a life. When you lose all 10 lives, the user's phone is so full of malware, its basically unusable.");
+                        this.tutorialPart += 1;
+                        break;
+                    case 7:
+                        //Spawn 10 really fast packets so that the user can't click them
+                        for(let i = 0; i < 10; i++){
+                            this.spawnPacket(1,5);
+                            this.packets[this.packets.length-1].speed = 30.0; //Make it really fast
+                        }
+                        this.tutorialPart += 1;
+                        break;
+                    case 8:
                         if(this.gameOver){
-                            alert("Oh no! Too many bad packets have gotten through! When this happens, the game is over and you will have a chance to play again. Enjoy!");
+                            alert("Oh no! Too many bad messages have gotten through! When this happens, the game is over and you will have a chance to play again. Enjoy!");
                             this.tutorialPart += 1;
                         }
                         break;
-                }*/
+                }
             }
 
             //Handle when the player clicks on the screen
@@ -363,7 +360,6 @@
                 //For each packet, get its information and see if the player clicked it
                 for (let i = 0; i < this.packets.length; i++) {
                     const p = this.packets[i];
-                    console.log(clickX+" "+p.x+" "+(p.x + p.width)+" "+clickY+" "+p.y+" "+(p.y + p.height));
                     //If the player didn't click on the packet, keep going through packets
                     if(clickX < p.x || clickX > p.x + p.width || clickY < p.y || clickY > p.y + p.height){
                         continue;
@@ -454,9 +450,9 @@
             </script>
         </div>
         <div style="margin-left: 8px;">
-          <button class="badPackets" onclick=mymain.saveAndQuit()>Save and Quit</button><!--<br>
+          <button class="badPackets" onclick=mymain.saveAndQuit()>Save and Quit</button><br>
           <button class="badPackets" onclick="mymain.skipTutorial()">Skip Tutorial</button><br>
-          <button class="badPackets" onclick="mymain.restartTutorial()">Restart Tutorial</button>-->
+          <button class="badPackets" onclick="mymain.restartTutorial()">Restart Tutorial</button>
         </div>
         
     </div>
