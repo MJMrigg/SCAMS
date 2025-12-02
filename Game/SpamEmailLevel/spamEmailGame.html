@@ -22,7 +22,7 @@
 			max-height: 70vh; /* 70% of viewport height */
 		}
 	</style>
-	
+
 	<script>
 		class main{
 			constructor(){
@@ -30,9 +30,11 @@
 				this.emailImg = document.getElementById("emailPic");
 				this.emailImg.src = 'data:image/png;base64,'+ this.image;
 				
-				this.playerAns = [null,null,null,null,null,null];
+				this.playerAns = [null,null,null,null,null,null,null];
 				this.playerAns[3]=false;
 				this.playerAns[4]=false;
+				this.playerAns[5]=false;
+
 				this.gameFinish = false;
 				this.maxScore = 0;
 				this.correctAnsNum = 0;
@@ -60,6 +62,7 @@
 				this.image = str;
 				this.emailImg = document.getElementById("emailPic");
 				this.emailImg.src = 'data:image/png;base64,'+ this.image;
+
 			}
 			
 			changeVal(opt, chosen){
@@ -80,12 +83,15 @@
 				else if(opt==2){
 					if(chosen==1){
 						document.getElementById("emailAdditional").style = "display:block";
+						document.getElementById("susLink").style="display:block";
+
 						document.getElementById("feelOff").style="display:block";
 						document.getElementById("spellingErr").style="display:block";
 						this.playerAns[2]=true;
 						
 					}else{
 						document.getElementById("emailAdditional").style = "display:none";
+						document.getElementById("susLink").style="display:none";
 						document.getElementById("feelOff").style="display:none";
 						document.getElementById("spellingErr").style="display:none";
 						this.playerAns[2]=false;
@@ -93,31 +99,39 @@
 
 						this.playerAns[3]=false;
 						this.playerAns[4]=false;
+						this.playerAns[5]=false;
+						document.getElementById("susLink").checked = false;
 						document.getElementById("feelOff").checked = false;
 						document.getElementById("spellingErr").checked = false;
 					}
 				}else{
 					if(chosen == 1){
-						this.playerAns[5] = true;
+						this.playerAns[6] = true;
 					}else{
-						this.playerAns[5] = false;
+						this.playerAns[6] = false;
 					}
 				}
 			}
 			
 			changeCheck(opt, checked){
 				var type = opt
-				if(type == 0){//the spelling errors
+				if(type == 0){//suspicious link
 					if(checked){
 						this.playerAns[3]=true;
 					}else{
 						this.playerAns[3]=false;
 					}
-				}else{//the sounding off
+				}else if(type==1){//the spelling errors
 					if(checked){
 						this.playerAns[4]=true;
 					}else{
 						this.playerAns[4]=false;
+					}
+				}else{//the sounding off
+					if(checked){
+						this.playerAns[5]=true;
+					}else{
+						this.playerAns[5]=false;
 					}
 				}
 			}
@@ -182,6 +196,7 @@
 			}
 			
 			async getQuestionBank(){
+				console.log("getting questions...");
 				try {
 					//const response = await fetch('SSE_MobileSecurityGame.PhishingBank.json');
 					var startTime = Date.now(); //Get start and end times to calculate rtt
@@ -214,7 +229,9 @@
 						var data = this.questionBank[curr-1];
 						//console.log(data);
 
-						var ans = [data.senderAdd, data.emailSubject, data.emailBody, data.spellingErrors, data.soundsOff, data.pdfIncluded];
+						var ans = [data.senderAdd, data.emailSubject, data.emailBody, data.susLink, data.spellingErrors, data.soundsOff, data.pdfIncluded];
+						//var ans = [data.senderAdd, data.emailSubject, data.emailBody, data.spellingErrors, data.soundsOff, data.pdfIncluded];
+						
 						this.emails.push(new email(data.imagebase64, ans));
 						this.questionBank.pop();
 					}
@@ -246,11 +263,13 @@
 						}else if(i==2){
 							document.getElementById("emailBod").style.color = "green";
 						}else if(i==3){
-							document.getElementById("spellingErr").style.color = "green";
+							document.getElementById("susLink").style.color = "green";
 						}else if(i==4){
-							document.getElementById("feelOff").style.color = "green";
+							document.getElementById("spellingErr").style.color = "green";
+						}else if(i==5){
+							document.getElementById("feelOff").style.color = "red";
 						}else{
-							document.getElementById("pdf").style.color = "green";
+							document.getElementById("pdf").style.color = "red";
 						}
 						
 					}else{
@@ -262,8 +281,10 @@
 						}else if(i==2){
 							document.getElementById("emailBod").style.color = "red";
 						}else if(i==3){
-							document.getElementById("spellingErr").style.color = "red";
+							document.getElementById("susLink").style.color = "red";
 						}else if(i==4){
+							document.getElementById("spellingErr").style.color = "red";
+						}else if(i==5){
 							document.getElementById("feelOff").style.color = "red";
 						}else{
 							document.getElementById("pdf").style.color = "red";
@@ -274,10 +295,10 @@
 				console.log(this.correctAnsNum);
 				
 				//if all correct
-				if(levelCor==6){
+				if(levelCor==7){
 					allCor = true;
 				}
-				this.maxScore += 6;
+				this.maxScore += 7;
 				var currentScore = JSON.parse(sessionStorage.getItem("currentScore")) + levelCor;
 				sessionStorage.setItem("currentScore", JSON.stringify(currentScore));
 				return allCor;
@@ -293,7 +314,7 @@
 					newIndex = Math.floor(Math.random()*this.emails.length);
 				}
 				this.currIndex=newIndex;
-				for(var i = 0;i<6;i++){
+				for(var i = 0;i<7;i++){
 					//clears player's current answer array
 					this.playerAns[i] = null;
 				}
@@ -301,13 +322,16 @@
 
 				this.playerAns[3] = false;
 				this.playerAns[4] = false;
+				this.playerAns[5] = false;
 
 				//the three main
 				document.getElementById("emailAd").style.color = "black";
 				document.getElementById("subjectLine").style.color = "black";
 				document.getElementById("emailBod").style.color = "black";
 
-				//the two additional
+				//the three additional
+				document.getElementById("susLink").style.color = "black";
+
 				document.getElementById("feelOff").style.color = "black";
 				document.getElementById("spellingErr").style.color = "black";
 	
@@ -323,9 +347,11 @@
 				}
 
 				document.getElementById("emailAdditional").style = "display:none";
+				document.getElementById("susLink").style="display:none";
 
 				document.getElementById("feelOff").style="display:none";
 				document.getElementById("spellingErr").style="display:none";
+				document.getElementById("susLink").checked = false;
 
 				document.getElementById("feelOff").checked = false;
 				document.getElementById("spellingErr").checked = false;
@@ -349,6 +375,8 @@
 				}
 				this.playerAns[3]=false;
 				this.playerAns[4]=false;
+				this.playerAns[5]=false;
+
 
 				this.goButton.innerText = "Submit Answers";
 				this.goButton.onclick = () => this.submitAnswers();
@@ -390,8 +418,10 @@
 			<label for = "OptionSel1">No</label>
 			
 			<div id="emailAdditional" style="display:none">
-				<input type = "checkbox" value = "spellingErr" id = "spellingErr"onclick="m.changeCheck(0,this.checked)">Spelling mistakes</input>
-				<input type = "checkbox"value="feelOff" id="feelOff"onclick="m.changeCheck(0,this.checked)">Sounds off</input>
+				<input type = "checkbox" value = "susLink" id="susLink" onclick="m.changeCheck(0,this.checked)">Suspicious Link</input>
+
+				<input type = "checkbox" value = "spellingErr" id = "spellingErr"onclick="m.changeCheck(1,this.checked)">Spelling mistakes</input>
+				<input type = "checkbox"value="feelOff" id="feelOff"onclick="m.changeCheck(2,this.checked)">Sounds off</input>
 			</div>
 			
 			</center>
