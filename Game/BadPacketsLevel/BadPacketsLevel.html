@@ -395,7 +395,7 @@
             //Get the score currently in session storage, add the game score, store the result, and leave the game
             saveAndQuit(){
                 var playerCurrentScore = JSON.parse(sessionStorage.getItem("currentScore"));
-                playerCurrentScore += Math.min(0,this.score);
+                playerCurrentScore += Math.max(0,this.score);
                 sessionStorage.setItem("currentScore", JSON.stringify(playerCurrentScore));
                 window.location.href = '../menu.html';
             }
