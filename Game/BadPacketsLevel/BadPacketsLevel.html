@@ -30,7 +30,7 @@
             }
             
             //Create a packet and add it to the packets array
-            spawnPacket(highColor, lowColor) {
+            spawnPacket(highType, lowType) {
                 //Calculate the minimum and maximum X values for spawning packets based on the canvas position
                 var MaxX = this.canvasWidth - 100;
                 var MinX = 0;
@@ -38,70 +38,83 @@
                 if(left < 0){
                     MinX = Math.abs(left)+60;
                 }
-                //If there is no min or max color, set them to default values to allow every kind of packet to spawn
-                var minColor = lowColor;
-                var maxColor = highColor;
-                if(minColor === undefined || maxColor === undefined){
-                    minColor = 0;
-                    maxColor = 5;
+                //If there is no min or max type, set them to default values to allow every kind of packet to spawn
+                var minType = lowType;
+                var maxType = highType;
+                if(minType === undefined || maxType === undefined){
+                    minType = 0;
+                    maxType = 5;
                 }
                 //Create the packet
                 const packet = {
-                    color: Math.floor(Math.random() * (maxColor - minColor) + minColor),
+                    type: Math.floor(Math.random() * (maxType - minType) + minType),
                     x: Math.random() * (MaxX-MinX+1) + MinX,
                     y: -30,
                     width: 60,
                     height: 60,
                     speed: 1.2 + Math.random() * 0.5,
                     text: "",
-                    textColor: "black",
                     textX: -60,
-                    textY: 0,
+                    textY: 28,
+                    PIC: new Image(),
+                    src: ""
                 };
-                //Based on the packet's color, set its text and text location
-                switch(packet.color){
+                //Based on the packet's color, set its text, text location, and picture
+                switch(packet.type){
                     case 0:
                         break; //Benign packets don't have text
                     case 1:
                         packet.text = "Malware";
-                        packet.textX = 7;
+                        packet.textX = 10;
+                        packet.PIC.src = "Malware.png";
+                        packet.src = "Malware.png";
                         break;
                     case 2:
                         packet.text = "Smishing";
-                        packet.textX = 5.25;
-                        packet.textColor = "white";
+                        packet.textX = 7.5;
+                        packet.PIC.src = "Smishing.png";
+                        packet.src = "Smishing.png";
                         break;
                     case 3:
                         packet.text = "Spam Email";
                         packet.textX = 3;
+                        packet.PIC.src = "Spam.png";
+                        packet.src = "Spam.png";
                         break;
                     case 4:
                         packet.text = "Vishing";
-                        packet.textX = 10;
-                        packet.textColor = "white";
+                        packet.textX = 12;
+                        packet.PIC.src = "Vishing.png";
+                        packet.src = "Vishing.png";
                         break;
                 }
+                //Add picture to the packet
+                packet.PIC.onload = () => {
+                    ctx.drawImage(packet.PIC, packet.x+6, packet.y, 48, 48);
+                };
                 this.packets.push(packet);
             }
             
             //Take in a packet and draw it
             drawPacket(packet) {
-                ctx.font = "12px Arial";
-                if(packet.color == 0){
-                    ctx.fillStyle = "green"; //Benign packet
-                }else if(packet.color == 1){
-                    ctx.fillStyle = "red"; //General Malware packet
-                }else if(packet.color == 2){
-                    ctx.fillStyle = "blue"; //Smishing packet
-                }else if(packet.color == 3){
-                    ctx.fillStyle = "Yellow"; //Spam packet
-                    ctx.font = "10px Arial";
-                }else if(packet.color == 4){
-                    ctx.fillStyle = "purple"; //Vishing packet
+                //Figure out the packet color and text size based on the type
+                ctx.font = "11px Arial";
+                if(packet.type == 0){ //Benign packet
+                    ctx.fillStyle = "green";
+                }else{ //Malicious packet
+                    ctx.fillStyle = "white";
+                    if(packet.type == 3){ //Spam packet has smaller text
+                        ctx.font = "10px Arial";
+                    }
                 }
+                //Add packet
                 ctx.fillRect(packet.x, packet.y, packet.width, packet.height);
+                //Add packet image if it's a malicious packet
+                if(packet.type > 0){
+                    ctx.drawImage(packet.PIC, packet.x+6, packet.y, 48, 48);
+                }
                 //Add packet text
-                ctx.fillStyle = packet.textColor;
+                ctx.fillStyle = "black";
                 ctx.fillText(packet.text, packet.x+packet.textX, packet.textY);
             }
             
@@ -223,11 +236,11 @@
                     //If that new position is below the canvas, take away a point and delete the packet
                     if (packet.y > canvas.height) {
                         //Take away a life if the packet was not a benign packet
-                        if(packet.color > 0){
+                        if(packet.type > 0){
                             this.lives--;
                         }
                         //Give the player points for letting a benign packet through, take away points for letting a bad packet through
-                        this.updateScore(packet.color == 0 ? 1 : -1);
+                        this.updateScore(packet.type == 0 ? 1 : -1);
                         //Delete the packet(because JavaScript is memory safe, removing it from the array will do this)
                         this.packets.splice(index, 1);
                         if(this.tutorial) this.handleTutorial(); //If this was the tutorial, handle what happens when the player lets a packet through
@@ -365,9 +378,9 @@
                         continue;
                     }
                     //If they did, update the score and remove it
-                    this.updateScore(p.color == 0 ? -1 : 1);
+                    this.updateScore(p.type == 0 ? -1 : 1);
                     //If they clicked a benign packet, lose a life
-                    if(p.color == 0){
+                    if(p.type == 0){
 
                     }
                     this.packets.splice(i, 1);
@@ -448,6 +461,7 @@
                 canvas.addEventListener("touchstart", main.click); //For mobile devices
                 requestAnimationFrame(main.loop);
             </script>
+            <p>Free clip art is taken from iconshock.com</p>
         </div>
         <div style="margin-left: 8px;">
           <button class="badPackets" onclick=mymain.saveAndQuit()>Save and Quit</button><br>

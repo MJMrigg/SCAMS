@@ -5,6 +5,8 @@
 
     <head>
         <script>
+            console.log("Menu page - on load:");
+            console.log("currentScore:", sessionStorage.getItem("currentScore"));
             //Start the smishing level either at the start or where the user last left off
             function startSmishingLevel(){
                 var level1Stage = JSON.parse(sessionStorage.getItem("level1Stage"));
@@ -124,6 +126,10 @@
                 <button class="selection" onclick="returnHome()" style="width: 180px; height:50px;font-family: 'Tahoma';font-weight: normal;font-size: 0.9rem;">Return Home</button>
             </center>
         </div>
-        <script>addCurrentScore()</script>
+        <script>
+            console.log("Menu page - on load:");
+            console.log("currentScore:", sessionStorage.getItem("currentScore"));
+            addCurrentScore()
+        </script>
     </body>
 </html>

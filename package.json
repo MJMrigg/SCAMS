@@ -1,7 +1,7 @@
 {
   "name": "desktop",
-  "version": "1.1.1",
-  "description": "Server used to host Mongo",
+  "version": "1.2.1",
+  "description": "Server to host SCAMS",
   "license": "ISC",
   "author": "Matthew Rigg",
   "type": "module",

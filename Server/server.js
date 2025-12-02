@@ -119,7 +119,6 @@ app.post("/login", async(request, response) =>{
         smishingLevelStage: result[0].smishingLevelStage
       };
     }
-    console.log(document);
     document.rtt = rtt; //Add sever-database request rtt to document
     //Return the document
     response.status(200).json(document);
@@ -575,7 +574,7 @@ app.post("/getPermissions", async(request, response) => {
     //Return the document
     response.status(200).send(document);
   }catch(err){
-    console.log(`[Error] ${err}`);
+    console.error(`[Error] ${err}`);
   }
 });
 

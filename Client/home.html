@@ -13,10 +13,29 @@
     
     <head>
         <script>
+            //Set all user information in the session storage
+            function setInformation(){
+                //User Information
+                if(sessionStorage.getItem("loggedIn") == null){
+                    sessionStorage.setItem("loggedIn",JSON.stringify(false)); //User does not start logged in
+                }
+                if(sessionStorage.getItem("currentScore") == null){
+                    sessionStorage.setItem("currentScore",JSON.stringify(0)); //User's score for this run
+                }
+                if(sessionStorage.getItem("level1Stage") == null){
+                    sessionStorage.setItem("level1Stage",JSON.stringify(0)); //User's stage on smishing level(0 is the tutorial)
+                }
+                if(sessionStorage.getItem("highScore") == null){
+                    sessionStorage.setItem("highScore",JSON.stringify(0)); //User's highest score
+                }
+                if(sessionStorage.getItem("permissionsLevelStage") == null){
+                    sessionStorage.setItem("permissionsLevelStage",JSON.stringify(0)); //User's stage on permissions level(0 is the tutorial)
+                }
+            }
             //Take the user to their profile if they are logged in
             function viewProfile(){
                 var loggedIn = JSON.parse(sessionStorage.getItem("loggedIn"));
-                if(!loggedIn){ //If the player is not logged in tell them and return
+                if(loggedIn == false){ //If the player is not logged in tell them and return
                     alert("You must be logged in to view your profile.");
                     return;
                 }
@@ -41,25 +60,19 @@
             <button class="selection" style="font-family: 'Tahoma';" onclick="viewProfile()">View Profile</button><br>
         </div>
         <script>
-            function setInformation(){
-                //User Information
-                if(sessionStorage.getItem("loggedIn") == null){
-                    sessionStorage.setItem("loggedIn",JSON.stringify(false)); //User does not start logged in
+            //Set all neccessary user information after 300 miliseconds because Gooogle Chrome preprocessing messes with session storage upon page load
+            setTimeout(function() {
+                setInformation();
+            }, 300);
+            //Before the player goes to another page, make sure all the neccessary user information is set
+            window.addEventListener('beforeunload', function() {
+                if(sessionStorage.getItem("currentScore") === null || sessionStorage.getItem("loggedIn") === null 
+                    || sessionStorage.getItem("level1Stage") === null || sessionStorage.getItem("highScore") === null 
+                    || sessionStorage.getItem("permissionsLevelStage") === null) 
+                {
+                    setInformation();
                 }
-                if(sessionStorage.getItem("currentScore") == null){
-                    sessionStorage.setItem("currentScore",JSON.stringify(0)); //User's score for this run
-                }
-                if(sessionStorage.getItem("level1Stage") == null){
-                    sessionStorage.setItem("level1Stage",JSON.stringify(0)); //User's stage on smishing level(0 is the tutorial)
-                }
-                if(sessionStorage.getItem("highScore") == null){
-                    sessionStorage.setItem("highScore",JSON.stringify(0)); //User's highest score
-                }
-                if(sessionStorage.getItem("permissionsLevelStage") == null){
-                    sessionStorage.setItem("permissionsLevelStage",JSON.stringify(0)); //User's stage on permissions level(0 is the tutorial)
-                }
-            }
-            setInformation();
+            });
         </script>
     </body>
 </html>
