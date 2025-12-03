@@ -21,6 +21,18 @@
 		#emailPic, .phishingIMG {
 			max-height: 70vh; /* 70% of viewport height */
 		}
+		#emailAdditional label {
+			display: inline-flex;
+			align-items: center;
+			gap: 5px;
+			cursor: pointer;
+			white-space: nowrap;
+		}
+		
+		#emailAdditional input[type="checkbox"] {
+			margin: 0;
+			cursor: pointer;
+		}
 	</style>
 
 	<script>
@@ -418,10 +430,20 @@
 			<label for = "OptionSel1">No</label>
 			
 			<div id="emailAdditional" style="display:none">
-				<input type = "checkbox" value = "susLink" id="susLink" onclick="m.changeCheck(0,this.checked)">Suspicious Link</input>
-
-				<input type = "checkbox" value = "spellingErr" id = "spellingErr"onclick="m.changeCheck(1,this.checked)">Spelling mistakes</input>
-				<input type = "checkbox"value="feelOff" id="feelOff"onclick="m.changeCheck(2,this.checked)">Sounds off</input>
+				<label>
+					<input type = "checkbox" value = "susLink" id="susLink" onclick="m.changeCheck(0,this.checked)">
+					Suspicious Link
+				</label>
+				<br>
+				<label>
+					<input type = "checkbox" value = "spellingErr" id = "spellingErr"onclick="m.changeCheck(1,this.checked)">
+					Spelling mistakes
+				</label>
+				<br>
+				<label>
+					<input type = "checkbox"value="feelOff" id="feelOff"onclick="m.changeCheck(2,this.checked)">
+					Sounds off
+				</label>
 			</div>
 			
 			</center>
