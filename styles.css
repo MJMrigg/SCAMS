@@ -10,10 +10,10 @@
         width: 60svh;
         height: 96vh;
     }
-    div.menuForBadPackets{
+    div.flexPhishing{
         flex-direction: row;
     }
-    div.flexPhishing{
+    div.flexForBadPackets{
         flex-direction: row;
     }
 }
@@ -29,10 +29,10 @@
     button.function{
         padding: 5%
     }
-    div.menuForBadPackets{
+    div.flexPhishing{
         flex-direction: column;
     }
-    div.flexPhishing{
+    div.flexForBadPackets{
         flex-direction: column;
     }
     img.phishingIMG{
@@ -150,17 +150,19 @@ div.badPacketsScore{
     font-family: 'Tahoma';
 }
 div.menuForBadPackets{
-    width: 90%;
+    width: 80%;
     height: 60%;
     text-align: left;
     border: 10px solid black;
     margin: auto;
     float: center;
     background-color: white;
-    display: flex;
-    align-items: center;
     margin-top: 5px;
     margin-bottom: 5px;
+}
+div.flexForBadPackets{
+    display: flex; 
+    align-items: center;
 }
 button.badPackets{
     width: 120px;

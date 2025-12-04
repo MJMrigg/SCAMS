@@ -449,26 +449,29 @@
   </head>
   <body>
     <div class="menuForBadPackets">
-        <div class="forBadPackets">
-            <div id="score" class="badPacketsScore">Score: 0 | Lives: 10</div>
-            <canvas id="gameCanvas" class="forBadPackets" width="800" height="600"></canvas>
-            <script>
-                const canvas = document.getElementById("gameCanvas");
-                const ctx = canvas.getContext("2d");
-                const mymain = new main;
+        <div class="flexForBadPackets" style="display: flex; align-items: center;">
+            <div class="forBadPackets">
+                <div id="score" class="badPacketsScore">Score: 0 | Lives: 10</div>
+                <canvas id="gameCanvas" class="forBadPackets" width="800" height="600"></canvas>
+                <script>
+                    const canvas = document.getElementById("gameCanvas");
+                    const ctx = canvas.getContext("2d");
+                    const mymain = new main;
 
-                canvas.addEventListener("click", main.click);
-                canvas.addEventListener("touchstart", main.click); //For mobile devices
-                requestAnimationFrame(main.loop);
-            </script>
-            <p style="color: white">Free clip art is taken from iconshock.com</p>
+                    canvas.addEventListener("click", main.click);
+                    canvas.addEventListener("touchstart", main.click); //For mobile devices
+                    requestAnimationFrame(main.loop);
+                </script>
+            </div>
+            <div style="margin-left: 8px;">
+                <div style="display: flex; align-items: left; flex-direction: column;">
+                    <button class="badPackets" onclick=mymain.saveAndQuit()>Save and Quit</button>
+                    <button class="badPackets" onclick="mymain.skipTutorial()">Skip Tutorial</button>
+                    <button class="badPackets" onclick="mymain.restartTutorial()">Restart Tutorial</button>
+                </div>
+            </div>
         </div>
-        <div style="margin-left: 8px;">
-          <button class="badPackets" onclick=mymain.saveAndQuit()>Save and Quit</button><br>
-          <button class="badPackets" onclick="mymain.skipTutorial()">Skip Tutorial</button><br>
-          <button class="badPackets" onclick="mymain.restartTutorial()">Restart Tutorial</button>
-        </div>
-        
+        <p style="color: black; text-align: center;">Free clip art is taken from iconshock.com</p>
     </div>
   </body>
 </html>
