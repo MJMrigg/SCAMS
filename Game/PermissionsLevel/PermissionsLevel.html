@@ -15,7 +15,8 @@
         if(this.stage == 0){ //If they are at the start of the level, do the tutorial
           this.doTutorial();
         }
-        this.getQuestions();
+        this.allApps = []; //All of the apps(questions)
+        this.getAllQuestions(); //Get all the questions from the server
       }
       // Have the player read the tutorial text using the alert function
       doTutorial(){
@@ -70,11 +71,11 @@
         submit.addEventListener("click", () => this.submitChoices());
       }
       // Creates the checkboxes that are used for selecting permissions
-      checkbox(permission, appIndex) {
+      checkbox(appIndex, permission) {
         return `<div style="margin-bottom: 10px;">
           <label>
             <input type="checkbox" data-app="${appIndex}" data-permission="${permission}" />
-            Allow ${permission.charAt(0).toUpperCase() + permission.slice(1)}
+            Allow ${appIndex.charAt(0).toUpperCase() + appIndex.slice(1)}
           </label>
         </div>`;
       }
@@ -86,8 +87,8 @@
         checkboxes.forEach(cb => {
           const appIndex = cb.dataset.app;
           const perm = cb.dataset.permission;
-          if (!userChoices[appIndex]) userChoices[appIndex] = {};
-          userChoices[appIndex][perm] = cb.checked;
+          if (!userChoices[appIndex]) userChoices[appIndex] = [];
+          userChoices[appIndex].push(cb.checked);
         });
         // See what the player got correct and incorrect and create the divs to show those results
         let score = 0;
@@ -96,13 +97,13 @@
         this.selectedApps.forEach((app, i) => {
           feedback += `<li><strong>${app.name}</strong>:`;
           Object.entries(app.correctPermissions).forEach(([perm, correct]) => {
-          const userValue = userChoices[i]?.[perm] || false; //This is an if statement
-          if (userValue === correct) {
-            score++;
-            feedback += ` <span style="color: green">✓ ${perm}</span>`;
-          } else {
-            feedback += ` <span style="color: red">✗ ${perm}</span>`;
-          }
+            const userValue = userChoices[perm]?.[i] || false; //This is an if statement
+            if (userValue === correct) {
+              score++;
+              feedback += ` <span style="color: green">✓ ${perm}</span>`;
+            } else {
+              feedback += ` <span style="color: red">✗ ${perm}</span>`;
+            }
           });
           feedback += `</ul><p>${app.explanation}</p></li>`;
         });
@@ -144,32 +145,47 @@
           document.getElementById("apps").innerHTML = "";
           document.getElementById("title").innerHTML = "";
           document.getElementById("results").innerHTML = "";
-          this.getQuestions();
+          this.setQuestions();
           document.getElementById('body').scrollIntoView();
         }
       }
-      //Get questions from the server
-      async getQuestions(){
-        //Set up data to be sent to the server
-        var data = {
-          stage: this.stage //Questions received = first five questions starting at question number stage/5 and going down
+      //Set up the questions for the stage
+      setQuestions(){
+        this.selectedApps = []; //Array to store all of the selected questions
+        //If this isn't the tutorial, set up five questions
+        if(this.stage > 0){
+          //Pick the questions based on the stage
+          var end = this.stage*5;
+          var start = end-4;
+          //Select the questions
+          for(var i = start; i <= end; i++){
+            this.selectedApps.push(this.allApps[i]);
+          }
+        }else{ //If this is the tutorial, only set up the first question
+          this.selectedApps.push(this.allApps[0]);
         }
+        //Set up the questions on the UI
+        this.createAppUI();
+      }
+      //Get all questions from the server
+      async getAllQuestions(){
         var startTime = Date.now(); //Keep track of start and end time to calculate RTT
         //Send fetch request to the server
-        var query = await fetch("/getPermissions",{
-          method:"POST",
+        var query = await fetch("/getAllPermissions",{
+          method:"GET",
           headers:{
             "Content-Type":"application/json"
           },
-          body: JSON.stringify(data),
         });
         //Get reply
         var result = await query.json();
         var endTime = Date.now();
         var rtt = startTime - endTime;
-        console.log("/getSmishing Request RTTs:\nServer-Database Request RTT: "+result.rtt+"ms\nClient-Server Request RTT: "+rtt+"ms\n");
-        this.selectedApps = result.questions;
-        this.createAppUI();
+        console.log("/getPermissions Request RTTs:\nServer-Database Request RTT: "+result.rtt+"ms\nClient-Server Request RTT: "+rtt+"ms\n");
+        //Store all questions
+        this.allApps = result.questions;
+        //Set up the first set of questions
+        this.setQuestions();
       }
     }
   </script>
