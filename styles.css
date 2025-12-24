@@ -10,6 +10,10 @@
         width: 60svh;
         height: 96vh;
     }
+    img.smishingKey{
+        width: 60svh;
+        height: 16vh;
+    }
     div.flexPhishing{
         flex-direction: row;
     }
@@ -25,6 +29,10 @@
     canvas.forSmishing{
         width: 35vh;
         height: 86vh;
+    }
+    img.smishingKey{
+        width: 35vh;
+        height: 14vh;
     }
     button.function{
         padding: 5%
@@ -103,6 +111,12 @@ canvas.forSmishing{
     border: 1px solid black;
     background-color: white;
     background-size: 100% 100%;
+}
+img.smishingKey{
+    border: 1px solid black;
+    background-color: black;
+    background-size: 100% 100%;
+    margin: 5px;
 }
 button.submit{
     width: auto;

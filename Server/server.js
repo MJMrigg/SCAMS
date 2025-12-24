@@ -33,7 +33,7 @@ app.post("/createAccount", async(request, response) => {
   try{
     //Connect to the proper database and collection
     var dataBase = "SSE_MobileSecurityGame";
-    var dbCollection = "Testing"
+    var dbCollection = "UserAccounts"
     const db = client.db(dataBase);
     const collection = db.collection(dbCollection);
 
@@ -88,7 +88,7 @@ app.post("/login", async(request, response) =>{
   try{
     //Connect to the proper database and collection
     var dataBase = "SSE_MobileSecurityGame";
-    var dbCollection = "Testing"
+    var dbCollection = "UserAccounts"
     const db = client.db(dataBase);
     const collection = db.collection(dbCollection);
 
@@ -141,7 +141,7 @@ app.post("/update", async(request,response) =>{
   try{
     //Connect to the proper database and collection
     var dataBase = "SSE_MobileSecurityGame";
-    var dbCollection = "Testing"
+    var dbCollection = "UserAccounts"
     const db = client.db(dataBase);
     const collection = db.collection(dbCollection);
 
@@ -193,7 +193,7 @@ app.post("/checkUsername",async(request,response)=>{
   try{
     //Connect to the proper database and collection
     var dataBase = "SSE_MobileSecurityGame";
-    var dbCollection = "Testing"
+    var dbCollection = "UserAccounts"
     const db = client.db(dataBase);
     const collection = db.collection(dbCollection);
 
@@ -233,7 +233,7 @@ app.post("/checkEmail",async(request,response)=>{
   try{
     //Connect to the proper database and collection
     var dataBase = "SSE_MobileSecurityGame";
-    var dbCollection = "Testing"
+    var dbCollection = "UserAccounts"
     const db = client.db(dataBase);
     const collection = db.collection(dbCollection);
 
@@ -272,7 +272,7 @@ app.post("/getScoreBoard", async(request,response) =>{
   try{
     //Connect to the proper database and collection
     var dataBase = "SSE_MobileSecurityGame";
-    var dbCollection = "Testing"
+    var dbCollection = "UserAccounts"
     const db = client.db(dataBase);
     const collection = db.collection(dbCollection);
 
@@ -310,7 +310,7 @@ app.post("/forgot", async(request, response) => {
   try{
     //Connect to the proper database and collection
     var dataBase = "SSE_MobileSecurityGame";
-    var dbCollection = "Testing"
+    var dbCollection = "UserAccounts"
     const db = client.db(dataBase);
     const collection = db.collection(dbCollection);
 
@@ -525,9 +525,7 @@ app.post("/getSmishingAll", async(request, response) => {
     var rtt = endTime - startTime;
     //Update document with data from result
     var document = {};
-    for(var i = 0; i < result.length; i++){
-      document["Question"+i] = result[i];
-    }
+    document.questions = result;
     //Return the document
     document.rtt = rtt; //Add server-database rtt to response
     response.status(200).json(document);

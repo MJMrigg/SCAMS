@@ -55,7 +55,6 @@
             void main(){
                 gl_Position = translation(rotation(scaleTransformation(a_position)));
                 fragColor = a_color;
-                gl_PointSize = 5.0;
             }
         </script>
         <script id="2dFragmentShader" type="notjs">
@@ -75,6 +74,7 @@
             <h1 id="stage"></h1>
             <p id="score"></p>
             <p>Click on the arrows that point to parts of the message that look suspicious.</p>
+            <img src="srcimgs/key.png" class="smishingKey"><br>
             <canvas id="canvas" class="forSmishing" width="300" height="649">
                 YOUR BROWSER DOES NOT SUPPORT CANVAS
             </canvas><br>

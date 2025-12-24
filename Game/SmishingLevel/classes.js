@@ -170,7 +170,11 @@ class main{
    	    this.webgl = new webgl();
         this.objects = []; //Parts of the message that are suspicious
         this.end = false; //This stage has not ended
-        this.getAllQuestions(); //Get entire bank of questions from server
+        this.allQuestions = []; //All the questions
+        this.init(); //Get the all the questions and setup the first stage
+    }
+    async init(){
+        await this.getAllQuestions(); //Get entire bank of questions from server
         this.setUpStage(); //Set up first stage
     }
     async getAllQuestions(){
@@ -184,6 +188,10 @@ class main{
         //Get response from post request that contains all the data that was post
         var result = await query.json();
         var endTime = Date.now(); 
+        var rtt = endTime - startTime;
+        console.log("/getSmishingAll Request RTTs:\nServer-Database Request RTT: "+result.rtt+"ms\nClient-Server Request RTT: "+rtt+"ms\n");
+        //Add questions to the questions array
+        this.allQuestions = result.questions;
     }
     //Set up the stage
     async setUpStage(){
@@ -194,7 +202,8 @@ class main{
             delete this.objects[i];
             this.objects.pop();
         }
-        this.stage = JSON.parse(sessionStorage.getItem("level1Stage")); //Stage number
+        //Get stage number
+        this.stage = JSON.parse(sessionStorage.getItem("level1Stage"))+1; //Add 1 to get the image name and text on screen
         //Update the stage number or handle if this is the tutorial
         if(this.stage > 0){ //If this is an actual level
             document.getElementById("stage").innerText = "Message "+this.stage+"/50";
@@ -212,7 +221,7 @@ class main{
             this.setTutorialText();
         }*/
         //Get stage data from the backend
-        var data = {
+        /*var data = {
             stage: this.stage
         }
         var startTime = Date.now(); //Get start and end times to calculate RTT
@@ -227,21 +236,26 @@ class main{
         var result = await query.json();
         var endTime = Date.now(); 
         var rtt = endTime - startTime;
-        console.log("/getSmishing Request RTTs:\nServer-Database Request RTT: "+result.rtt+"ms\nClient-Server Request RTT: "+rtt+"ms\n");
+        console.log("/getSmishing Request RTTs:\nServer-Database Request RTT: "+result.rtt+"ms\nClient-Server Request RTT: "+rtt+"ms\n");*/
         this.pointsFound = 0; //Number of suspicious parts of the message found
         this.realPoints = 0; //Number of arrows that really point to suspicious parts
+        //Set up the question
+        this.stage -= 1; //Subtract 1 to get the element in the questions array
+        var currentQuestion = this.allQuestions[this.stage]; //Subtract 1 to get the element
+        var arrows = currentQuestion.arrows;
         //Get arrow coordinates and if its a real or fake arrow and set up arrows
-        for(let i = 0; i < result.arrows.length; i+=9){
-            var loc = [result.arrows[i], result.arrows[i+1], 0];
-            var rot = [result.arrows[i+2], result.arrows[i+3], result.arrows[i+4]];
-            var scale = [result.arrows[i+5], result.arrows[i+6], result.arrows[i+7]];
-            this.addObject(0, arrow, loc, rot, scale).real = result.arrows[i+8];
-            if(result.arrows[i+8]){ //If this arrow points to a suspicious part of the message
+        for(let i = 0; i < arrows.length; i+=9){
+            var loc = [arrows[i], arrows[i+1], 0];
+            var rot = [arrows[i+2], arrows[i+3], arrows[i+4]];
+            var scale = [arrows[i+5], arrows[i+6], arrows[i+7]];
+            var real = arrows[i+8];
+            this.addObject(0, arrow, loc, rot, scale).real = real;
+            if(real){ //If this arrow points to a suspicious part of the message
                 this.realPoints += 1; //Add one to the real points count
             }
         }
-        this.losingText = result.losingText;
-        this.takeaway = result.takeaway;
+        this.losingText = currentQuestion.losingText;
+        this.takeaway = currentQuestion.takeaway;
 	    this.renderAll();
     }
     addObject(type, prefab, loc, rot, scale){
@@ -297,7 +311,7 @@ class main{
        	var realY = clickY - rect.top;
     	var x = -1 + 2*realX/rect.width;
     	var y = -1 + 2*(rect.height-realY)/rect.height;
-		return [x,y]; //WHY - It's the dynamic web sizing in styles.css. It's messing with the viewport creation.
+		return [x,y];
 	}
     renderAll(){
         //Clear the screen and then render all objects
@@ -318,7 +332,6 @@ class main{
     pointClicked(point, curser){
         var xDistance = Math.abs(point.loc[0]-curser[0]);
         var yDistance = Math.abs(point.loc[1]-curser[1]);
-        //console.log(point.loc[0]+" "+curser[0]+" "+point.collissionRadius[0]+" "+point.loc[1]+" "+curser[1]+" "+point.collissionRadius[1]);
         return (xDistance <= point.collissionRadius[0] && yDistance <= point.collissionRadius[1]);
     }/*
     //Set tutorial message based on which part of the tutorial the player is at
@@ -409,24 +422,26 @@ class main{
         //Now that the player has submitted their answers of what they believe to be suspicious parts of the message, the real points will now be shown
         this.end = true;
         this.renderAll();
-        //Give the player a few seconds to look at their results
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        //If the player clicked any arrows, give the player a few seconds to look at their results
+        if(realFound == fakeFound){
+            await new Promise(resolve => setTimeout(resolve, 2000));
+        }
         //Tell the player the results
         var text;
         if(realFound == 0){
-            text = "You found 0 correct things";
+            text = "You correctly labled 0 things as suspicious ";
         }else if(realFound == 1){
-            text = "You found 1 correct thing";
+            text = "You correctly labled 1 thing as suspicious ";
         }else{
-            text = "You found "+realFound+" correct things"
+            text = "You correctly labled "+realFound+" things as suspicious "
         }
         text += "out of "+this.realPoints+" correct things,"
         if(fakeFound == 0){
-            text += " and 0 incorrect things, ";
+            text += " and incorrectly labled 0 things as suspicious, ";
         }else if(fakeFound == 1){
-            text += " and 1 incorect thing, ";
+            text += " and incorrectly labled 1 thing as suspicious, ";
         }else{
-            text += "and "+fakeFound+" incorrect things, ";
+            text += "and incorrectly labled "+fakeFound+" things as suspicious, ";
         }
         if(this.pointsFound <= 0 && realFound == 0){
             text += "earning you 0 points towards you total score. "+this.losingText;
