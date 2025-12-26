@@ -25,7 +25,7 @@
                         button.innerText = "How do I know if I'm being smished? Are there signs?";
                         break;
                     case 3:
-                        textBox.innerText = "The most obvious sign is that it's an unkown number. If it's also a number that looks strange, it's likely a bot. There are other signs too though.";
+                        textBox.innerText = "The most obvious sign is that it's an unkown number. If it's also a number with an unsual format, it's likely a bot. There are other signs too though.";
                         button.innerText = "What are they?";
                         break;
                     case 4:
@@ -37,43 +37,47 @@
                         button.innerText = "Any more tells?";
                         break;
                     case 6:
-                        textBox.innerText = "The final big sign is that they're offering a really good deal or opportunity. Bonus points if it's limited time.";
-                        button.innerText = "Can I get an example?";
+                        textBox.innerText = "Yet another sign is that they're offering a really good deal or opportunity. Bonus points if it's limited time.";
+                        button.innerText = "Any more?";
                         break;
                     case 7:
+                        textBox.innerText = "The final big sign is if the message tries to use fear mongering tactics or scare you into clicking the link.";
+                        button.innerText = "Can I get an example?";
+                        break;
+                    case 8:
                         textBox.innerText = "Common smishing attacks often are Account/Information Verification Scams, Tax Scams, Prize/Lottery Scams, Bank Scams, Tech Support Scams, Charity Scams, Service Cancelation Scams, and Investment Scams.";
                         button.innerText = "Okay, but I thought this was a game, not a reading assignment.";
                         break;
-                    case 8:
+                    case 9:
                         textBox.innerText = "Yes, this is in fact a game. Press next to continue.";
                         button.innerText = "Next";
                         break;
-                    case 9:
+                    case 10:
                         textBox.innerText = "In this game, you will be given a series of messages, each one a smishing text, with arrows pointing to parts of the message.";
                         button.innerText = "Okay. What I do with these?";
                         break;
-                    case 10:
+                    case 11:
                         textBox.innerText = "You must click on the arrows that point to parts of the message that give it away as a smishing text. When an arrow is clicked, it'll turn pink. If you click a wrong arrow, just click it again.";
                         button.innerText = "Ha! That's too easy!";
                         break;
-                    case 11:
+                    case 12:
                         textBox.innerText = "Don't get too confident. Some arrows don't point to parts of the message that give it away as a smishing message. They are fake.";
                         button.innerText = "Ah, thank you for the heads up. What then?";
                         break;
-                    case 12:
+                    case 13:
                         textBox.innerText = "Once you have clicked on the arrows that you believe points to parts of the message that give it away as a smishing message, click the Submit button. You will then be shown which arrows you clicked correctly point to suspicous parts of the message and which ones were fake.";
                         button.innerText = "Okay. How do I score?";
                         break;
-                    case 13:
+                    case 14:
                         textBox.innerText = "For every arrow that you clicked that points to a suspicious part of the message, you get a point. For every fake arrow, you lose a point.";
                         button.innerText = "Okay, I understand now. When do I start?";
                         break;
-                    case 14:
+                    case 15:
                         textBox.innerText = "It starts when you click Finish.";
                         button.innerText = "Finish";
                         break;
-                    case 15:
-                        //Update session stage and go to the tutorial stage
+                    case 16:
+                        //Update session stage and go to the game
                         sessionStorage.setItem("level1Stage", JSON.stringify(1));
                         window.location.href = "stages.html";
                 }

@@ -17,6 +17,8 @@
                 this.tutorial = true; //Do not start the tutorial
                 this.tutorialPart = 0; //Start at the beginning of the tutorial
                 this.wait = false; //Don't wait before drawing the next frame
+                this.speedModifier = 0; //Modifier of the speed (increases over time)
+                this.frame = 0; //Frame of the game
                 //Get the canvas width based on the screen size
                 var rect = canvas.getBoundingClientRect();
                 this.canvasWidth = Math.min(rect.width, rect.right-Math.max(0,rect.left))
@@ -52,7 +54,7 @@
                     y: -30,
                     width: 60,
                     height: 60,
-                    speed: 1.2 + Math.random() * 0.5,
+                    speed: (1.2 + Math.random() * 0.5) + this.speedModifier,
                     text: "",
                     textX: -60,
                     textY: 28,
@@ -226,6 +228,14 @@
                     return;
                 }
 
+                //Increase the frame number
+                this.frame += 1;
+                //Increase the speed modifer after a certain amount of grames
+                if(this.frame % 60 == 0){
+                    this.speedModifier += 0.05;
+                    console.log(this.speedModifier);
+                }
+
                 ctx.clearRect(0, 0, canvas.width, canvas.height); //Clear the canvas
                 //Draw each packet at their new position
                 this.packets.forEach((packet, index) => {
@@ -250,7 +260,7 @@
                 if(this.tutorial){ //If this is the tutorial, handle the tutorial functionality
                     this.handleTutorial();
                 }else{ //If it's not, proceed as normal
-                    if (Math.random() < 0.01) this.spawnPacket(); //Possibly spawn a new packet
+                    if (Math.random() < (0.05 + this.spawnModifier)) this.spawnPacket(); //Possibly spawn a new packet
                 }
             }
 
