@@ -10,14 +10,15 @@
         class main{
             constructor(){
                 this.score = 0; //The player's starts at score is 0
+                this.totalScore = 0; //The player's total score of all games
                 this.lives = 10; //The player starts with 10 lives
                 this.packets = []; //Stores where the packets appear on the screen
                 this.gameStarted = false; //The Game has not yet started
                 this.gameOver = false; //The Game has not yet ended
                 this.tutorial = true; //Do not start the tutorial
                 this.tutorialPart = 0; //Start at the beginning of the tutorial
-                this.wait = false; //Don't wait before drawing the next frame
-                this.speedModifier = 0; //Modifier of the speed (increases over time)
+                this.speedModifier = 0; //Modifier of the speed at which packets move (increases over time)
+                this.spawnModifier = 0; //Modifier of the rate at which packets spawn (inscreases over time)
                 this.frame = 0; //Frame of the game
                 //Get the canvas width based on the screen size
                 var rect = canvas.getBoundingClientRect();
@@ -28,7 +29,8 @@
             //Take in the amount of points the score should change by, change the score, and update the score on the scren
             updateScore(change) {
                 this.score += change;
-                document.getElementById("score").textContent = "Score: " + this.score + " | Lives: " + this.lives;
+                this.totalScore += change;
+                document.getElementById("score").textContent = "Score: " + this.score + " | Lives: " + this.lives + " | Total Score: " + this.totalScore;
             }
             
             //Create a packet and add it to the packets array
@@ -190,11 +192,8 @@
 
                 if(this.tutorial){ //If this was the tutorial, tell the player what happens when they lose
                     this.handleTutorial();
-                }else{ //Else, add the result to their total score and mark the tutorial as complete
-                    var playerCurrentScore = JSON.parse(sessionStorage.getItem("currentScore"));
-                    playerCurrentScore += Math.max(0,this.score);
-                    //playerCurrentScore += score;
-                    sessionStorage.setItem("currentScore",JSON.stringify(playerCurrentScore));
+                }else{ //Else, reset the score
+                    this.score = 0;
                 }
             }
             
@@ -202,6 +201,8 @@
             resetGame() {
                 this.score = 0;
                 this.lives = 10;
+                this.speedModifier = 0;
+                this.spawnModifier = 0;
                 //Delete all packets in the game
                 this.packets.forEach((packet, index) => {
                     this.packets.splice(index, 1);
@@ -230,10 +231,13 @@
 
                 //Increase the frame number
                 this.frame += 1;
-                //Increase the speed modifer after a certain amount of grames
-                if(this.frame % 60 == 0){
-                    this.speedModifier += 0.05;
-                    console.log(this.speedModifier);
+                //Increase the speed modifer after a certain amount of frames
+                if(this.frame % 45 == 0){
+                    this.speedModifier += 0.1;
+                }
+                //Increase the spawn modifier after a certain amount of frames
+                if(this.frame % 120 == 0){
+                    this.spawnModifier += 0.002;
                 }
 
                 ctx.clearRect(0, 0, canvas.width, canvas.height); //Clear the canvas
@@ -260,7 +264,7 @@
                 if(this.tutorial){ //If this is the tutorial, handle the tutorial functionality
                     this.handleTutorial();
                 }else{ //If it's not, proceed as normal
-                    if (Math.random() < (0.05 + this.spawnModifier)) this.spawnPacket(); //Possibly spawn a new packet
+                    if (Math.random() < (0.02 + this.spawnModifier)) this.spawnPacket(); //Possibly spawn a new packet
                 }
             }
 
@@ -405,7 +409,10 @@
             //Get the score currently in session storage, add the game score, store the result, and leave the game
             saveAndQuit(){
                 var playerCurrentScore = JSON.parse(sessionStorage.getItem("currentScore"));
-                playerCurrentScore += Math.max(0,this.score);
+                if(playerCurrentScore == null || playerCurrentScore == "null"){ //If it didn't exist, initialize it with 0
+                    playerCurrentScore = 0;
+                }
+                playerCurrentScore += Math.max(0,this.score+this.totalScore);
                 sessionStorage.setItem("currentScore", JSON.stringify(playerCurrentScore));
                 window.location.href = '../menu.html';
             }
@@ -461,7 +468,7 @@
     <div class="menuForBadPackets">
         <div class="flexForBadPackets" style="display: flex; align-items: center;">
             <div class="forBadPackets">
-                <div id="score" class="badPacketsScore">Score: 0 | Lives: 10</div>
+                <div id="score" class="badPacketsScore">Score: 0 | Lives: 10 | Total Score: 0</div>
                 <canvas id="gameCanvas" class="forBadPackets" width="800" height="600"></canvas>
                 <script>
                     const canvas = document.getElementById("gameCanvas");

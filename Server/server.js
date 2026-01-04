@@ -4,6 +4,7 @@ import {MongoClient} from "mongodb";
 import {fileURLToPath} from 'url';
 import path from 'path';
 import nodemailer from 'nodemailer';
+import {internalIpV4} from "internal-ip";
 
 //Create an express application to handle communications between the front end and back end
 const app = express();
@@ -608,6 +609,6 @@ app.post("/getPermissions", async(request, response) => {
 });
 
 //Begin the server on port 3000
-app.listen(3000, () => {
-  console.log('Server listening on Port 3000');
+app.listen(3000, async() => {
+  console.log(`Server listening at ${await internalIpV4()}:3000`);
 });
