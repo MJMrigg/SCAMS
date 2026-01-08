@@ -86,8 +86,9 @@
                 canvas.addEventListener("click", main.leftClick);
                 canvas.addEventListener("touchstart", main.leftClick); //For mobile devices
             </script>
-            <button class="submit" onclick="mymain.submit(1)" >Submit</button><br>
-            <button class="selection" onclick="window.location.href='../menu.html'" style="width: auto; padding: 0.3%;">Save and Quit</button>
+            <button id="nextStage" class="submit" onclick="mymain.submit()" >Submit</button><br>
+            <button class="forSmishing" onclick="mymain.previousQuestion()">Previous Question</button><br>
+            <button class="forSmishing" onclick="window.location.href='../menu.html'">Save and Quit</button>
         </div>
     </body>
 </html>

@@ -52,7 +52,9 @@
                         sessionStorage.setItem("loggedIn",JSON.stringify(true)); //Mark user as logged in
                         //Set the user's stages on the levels
                         sessionStorage.setItem("permissionsLevelStage", JSON.stringify(response.permissionsLevelStage));
+                        sessionStorage.setItem("permissionsLevelResponses", JSON.stringify(response.permissionsLevelResponses));
                         sessionStorage.setItem("level1Stage", JSON.stringify(response.smishingLevelStage));
+                        sessionStorage.setItem("level1Responses", JSON.stringify(response.smishingResponses));
                         alert("Sucessfully logged in! Welcome back "+response.username+"!");
                         window.location.href = "home.html";
                     }

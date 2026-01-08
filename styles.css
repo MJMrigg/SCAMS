@@ -84,6 +84,15 @@ button.selection{
     color: black;
     font-size: 0.9rem;
 }
+button.forSmishing{
+    width: 150px; 
+    background-color: lime;
+    border: 2px solid black;
+    margin: 2px;
+    font-family: 'Tahoma';
+    color: black;
+    font-size: 0.9rem;
+}
 button.function{
     background-color: lime;
     border: 2px solid black;

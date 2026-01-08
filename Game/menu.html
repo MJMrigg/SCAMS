@@ -5,8 +5,6 @@
 
     <head>
         <script>
-            console.log("Menu page - on load:");
-            console.log("currentScore:", sessionStorage.getItem("currentScore"));
             //Start the smishing level either at the start or where the user last left off
             function startSmishingLevel(){
                 var level1Stage = JSON.parse(sessionStorage.getItem("level1Stage"));
@@ -70,7 +68,11 @@
                     email: JSON.parse(sessionStorage.getItem("userData"))[1],
                     password: JSON.parse(sessionStorage.getItem("userData"))[2],
                     highScore: JSON.parse(sessionStorage.getItem("highScore")),
-                    scores: scoreList
+                    scores: scoreList,
+                    smishingLevelStage: JSON.parse(sessionStorage.getItem("level1Stage")),
+                    smishingResponses: JSON.parse(sessionStorage.getItem("level1Responses")),
+                    permissionsLevelStage: JSON.parse(sessionStorage.getItem("permissionsLevelStage")),
+                    permissionsLevelResponses: JSON.parse(sessionStorage.getItem("permissionsLevelResponses"))
                 }
                 try{
                     //Send a query along a post request to the backend

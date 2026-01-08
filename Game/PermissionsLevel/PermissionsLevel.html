@@ -12,10 +12,13 @@
       constructor(){
         // Get the apps to display based on the stage
         this.stage = JSON.parse(sessionStorage.getItem("permissionsLevelStage"));
-        if(this.stage == 0){ //If they are at the start of the level, do the tutorial
-          this.doTutorial();
-        }
+        this.currentStage = this.stage;
         this.allApps = []; //All of the apps(questions)
+        //Keep track of the player's responses
+        this.responses = JSON.parse(sessionStorage.getItem("permissionsLevelResponses"));
+        if(this.responses == undefined || this.responses == "undefined" || this.responses == null || this.responses == "null"){
+          this.responses = {};
+        }
         this.getAllQuestions(); //Get all the questions from the server
       }
       // Have the player read the tutorial text using the alert function
@@ -49,11 +52,11 @@
           div.className = "app-container";
           div.innerHTML = `<img src="${this.selectedApps[i].image}" width="70" height="70"></img>
           <h1 style='display:inline;'>${this.selectedApps[i].name}</h1>
-            ${this.checkbox("camera", this.selectedApps[i].correctPermissions.camera)}
-            ${this.checkbox("location", this.selectedApps[i].correctPermissions.location)}
-            ${this.checkbox("microphone", this.selectedApps[i].correctPermissions.microphone)}
-            ${this.checkbox("photos", this.selectedApps[i].correctPermissions.photos)}
-            ${this.checkbox("contacts", this.selectedApps[i].correctPermissions.contacts)}
+            ${this.checkbox("camera", this.selectedApps[i].correctPermissions.camera, i)}
+            ${this.checkbox("location", this.selectedApps[i].correctPermissions.location, i)}
+            ${this.checkbox("microphone", this.selectedApps[i].correctPermissions.microphone, i)}
+            ${this.checkbox("photos", this.selectedApps[i].correctPermissions.photos, i)}
+            ${this.checkbox("contacts", this.selectedApps[i].correctPermissions.contacts, i)}
           <p>Credits to <a href=${this.selectedApps[i].link}>${this.selectedApps[i].creator}</a> for this image.</p>`;
           appsContainer.appendChild(div);
         }
@@ -66,30 +69,47 @@
         submit.style = "width: 200px;";
         submit.className = "function";
         submit.innerHTML = "Confirm Settings";
+        if(this.stage != this.currentStage){
+          submit.innerHTML = "Continue";
+        }
         submit.id = "confirm-settings";
         buttonHolder.appendChild(submit);
         submit.addEventListener("click", () => this.submitChoices());
+        // If this was a previous stage that the player is looking at, show them the results of their choices
+        if(this.stage != this.currentStage){
+          this.submitChoices();
+        }
       }
       // Creates the checkboxes that are used for selecting permissions
-      checkbox(appIndex, permission) {
-        return `<div style="margin-bottom: 10px;">
+      checkbox(appIndex, permission, index) {
+        var newDiv = `<div style="margin-bottom: 10px;">
           <label>
-            <input type="checkbox" data-app="${appIndex}" data-permission="${permission}" />
+            <input type="checkbox" data-app="${appIndex}" data-permission="${permission}"`;
+        //If this was a previous stage, add whether the user checked the box or not
+        if(this.stage in this.responses){
+          if(this.responses[this.stage][appIndex][index]) {
+            newDiv += ` checked`; 
+          }
+        }
+        newDiv += ` />
             Allow ${appIndex.charAt(0).toUpperCase() + appIndex.slice(1)}
           </label>
         </div>`;
+        return newDiv;
       }
-    // Gets the users choices and compares them to the correct answers and displays the ones they got right/wrong along with an explanation for that app
-    submitChoices() {
-        // ???
+      // Gets the users choices and compares them to the correct answers and displays the ones they got right/wrong along with an explanation for that app
+      submitChoices() {
+        // Get the player's answers
         const checkboxes = document.querySelectorAll("input[type=checkbox]");
         const userChoices = {};
         checkboxes.forEach(cb => {
           const appIndex = cb.dataset.app;
           const perm = cb.dataset.permission;
+          cb.disabled = true;
           if (!userChoices[appIndex]) userChoices[appIndex] = [];
           userChoices[appIndex].push(cb.checked);
         });
+        this.responses[this.stage] = userChoices;
         // See what the player got correct and incorrect and create the divs to show those results
         let score = 0;
         let total = this.selectedApps.length * 5;
@@ -140,14 +160,23 @@
           alert("You completed the app permissions level! Returning to the menu.");
           window.location.href = "../menu.html";
         }else{ // If it wasn't, clear the screen and add the next set of apps
+          //If this wasn't a previous stage, update the current stage
+          if(this.stage == this.currentStage){
+            this.currentStage += 1;
+            sessionStorage.setItem("permissionsLevelStage",JSON.stringify(this.currentStage));
+            sessionStorage.setItem("permissionsLevelResponses",JSON.stringify(this.responses));
+          }
           this.stage += 1;
-          sessionStorage.setItem("permissionsLevelStage",JSON.stringify(this.stage));
-          document.getElementById("apps").innerHTML = "";
-          document.getElementById("title").innerHTML = "";
-          document.getElementById("results").innerHTML = "";
+          this.clearScreen();
           this.setQuestions();
           document.getElementById('body').scrollIntoView();
         }
+      }
+      //Clear the screen of all questions and answers
+      clearScreen(){
+        document.getElementById("apps").innerHTML = "";
+        document.getElementById("title").innerHTML = "";
+        document.getElementById("results").innerHTML = "";
       }
       //Set up the questions for the stage
       setQuestions(){
@@ -186,6 +215,22 @@
         this.allApps = result.questions;
         //Set up the first set of questions
         this.setQuestions();
+        //If they are at the start of the level, do the tutorial
+        if(this.stage == 0){
+          this.doTutorial();
+        }
+      }
+      //Go to the previous stage
+      previousStage(){
+        //Don't go to the stage before the beginning, because it does not exist
+        if(this.stage <= 0){
+          return;
+        }
+        //Go to the previous stage, clear the screen, and set it up with the previous stage's data
+        this.stage -= 1;
+        this.clearScreen();
+        this.setQuestions();
+        document.getElementById('body').scrollIntoView();
       }
     }
   </script>
@@ -198,8 +243,9 @@
     <div id="apps"></div>
     <div id="results"></div>
     <div id="button-holder">
-      <button id="confirm-settings" class="function" onclick="mymain.submitChoices()">Confirm Settings</button><br>
+      <button id="confirm-settings" class="function" style="width: 200px" onclick="mymain.submitChoices()">Confirm Settings</button><br>
     </div>
+    <button class="function" onclick="mymain.previousStage()" style="width: 200px">Previous Stage</button><br>
     <button class="function" onclick="window.location.href='../menu.html'" style="margin-bottom: 10px; width: 200px">Save and Quit</button>
   </div>
 

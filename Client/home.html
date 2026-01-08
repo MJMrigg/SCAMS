@@ -31,6 +31,12 @@
                 if(sessionStorage.getItem("permissionsLevelStage") == null){
                     sessionStorage.setItem("permissionsLevelStage",JSON.stringify(0)); //User's stage on permissions level(0 is the tutorial)
                 }
+                if(sessionStorage.getItem("level1Responses") == null){ //User's previous responses on smishing level
+                    sessionStorage.setItem("level1Responses",JSON.stringify({}));
+                }
+                if(sessionStorage.getItem("permissionsLevelResponses") == null){ //User's previous responses on permissions level
+                    sessionStorage.setItem("permissionsLevelResponses",JSON.stringify({}));
+                }
             }
             //Take the user to their profile if they are logged in
             function viewProfile(){
@@ -58,6 +64,7 @@
             <button class="selection" style="font-family: 'Tahoma';" onclick="window.location.href = 'create.html'">Create Account</button><br>
             <button class="selection" style="font-family: 'Tahoma';" onclick="window.location.href = 'scores.html'">View Scoreboard</button><br>
             <button class="selection" style="font-family: 'Tahoma';" onclick="viewProfile()">View Profile</button><br>
+            <h4>©Copyright Florida Polytechnic University, Dr. Denis Ulybyshev, Matthew Rigg, Megan Ruiz, Robert Grant, Emil Torres, and Katelynn Holt</h4>
         </div>
         <script>
             //Set all neccessary user information upon page load
@@ -66,16 +73,10 @@
             setTimeout(function() {
                 setInformation();
             }, 300);
-            
+
             //Before the player goes to another page, make sure all the neccessary user information is set
             window.addEventListener('beforeunload', function() {
-                if(sessionStorage.getItem("currentScore") === null || sessionStorage.getItem("loggedIn") === null 
-                    || sessionStorage.getItem("level1Stage") === null || sessionStorage.getItem("highScore") === null 
-                    || sessionStorage.getItem("permissionsLevelStage") === null) 
-                {
-                    //If it wasn't, set it
-                    setInformation();
-                }
+                setInformation();
             });
         </script>
     </body>

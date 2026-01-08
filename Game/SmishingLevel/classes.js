@@ -48,6 +48,7 @@ class webgl{
 //General Object class with variables that all objects will have
 class object{
     constructor(){
+        this.id; //Object Id
         this.prefab; //Object type
         this.vertices = []; //First 3 numbers are (x,y,z) and next 3 are rgb values
         this.indices = []; //Store how vertices connect using their indices in the vertices array
@@ -166,11 +167,18 @@ class arrow extends object{
 
 //Class that will serve as the main function
 class main{
-    constructor(){ //Takes in coordinates for Real Points, their bounds' coordinates, losing text, and takeway tip for this level
+    constructor(){
    	    this.webgl = new webgl();
         this.objects = []; //Parts of the message that are suspicious
-        this.end = false; //This stage has not ended
         this.allQuestions = []; //All the questions
+        //Get player's previous answers from session storage
+        this.responses = JSON.parse(sessionStorage.getItem("level1Responses"));
+        if(this.responses == undefined || this.responses == "undefined"){
+            this.responses = {};
+        }
+        this.objectCounter = 0; //There are no objects on the screen
+        this.stage = JSON.parse(sessionStorage.getItem("level1Stage"))+1; //Get the stage from session storage
+        this.currentQuestion = this.stage; //Set the current question the user is currently on to the current stage
         this.init(); //Get the all the questions and setup the first stage
     }
     async init(){
@@ -195,21 +203,22 @@ class main{
     }
     //Set up the stage
     async setUpStage(){
-        this.end = false; //The level is not yet done
         //If any, get rid of all arrows and objects on the screen
-        var length = this.objects.length;
-        for(let i = length - 1; i >= 0; i--){
+        for(var i in this.objects){
             delete this.objects[i];
-            this.objects.pop();
         }
-        //Get stage number
-        this.stage = JSON.parse(sessionStorage.getItem("level1Stage"))+1; //Add 1 to get the image name and text on screen
         //Update the stage number or handle if this is the tutorial
         if(this.stage > 0){ //If this is an actual level
             document.getElementById("stage").innerText = "Message "+this.stage+"/50";
             document.getElementById("score").innerText = "Current Score: "+JSON.parse(sessionStorage.getItem("currentScore"));
             this.tutorial = false;
             canvas.style.backgroundImage = "url('srcimgs/stage"+this.stage+".png')"; //Set background image
+            //Set the text on the submit button based on if this the current stage or a previous one
+            var nextButton = document.getElementById("nextStage");
+            nextButton.innerText = "Submit";
+            if(this.stage != this.currentQuestion){
+                nextButton.innerText = "Continue";
+            }
         }/*else{ //If this is the tutorial
             this.tutorial = true;
             this.tutorialPoints = [];
@@ -221,47 +230,51 @@ class main{
             this.setTutorialText();
         }*/
         //Get stage data from the backend
-        /*var data = {
-            stage: this.stage
-        }
-        var startTime = Date.now(); //Get start and end times to calculate RTT
-        var query = await fetch("/getSmishing",{
-            method:"POST",
-            headers:{
-                "Content-Type":"application/json"
-            },
-            body: JSON.stringify(data),
-        });
-        //Get response from post request that contains all the data that was post
-        var result = await query.json();
-        var endTime = Date.now(); 
-        var rtt = endTime - startTime;
-        console.log("/getSmishing Request RTTs:\nServer-Database Request RTT: "+result.rtt+"ms\nClient-Server Request RTT: "+rtt+"ms\n");*/
         this.pointsFound = 0; //Number of suspicious parts of the message found
         this.realPoints = 0; //Number of arrows that really point to suspicious parts
         //Set up the question
-        this.stage -= 1; //Subtract 1 to get the element in the questions array
-        var currentQuestion = this.allQuestions[this.stage]; //Subtract 1 to get the element
-        var arrows = currentQuestion.arrows;
+        var question = this.allQuestions[this.stage - 1]; //Subtract 1 to get the element
+        var arrows = question.arrows;
         //Get arrow coordinates and if its a real or fake arrow and set up arrows
+        this.objectCounter = 0;
         for(let i = 0; i < arrows.length; i+=9){
             var loc = [arrows[i], arrows[i+1], 0];
             var rot = [arrows[i+2], arrows[i+3], arrows[i+4]];
             var scale = [arrows[i+5], arrows[i+6], arrows[i+7]];
             var real = arrows[i+8];
-            this.addObject(0, arrow, loc, rot, scale).real = real;
+            var newId = this.addObject(0, arrow, loc, rot, scale).id;
+            this.objects[newId].real = real;
             if(real){ //If this arrow points to a suspicious part of the message
                 this.realPoints += 1; //Add one to the real points count
             }
+            //Adjust the arrow's collision radius based on its rotation
+            if(arrows[i+4] == 90){
+                var xcollisionRadius = this.objects[newId].collissionRadius[0];
+                this.objects[newId].collissionRadius[0] = this.objects[newId].collissionRadius[1];
+                this.objects[newId].collissionRadius[1] = xcollisionRadius;
+            }
+            //If this is a previous stage and the arrow was one of the ones that the player clicked, change its color
+            if(newId in this.responses){
+                this.objects[newId].clicked = true;
+                //Change its color based off if the player correctly identified or not
+                if(this.responses[newId]){ //It was a correctly identified suspicious point
+                    this.objects[newId].changeColor([0.0, 1.0, 0.0]);
+                }else{ //It was an incorrectly identified non-suspicious point
+                    this.objects[newId].changeColor([1.0, 0.0, 0.0]);
+                }
+            }
         }
-        this.losingText = currentQuestion.losingText;
-        this.takeaway = currentQuestion.takeaway;
+        this.losingText = question.losingText;
+        this.takeaway = question.takeaway;
 	    this.renderAll();
     }
     addObject(type, prefab, loc, rot, scale){
         //Take in object type, its prefab code, and vertex coordinates, create the object, render, and return it
         var temp = new prefab; //Create Object
         //Set properties
+        var id = this.stage+"."+this.objectCounter;
+        temp.id = id;
+        this.objectCounter += 1;
         temp.prefab = prefab;        
         for(let i = 0; i < 3; i++){
             temp.loc[i] = loc[i];
@@ -271,9 +284,9 @@ class main{
         }
         //Add to proper array
         if(type == 0){
-            this.objects.push(temp)
+            this.objects[id] = temp;
         }else if(type == 2){
-            this.tutorialPoints.push(temp);
+            this.tutorialPoints[id] = temp;
         }else{
             console.log("Error, invalid type: "+type);
             return;
@@ -289,7 +302,12 @@ class main{
         if(isNaN(coordinates[0]) || isNaN(coordinates[1])){ //If the coordinates are invalid, return
             return;
         }
-        for(let i = 0; i < this.objects.length; i++){ //For every arrow, check to see if it was clicked
+        //If this is the player looking at previous question, don't change any arrows
+        if(this.currentQuestion != this.stage){
+            return;
+        }
+        //For every arrow, check to see if it was clicked
+        for(var i in this.objects){
             if(!this.pointClicked(this.objects[i], coordinates)){ //If it wasn't, move on to the next one
                 continue;
             }
@@ -317,9 +335,6 @@ class main{
         //Clear the screen and then render all objects
         gl.clear(gl.CLEAR_BUFFER_BIT);
         for(var i in this.objects){ //Render every arrow
-            /*if(this.objects[i].real && this.end){ //If the arrow is a real arrow, render it as green
-                this.objects[i].changeColor([0.0, 1.0, 0.0]);
-            }*/
             this.objects[i].render(this.webgl.program);
         }
         if(this.tutorial){ //Render tutorial points if this is the tutorial
@@ -404,36 +419,40 @@ class main{
         var realFound = 0; //Real suspicious points clicked
         var fakeFound = 0; //Fake suspicious points clicked
         //For each arrow
-        for(let i = 0; i < this.objects.length; i++){
+        for(var i in this.objects){
             //Check this arrow was clicked
             if(this.objects[i].clicked){
                 //Check if the arrow clicked was a real suspicious point
                 if(this.objects[i].real){
                     this.pointsFound += 1; //If the clicked arrow was a real suspicious part of the message, add one to the score
                     realFound += 1;
-                    this.objects[i].changeColor([0.0, 1.0, 0.0]); //Turn it green to show that it was correctly clicked 
+                    this.objects[i].changeColor([0.0, 1.0, 0.0]); //Turn it green to show that it was correctly clicked
+                    this.responses[this.objects[i].id] = true; 
                 }else{
                     this.pointsFound -= 1; //If it wasn't a real supsicious part of the messags, subtract one
                     fakeFound += 1;
                     this.objects[i].changeColor([1.0, 0.0, 0.0]); //Turn it red to show that it was incorrectly clicked
+                    this.responses[this.objects[i].id] = false;
                 }
             } //Arrows not clicked remain blue
         }
-        //Now that the player has submitted their answers of what they believe to be suspicious parts of the message, the real points will now be shown
-        this.end = true;
-        this.renderAll();
-        //If the player clicked any arrows, give the player a few seconds to look at their results
-        if(realFound == fakeFound){
+        //If the player clicked any arrows and it's not a previous question, give the player a few seconds to look at their results
+        if((realFound != 0 || fakeFound != 0) && (this.currentQuestion == this.stage)){
+            //Reveal which real points were correctly identified and which fake ones were incorrectly identified
+            this.renderAll();
             await new Promise(resolve => setTimeout(resolve, 2000));
         }
         //Tell the player the results
-        var text;
+        var text = "You ";
+        if(this.currentQuestion != this.stage){
+            text += "previously ";
+        }
         if(realFound == 0){
-            text = "You correctly labled 0 things as suspicious ";
+            text += "correctly labled 0 things as suspicious ";
         }else if(realFound == 1){
-            text = "You correctly labled 1 thing as suspicious ";
+            text += "correctly labled 1 thing as suspicious ";
         }else{
-            text = "You correctly labled "+realFound+" things as suspicious "
+            text += "correctly labled "+realFound+" things as suspicious "
         }
         text += "out of "+this.realPoints+" correct things,"
         if(fakeFound == 0){
@@ -474,15 +493,30 @@ class main{
 
         //If that was the final stage, send them back the menu
         if(this.stage == 50){
-            //Reset the stage number so that they can play the game again.
+            //Reset the stage number and responses so that they can play the game again.
             sessionStorage.setItem("level1Stage", JSON.stringify(0));
+            sessionStorage.setItem("level1Responses", JSON.stringify({}));
             window.location.href='../menu.html'; //Return to menu
-        }else{
-            //Else, send them to the next stage
+        }else{ //Else, send them to the next stage
+            //If they weren't exploring a previous stage, move on to the next question
+            if(this.currentQuestion == this.stage){
+                sessionStorage.setItem("level1Stage", JSON.stringify(this.currentQuestion));
+                sessionStorage.setItem("level1Responses", JSON.stringify(this.responses));
+                this.currentQuestion += 1;
+            }
             this.stage += 1;
-            sessionStorage.setItem("level1Stage", JSON.stringify(this.stage));
             this.setUpStage();  
         }
+    }
+    //Go back to the previous stage
+    previousQuestion(){
+        //If this is the first stage, do nothing
+        if(this.stage == 1){
+            return;
+        }
+        //Set up the previous stage
+        this.stage -= 1;
+        this.setUpStage();
     }
 
     //Static functions for handling when the player left clicks

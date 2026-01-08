@@ -54,7 +54,9 @@ app.post("/createAccount", async(request, response) => {
       email: data.email,
       password: data.password,
       permissionsLevelStage: data.permissionsLevelStage,
+      permissionsLevelResponses: data.permissionsLevelResponses,
       smishingLevelStage: data.smishingLevelStage,
+      smishingResponses: data.smishingResponses,
       highScore: 0,
       scores: []
     };
@@ -117,7 +119,9 @@ app.post("/login", async(request, response) =>{
         highScore: result[0].highScore,
         scores: result[0].scores,
         permissionsLevelStage: result[0].permissionsLevelStage,
-        smishingLevelStage: result[0].smishingLevelStage
+        permissionsLevelResponses: result[0].permissionsLevelResponses,
+        smishingLevelStage: result[0].smishingLevelStage,
+        smishingResponses: result[0].smishingResponses
       };
     }
     document.rtt = rtt; //Add sever-database request rtt to document
@@ -153,7 +157,11 @@ app.post("/update", async(request,response) =>{
         email: data.email, 
         password: data.password, 
         highScore: data.highScore,
-        scores: data.scores
+        scores: data.scores,
+        smishingLevelStage: data.smishingLevelStage,
+        smishingResponses: data.smishingResponses,
+        permissionsLevelStage: data.permissionsLevelStage,
+        permissionsLevelResponses: data.permissionsLevelResponses
 	    }
     };
     //Filter to know which document to update in mongo
@@ -166,13 +174,7 @@ app.post("/update", async(request,response) =>{
     result = await collection.find({user_id: data.user_id}).toArray();
     //Update document
     document = {
-      username: result[0].username,
-      email: result[0].email,
-      password: result[0].password,
-      highScore: result[0].highScore,
-      scores: result[0].scores,
-      permissionsLevelStage: data.permissionsLevelStage,
-      smishingLevelStage: data.smishingLevelStage,
+      scores: result[0].scores
     }
     //Return the document
     response.status(200).json(document);
@@ -549,7 +551,7 @@ app.get("/getAllPermissions", async(request, response) => {
 
     //Get all of the questions from the permissions bank
     var startTime = Date.now(); //Get start and end time to calculate RTT
-    var result = await collection.find({}).toArray();
+    var result = await collection.find({}).sort({question:1}).toArray();
     var endTime = Date.now();
     var rtt = startTime - endTime;
 
