@@ -23,7 +23,7 @@ class Call_Gen{
 			this.transcript_Line3 = "Caller: Great. Are you an account holder of ####?";
 			this.transcript_Line4 = "Recipient: Yes, I am. Why do you ask?";
 			this.transcript_Line5 = "Caller: Perfect. Recently the terms of service was changed. Do you have time to go over these changes?";
-			this.correctAnswers = [false, false, true];
+			this.correctAnswers = [true, false, true];
 			this.reasonAnswers = [" No personal information was requested in this call.", " No payment was requested during this call.", " This call majorly consisted of yes and no type questions despite seeming like an innocent call. This can be a major warning sign that can be used to impersonate the victim.", " The major warning sign in this call was the use of only yes and no questions. This can be used for robocalls and to impersonate the victim."];
 			
 		}else if(type == 1){
