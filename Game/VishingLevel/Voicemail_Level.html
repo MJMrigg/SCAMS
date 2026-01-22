@@ -51,8 +51,9 @@
 				var rtt = endTime - startTime;
 				console.log("/getVishing Request RTTs:\nServer-Database Request RTT: "+questions.pop()+"ms\nClient-Server Request RTT: "+rtt+"ms\n");
 				this.questionBank = questions;
-				for(var i = 0;i<this.questionBank.length-1;i++){
-					this.alreadyDone[i]=false;
+				for(var i = 0;i<this.questionBank.length;i++){
+					//this.alreadyDone[i]=false;
+					this.alreadyDone.push(false);
 				}
 				while(this.questionBank.length != 0){
 					var curr = this.questionBank.length;
@@ -63,6 +64,7 @@
 					this.mail.push(new Voicemail_Gen(data.prompt, data.opt1, data.opt2, data.opt3));
 					this.questionBank.pop();
 				}
+
 
 				this.mailCurrentIndex = Math.floor(Math.random()*this.mail.length);
 				this.currentVoiceMail = this.mail[this.mailCurrentIndex];
@@ -107,6 +109,9 @@
 					this.ansResult.innerText = "Please answer all questions before submitting!";
 				}else{
 					var check = this.checkAllAns();//check answers to display proper result message
+
+					this.alreadyDone[this.mailCurrentIndex] = true;
+
 					var nextIndex = this.mailCurrentIndex + 1;//makes next index a temporary variable
 					console.log("next index: "+nextIndex);
 					if(check){
@@ -114,11 +119,11 @@
 						//this.ansResult.innerText += " "+this.mail[this.mailCurrentIndex].ansReasons[3];
 					}else{
 						this.ansResult.innerText = "Not Quite!";
-						for(var i = 0; i<3;i++){
-							/*if(this.playerAns[i]!=this.mail[this.mailCurrentIndex].correctAnswers[i]){
+						/*for(var i = 0; i<3;i++){
+							if(this.playerAns[i]!=this.mail[this.mailCurrentIndex].correctAnswers[i]){
 								this.ansResult.innerText += " "+ this.mail[this.mailCurrentIndex].ansReasons[i];
-							}*/
-						}
+							}
+						}*/
 					}
 					if(this.checkDone()){//nextIndex == this.mail.length
 						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
@@ -127,7 +132,9 @@
 						document.getElementById("button").style.display = "none";
 						document.getElementById("finishedDisplay").innerText = "You finished all the levels!";
 						this.gameFinish = true;
-					}else if (!this.gameFinish){
+
+					}else //if (!this.gameFinish){
+					{
 						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
 						this.goButton.innerText = "Next level";
 						this.goButton.onclick = () => this.goNextLevel();
@@ -136,11 +143,15 @@
 			}
 
 			checkDone(){
-				for(var i = 0;i<this.alreadyDone.length-1;i++){
-					if(!this.alreadyDone.length[i]){
+				console.log(this.alreadyDone.length);
+				console.log("AlreadyDone array: " + this.alreadyDone);
+				for(var i = 0;i<this.alreadyDone.length;i++){
+					if(!this.alreadyDone[i]){
+						console.log("returns false from checkDone: " + i);
 						return false;
 					}
 				}
+				console.log("returns true from checkDone");
 				return true;
 			}
 			
@@ -184,7 +195,9 @@
 			
 			goNextLevel(){
 				//console.log("Successful?");
-				this.alreadyDone[this.mailCurrentIndex] = true;
+
+				//this.alreadyDone[this.mailCurrentIndex] = true;
+
 				//this.mailCurrentIndex+= 1;
 				while(this.alreadyDone[this.mailCurrentIndex]){
 					this.mailCurrentIndex = Math.floor(Math.random()*this.mail.length);
