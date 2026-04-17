@@ -50,11 +50,24 @@
                         sessionStorage.setItem("highScore",JSON.stringify(Math.max(response.highScore,currentScore)));
                         sessionStorage.setItem("scores",JSON.stringify(response.scores));
                         sessionStorage.setItem("loggedIn",JSON.stringify(true)); //Mark user as logged in
-                        //Set the user's stages on the levels
-                        sessionStorage.setItem("permissionsLevelStage", JSON.stringify(response.permissionsLevelStage));
-                        sessionStorage.setItem("permissionsLevelResponses", JSON.stringify(response.permissionsLevelResponses));
-                        sessionStorage.setItem("level1Stage", JSON.stringify(response.smishingLevelStage));
-                        sessionStorage.setItem("level1Responses", JSON.stringify(response.smishingResponses));
+                        //Get the user's stages on all levels
+                        var permissionsLevelStage = response.permissionsLevelStage;
+                        var permissionsLevelResponses = response.permissionsLevelStage;
+                        var level1Stage = response.smishingLevelStage;
+                        var Level1Responses = response.smishingResponses;
+                        //If any are valid and the player doesn't already have stages saved, save the ones from their account
+                        if(JSON.parse(sessionStorage.getItem("permissionsLevelStage")) == null && permissionsLevelStage != undefined){
+                            sessionStorage.setItem("permissionsLevelStage", JSON.stringify(permissionsLevelStage));
+                        }
+                        if(JSON.parse(sessionStorage.getItem("permissionsLevelResponses")) == null && permissionsLevelResponses != undefined){
+                            sessionStorage.setItem("permissionsLevelResponses", JSON.stringify(permissionsLevelResponses));
+                        }
+                        if(JSON.parse(sessionStorage.getItem("level1Stage")) == null && level1Stage != undefined){
+                            sessionStorage.setItem("level1Stage", JSON.stringify(level1Stage));
+                        }
+                        if(JSON.parse(sessionStorage.getItem("Level1Responses")) == null && Level1Responses != undefined){
+                            sessionStorage.setItem("Level1Responses", JSON.stringify(Level1Responses));
+                        }
                         alert("Sucessfully logged in! Welcome back "+response.username+"!");
                         window.location.href = "home.html";
                     }

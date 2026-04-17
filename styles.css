@@ -83,6 +83,7 @@ button.selection{
     font-family: 'Tahoma';
     color: black;
     font-size: 0.9rem;
+    font-weight: normal;
 }
 button.forSmishing{
     width: 150px; 
