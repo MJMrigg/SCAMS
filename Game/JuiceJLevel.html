@@ -139,27 +139,45 @@
 
         function submit(){
             //gathering chosen answers
-            const checkboxes = document.querySelectorAll('input[name="attack"]:checked');
-            const selectedAttacks = Array.from(checkboxes).map(checkbox => checkbox.value);
+            const checkboxes = document.querySelectorAll('input[name="attack"]');
 
             //containing correct answers in an array
             const correctAttacks = ['DataTheft','MalwareInstallation', 'MultiDeviceAttack', 'DisablingAttack'];
             
             let correctCount = 0;
             let currentScore = 0;
-            selectedAttacks.forEach(attack => {
-                if (correctAttacks.includes(attack)){
+            let incorrectCount = 0;
+            checkboxes.forEach(cb => {
+                if (cb.checked && correctAttacks.includes(cb.value)){
                     currentScore++;
                     correctCount++;
                 }
-                else{
+                else if(cb.checked && !correctAttacks.includes(cb.value)){
                     currentScore--;
+                    incorrectCount++;
                 }
+                
+                //Disable the check mark
+                cb.disabled = true;
             })
 
+            //Delete the submit button
+            document.getElementById("submit").remove();
+
             score += currentScore;
+
+            //Handle making the displayed message grammatically correct based on the scores
+            let correctAnswers = "answers";
+            if(correctCount == 1)
+                correctAnswers = "answer";
+            let incorrectAnswers = "answers";
+            if(incorrectCount == 1)
+                incorrectAnswers = "answer";
+            let points = "points";
+            if(currentScore == 1)
+                points = "point"
                     
-            let feedbackMsg = `You got ${correctCount} out of 4 answers correct! You earned ${currentScore} point(s).`;
+            let feedbackMsg = `You selected ${correctCount} out of 4 correct ${correctAnswers} and ${incorrectCount} incorrect ${incorrectAnswers}! You earned ${currentScore} ${points}.`;
 
             document.getElementById("feedback2").innerHTML = feedbackMsg;
 
