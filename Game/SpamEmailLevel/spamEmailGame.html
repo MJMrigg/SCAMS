@@ -148,6 +148,13 @@
 				}
 			}
 			
+			setInputsDisabled(disabled){
+				var inputs = document.querySelectorAll('input[type="radio"], input[type="checkbox"]');
+				for(var i = 0; i < inputs.length; i++){
+					inputs[i].disabled = disabled;
+				}
+			}
+
 			submitAnswers(){
 				//console.log("Pressed");
 				//console.log("Yes and No value: " + this.playerAns);
@@ -161,6 +168,7 @@
 				if(!allAns){
 					this.ansResult.innerText = "Please answer all questions before submitting!";
 				}else{
+					this.setInputsDisabled(true);
 					var check = this.checkAllAns();//check answers to display proper result message
 					//var nextIndex = this.mailCurrentIndex + 1;//makes next index a temporary variable
 					//console.log("next index: "+nextIndex);
@@ -244,7 +252,7 @@
 						var ans = [data.senderAdd, data.emailSubject, data.emailBody, data.susLink, data.spellingErrors, data.soundsOff, data.pdfIncluded];
 						//var ans = [data.senderAdd, data.emailSubject, data.emailBody, data.spellingErrors, data.soundsOff, data.pdfIncluded];
 						
-						this.emails.push(new email(data.imagebase64, ans));
+						this.emails.push(new email(data.imagebase64, ans, data.count));
 						this.questionBank.pop();
 					}
 					this.currIndex = Math.floor(Math.random()*this.emails.length);
@@ -371,7 +379,9 @@
 				document.getElementById("pdf").checked = false;
 
 				this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
-
+				
+				this.setInputsDisabled(false);
+				
 				this.updateScreen();
 			}
 			
@@ -382,6 +392,7 @@
 				/*for(var i = 0; i<this.playerAns.length;i++){
 					this.playerAns[i]=null;
 				}*/
+				console.log("Current object number: "+this.emails[this.currIndex].count);
 				for(var i = 0; i<this.playerAns.length;i++){
 					this.playerAns[i]=null;
 				}

@@ -52,6 +52,13 @@
 				this.callScript_Line5.innerText = this.currentCall.transcript_Line5;
 				
 			}
+
+			setInputsDisabled(disabled){
+				var inputs = document.querySelectorAll('input[type="radio"], input[type="checkbox"]');
+				for(var i = 0; i < inputs.length; i++){
+					inputs[i].disabled = disabled;
+				}
+			}
 			
 			changeVal(type, val){
 				if(type == 0){//personal info questions
@@ -88,6 +95,7 @@
 				if(!allAns){
 					this.ansResult.innerText = "Please answer all questions before submitting!";
 				}else{
+					this.setInputsDisabled(true);
 					var check = this.checkAllAns();//check answers to display proper result message
 					var nextIndex = this.callCurrentIndex + 1;//makes next index a temporary variable
 					console.log("next index: "+nextIndex);
@@ -169,7 +177,7 @@
 				for(var i = 0;i<rad.length;i++){
 					rad[i].checked = false;
 				}
-				
+				this.setInputsDisabled(false);
 				this.updateScreen();
 			}
 			
