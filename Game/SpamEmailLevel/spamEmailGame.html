@@ -147,7 +147,7 @@
 					}
 				}
 			}
-			
+
 			setInputsDisabled(disabled){
 				var inputs = document.querySelectorAll('input[type="radio"], input[type="checkbox"]');
 				for(var i = 0; i < inputs.length; i++){
@@ -160,7 +160,7 @@
 				//console.log("Yes and No value: " + this.playerAns);
 				console.log(this.correctAnsNum);
 				var allAns = true;
-				for(var i = 0; i<this.playerAns.length-1;i++){
+				for(var i = 0; i<this.playerAns.length;i++){
 					if(this.playerAns[i]==null){
 						allAns = false;
 					}
@@ -287,9 +287,9 @@
 						}else if(i==4){
 							document.getElementById("spellingErr").style.color = "green";
 						}else if(i==5){
-							document.getElementById("feelOff").style.color = "red";
+							document.getElementById("feelOff").style.color = "green";
 						}else{
-							document.getElementById("pdf").style.color = "red";
+							document.getElementById("pdf").style.color = "green";
 						}
 						
 					}else{
