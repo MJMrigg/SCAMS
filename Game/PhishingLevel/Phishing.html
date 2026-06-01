@@ -1,0 +1,489 @@
+<html>
+<head>
+	<script src = "email.js"></script>
+
+	<meta name="viewport" content="width=device-width, initial-scale:1.0'">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+	
+	<!-- This style block will override the external styles.css for images only -->
+	<style>
+		/* Fix image warping - maintain aspect ratio */
+		#emailPic, .phishingIMG {
+			max-width: 100% !important;
+			width: auto !important;
+			height: auto !important;
+			display: block;
+			margin: 0 auto;
+		}
+		
+		/* Optional: Add a max-height if images are too tall */
+		#emailPic, .phishingIMG {
+			max-height: 70vh; /* 70% of viewport height */
+		}
+		#emailAdditional label {
+			display: inline-flex;
+			align-items: center;
+			gap: 5px;
+			cursor: pointer;
+			white-space: nowrap;
+		}
+		
+		#emailAdditional input[type="checkbox"] {
+			margin: 0;
+			cursor: pointer;
+		}
+	</style>
+
+	<script>
+		class main{
+			constructor(){
+				this.image = '';
+				this.emailImg = document.getElementById("emailPic");
+				this.emailImg.src = 'data:image/png;base64,'+ this.image;
+				
+				this.playerAns = [null,null,null,null,null,null,null];
+				this.playerAns[3]=false;
+				this.playerAns[4]=false;
+				this.playerAns[5]=false;
+
+				this.gameFinish = false;
+				this.maxScore = 0;
+				this.correctAnsNum = 0;
+				this.currIndex = 0;
+				
+				this.ansResult = document.getElementById("results");
+				this.score = document.getElementById("score");
+				this.goButton = document.getElementById("confirm");
+
+
+
+				this.questionBank = [];
+
+				this.emails = [];
+				this.alreadyDone = [];
+				//this.getQuestionBank();
+				//var len = this.questionBank.length;
+				this.currIndex = 0;
+				//this.updateScreen();
+
+			}
+			
+			changeImage(str){
+				//this.image = this.questionBank[this.currIndex].imagebase64;
+				this.image = str;
+				this.emailImg = document.getElementById("emailPic");
+				this.emailImg.src = 'data:image/png;base64,'+ this.image;
+
+			}
+			
+			changeVal(opt, chosen){
+				if(opt==0){
+					if(chosen == 1){
+						this.playerAns[0] = true;
+					}else{
+						this.playerAns[0] = false;
+					}
+				}
+				else if(opt==1){
+					if(chosen == 1){
+						this.playerAns[1] = true;
+					}else{
+						this.playerAns[1] = false;
+					}
+				}
+				else if(opt==2){
+					if(chosen==1){
+						document.getElementById("emailAdditional").style = "display:block";
+						document.getElementById("susLink").style="display:block";
+
+						document.getElementById("feelOff").style="display:block";
+						document.getElementById("spellingErr").style="display:block";
+						this.playerAns[2]=true;
+						
+					}else{
+						document.getElementById("emailAdditional").style = "display:none";
+						document.getElementById("susLink").style="display:none";
+						document.getElementById("feelOff").style="display:none";
+						document.getElementById("spellingErr").style="display:none";
+						this.playerAns[2]=false;
+
+
+						this.playerAns[3]=false;
+						this.playerAns[4]=false;
+						this.playerAns[5]=false;
+						document.getElementById("susLink").checked = false;
+						document.getElementById("feelOff").checked = false;
+						document.getElementById("spellingErr").checked = false;
+					}
+				}else{
+					if(chosen == 1){
+						this.playerAns[6] = true;
+					}else{
+						this.playerAns[6] = false;
+					}
+				}
+			}
+			
+			changeCheck(opt, checked){
+				var type = opt
+				if(type == 0){//suspicious link
+					if(checked){
+						this.playerAns[3]=true;
+					}else{
+						this.playerAns[3]=false;
+					}
+				}else if(type==1){//the spelling errors
+					if(checked){
+						this.playerAns[4]=true;
+					}else{
+						this.playerAns[4]=false;
+					}
+				}else{//the sounding off
+					if(checked){
+						this.playerAns[5]=true;
+					}else{
+						this.playerAns[5]=false;
+					}
+				}
+			}
+
+			setInputsDisabled(disabled){
+				var inputs = document.querySelectorAll('input[type="radio"], input[type="checkbox"]');
+				for(var i = 0; i < inputs.length; i++){
+					inputs[i].disabled = disabled;
+				}
+			}
+
+			submitAnswers(){
+				//console.log("Pressed");
+				//console.log("Yes and No value: " + this.playerAns);
+				console.log(this.correctAnsNum);
+				var allAns = true;
+				for(var i = 0; i<this.playerAns.length;i++){
+					if(this.playerAns[i]==null){
+						allAns = false;
+					}
+				}
+				if(!allAns){
+					this.ansResult.innerText = "Please answer all questions before submitting!";
+				}else{
+					this.setInputsDisabled(true);
+					var check = this.checkAllAns();//check answers to display proper result message
+					//var nextIndex = this.mailCurrentIndex + 1;//makes next index a temporary variable
+					//console.log("next index: "+nextIndex);
+					if(check){
+						this.ansResult.innerText = "Fantastic!";
+					}else{
+						this.ansResult.innerText = "Not Quite!";
+					}
+					var doneCount = 0;
+					for(let i =0; i<this.emails.length;i++){
+						if(this.alreadyDone[i]){
+							doneCount++;
+						}
+					}
+					if(this.checkDone()){
+						for(let i = 0;i<this.emails.length;i++){
+							this.alreadyDone[i]=false;
+							//resets game
+						}
+						var newIndex = Math.floor(Math.random()*this.gameBank.length);
+						while(newIndex==this.currIndex || this.alreadyDone[newIndex]==true){
+							newIndex = Math.floor(Math.random()*this.gameBank.length);
+						}
+						this.currIndex=newIndex;
+
+						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
+						this.goButton.innerText = "Next level";
+						this.goButton.onclick = () => this.nextQuestion();
+					}else{
+						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
+						this.goButton.innerText = "Next level";
+						this.goButton.onclick = () => this.nextQuestion();
+					}
+					this.goButton.innerText = "Next level";
+					this.goButton.onclick = () => this.nextQuestion();
+				}
+			}
+			checkDone(){
+				for(var i = 0;i<this.alreadyDone.length;i++){
+					if(!this.alreadyDone.length[i]){
+						return false;
+					}
+				}
+				return true;
+			}
+			
+			async getQuestionBank(){
+				console.log("getting questions...");
+				try {
+					//const response = await fetch('SSE_MobileSecurityGame.PhishingBank.json');
+					var startTime = Date.now(); //Get start and end times to calculate rtt
+					const response = await fetch("/getPhishing",{
+                        method: "POST",
+                        "Content-Type": "application/json",
+                        //body: JSON.stringify({})
+                    });
+					//const data = await response.json();
+					const questions = await response.json();
+
+					const questionString = JSON.stringify(questions);
+					const size = new TextEncoder().encode(questionString).length;
+
+					console.log("File size in bytes is: "+size);
+
+					var endTime = Date.now();
+					var rtt = endTime - startTime;
+					console.log("/getPhishing Request RTTs:\nServer-Database Request RTT: "+questions.pop()+"ms\nClient-Server Request RTT: "+rtt+"ms\n");
+					//this.changeImage(data[0].imagebase64);
+					this.questionBank = questions;
+					for(var i = 0;i<this.questionBank.length-1;i++){
+						this.alreadyDone.push(false);
+					}
+					while(this.questionBank.length != 0){
+						//this.alreadyDone.push(data[i]);
+						//this.questionBank.push(data[i]);
+						
+						var curr = this.questionBank.length;
+						var data = this.questionBank[curr-1];
+						//console.log(data);
+
+						var ans = [data.senderAdd, data.emailSubject, data.emailBody, data.susLink, data.spellingErrors, data.soundsOff, data.pdfIncluded];
+						//var ans = [data.senderAdd, data.emailSubject, data.emailBody, data.spellingErrors, data.soundsOff, data.pdfIncluded];
+						
+						this.emails.push(new email(data.imagebase64, ans, data.count));
+						this.questionBank.pop();
+					}
+					this.currIndex = Math.floor(Math.random()*this.emails.length);
+					this.updateScreen();
+				} catch (error) {
+					console.error("Error fetching question bank:", error);
+				}
+				//const questions = 'PhishingQA.json';
+				//this.questionBank = JSON.parse(questions);
+				//console.log("Did it work? "+ this.questionBank["senderAdd"]);
+				
+			}
+			
+			checkAllAns(){
+				console.log(this.playerAns);
+				console.log(this.emails[this.currIndex].corAns);
+				var allCor = false;
+				var levelCor = 0;
+				for(var i = 0; i<this.playerAns.length;i++){
+					if(this.emails[this.currIndex].checkCorrect(i, this.playerAns[i])){
+						this.correctAnsNum++;
+						levelCor++;
+						if(i==0){
+							document.getElementById("emailAd").style.color = "green";
+
+						}else if(i==1){
+							document.getElementById("subjectLine").style.color = "green";
+						}else if(i==2){
+							document.getElementById("emailBod").style.color = "green";
+						}else if(i==3){
+							document.getElementById("susLink").style.color = "green";
+						}else if(i==4){
+							document.getElementById("spellingErr").style.color = "green";
+						}else if(i==5){
+							document.getElementById("feelOff").style.color = "green";
+						}else{
+							document.getElementById("pdf").style.color = "green";
+						}
+						
+					}else{
+						if(i==0){
+							document.getElementById("emailAd").style.color = "red";
+
+						}else if(i==1){
+							document.getElementById("subjectLine").style.color = "red";
+						}else if(i==2){
+							document.getElementById("emailBod").style.color = "red";
+						}else if(i==3){
+							document.getElementById("susLink").style.color = "red";
+						}else if(i==4){
+							document.getElementById("spellingErr").style.color = "red";
+						}else if(i==5){
+							document.getElementById("feelOff").style.color = "red";
+						}else{
+							document.getElementById("pdf").style.color = "red";
+						}
+					}
+				}
+
+				console.log(this.correctAnsNum);
+				
+				//if all correct
+				if(levelCor==7){
+					allCor = true;
+				}
+				this.maxScore += 7;
+				var currentScore = JSON.parse(sessionStorage.getItem("currentScore")) + levelCor;
+				sessionStorage.setItem("currentScore", JSON.stringify(currentScore));
+				return allCor;
+			}
+			
+			nextQuestion(){
+				//var len = this.questionBank.length;
+				//while(this.alreadyDone[this.currIndex]){
+				this.alreadyDone[this.currIndex] = true;
+				
+				var newIndex = Math.floor(Math.random()*this.emails.length);
+				while(newIndex==this.currIndex || this.alreadyDone[newIndex]==true){
+					newIndex = Math.floor(Math.random()*this.emails.length);
+				}
+				this.currIndex=newIndex;
+				for(var i = 0;i<7;i++){
+					//clears player's current answer array
+					this.playerAns[i] = null;
+				}
+				
+
+				this.playerAns[3] = false;
+				this.playerAns[4] = false;
+				this.playerAns[5] = false;
+
+				//the three main
+				document.getElementById("emailAd").style.color = "black";
+				document.getElementById("subjectLine").style.color = "black";
+				document.getElementById("emailBod").style.color = "black";
+
+				//the three additional
+				document.getElementById("susLink").style.color = "black";
+
+				document.getElementById("feelOff").style.color = "black";
+				document.getElementById("spellingErr").style.color = "black";
+	
+				document.getElementById("pdf").style.color = "black";
+
+				/*document.getElementById("emailAd").checked = false;
+				document.getElementById("subjectLine").checked = false;
+				document.getElementById("emailBod").checked = false;*/
+
+				var rad = document.querySelectorAll('input[type="radio"]');
+				for(var i = 0;i<rad.length;i++){
+					rad[i].checked = false;
+				}
+
+				document.getElementById("emailAdditional").style = "display:none";
+				document.getElementById("susLink").style="display:none";
+
+				document.getElementById("feelOff").style="display:none";
+				document.getElementById("spellingErr").style="display:none";
+				document.getElementById("susLink").checked = false;
+
+				document.getElementById("feelOff").checked = false;
+				document.getElementById("spellingErr").checked = false;
+	
+				document.getElementById("pdf").checked = false;
+
+				this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
+				
+				this.setInputsDisabled(false);
+				
+				this.updateScreen();
+			}
+			
+			updateScreen(){
+				//this.changeImage();
+				
+				this.changeImage(this.emails[this.currIndex].imgUrl);
+				/*for(var i = 0; i<this.playerAns.length;i++){
+					this.playerAns[i]=null;
+				}*/
+				console.log("Current object number: "+this.emails[this.currIndex].count);
+				for(var i = 0; i<this.playerAns.length;i++){
+					this.playerAns[i]=null;
+				}
+				this.playerAns[3]=false;
+				this.playerAns[4]=false;
+				this.playerAns[5]=false;
+
+
+				this.goButton.innerText = "Submit Answers";
+				this.goButton.onclick = () => this.submitAnswers();
+				this.ansResult.innerText = " ";
+				//this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
+
+			}
+		}
+	</script>
+	<link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+	<div class = "menu" style="height:auto">
+		<div style = "border: 1px solid #000;">
+			<b>Task: Select Any Suspicious Parts of the Email!</b>
+		</div>
+		<img id="emailPic" src = "" alt = "Loading image! Please wait." width = "100%" height="50%"/><br>
+		<div id = "emailAd" for = "emailAd" style = "border: 1px solid #000;">
+			<center><b>Weird Sender's Email Address</b><br>
+			<input type = "radio" id = "emailAdT" name = "emailAdd" onClick = "m.changeVal(0,1)">
+			<label for = "OptionSel1">Yes</label>
+			<input type = "radio" id = "emailAdF" name ="emailAdd" onClick = "m.changeVal(0,0)">
+			<label for = "OptionSel1">No</label>
+		</div>
+		
+		<div id = "subjectLine" for = "subjectLine" style = "border: 1px solid #000;">
+			<center><b>Weird Email Subject Line</b><br>
+			<input type = "radio" id = "subT" name = "subject" onClick = "m.changeVal(1,1)">
+			<label for = "OptionSel1">Yes</label>
+			<input type = "radio" id = "subF" name = "subject" onClick = "m.changeVal(1,0)">
+			<label for = "OptionSel1">No</label>
+		</div>
+		
+		<div id = "emailBod" for = "emailBod" style = "border: 1px solid #000;">
+			<center><b>Suspicious Email Body</b><br>
+			<input type = "radio" id = "bodT" name = "emailBod"onClick = "m.changeVal(2,1)">
+			<label for = "OptionSel1">Yes</label>
+			<input type = "radio" id = "bodF" name = "emailBod"onClick = "m.changeVal(2,0)">
+			<label for = "OptionSel1">No</label>
+			
+			<div id="emailAdditional" style="display:none">
+				<label>
+					<input type = "checkbox" value = "susLink" id="susLink" onclick="m.changeCheck(0,this.checked)">
+					Suspicious Link
+				</label>
+				<br>
+				<label>
+					<input type = "checkbox" value = "spellingErr" id = "spellingErr"onclick="m.changeCheck(1,this.checked)">
+					Spelling mistakes
+				</label>
+				<br>
+				<label>
+					<input type = "checkbox"value="feelOff" id="feelOff"onclick="m.changeCheck(2,this.checked)">
+					Sounds off
+				</label>
+			</div>
+			
+			</center>
+		</div>
+		<div>
+			<div id = "pdf" for = "pdf"style = "border: 1px solid #000;">
+				<center><b>PDF Attached</b><br>
+				<input type = "radio" id = "pdfInT" name = "yesNo"onClick = "m.changeVal(5,1)">
+				<label for = "OptionSel1">Yes</label>
+				<input type = "radio" id = "pdfInF" name = "yesNo"onClick = "m.changeVal(5,0)">
+				<label for = "OptionSel1">No</label>
+				</center>
+			</div>
+			<button id="confirm" class="selection" onclick = "m.submitAnswers()">Confirm Selection</button>
+			<div id = "results" style = "height:auto;"><br></div>
+			<div id="score" style="height: auto;"><br></div>
+
+			<div id = "finishedDisplay" style = "font-size:25px;text-align:center"></div>
+			<br>
+			<button id="returnMenu" class="selection" onclick = "window.location.href = 'PhishingMenu.html'">Return to Phishing Menu</button>
+			<button id="returnLevel" class = "selection" onclick = "window.location.href = '../menu.html'">Return to Level screen</button><br>
+		</div>
+
+		<script>
+			var m = new main();
+			m.getQuestionBank();
+			//m.changeImage();
+		</script>
+	</div>
+</body>
+</html>
+
