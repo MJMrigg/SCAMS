@@ -50,7 +50,6 @@
 				this.gameFinish = false;
 				this.maxScore = 0;
 				this.correctAnsNum = 0;
-				this.currIndex = 0;
 				
 				this.ansResult = document.getElementById("results");
 				this.score = document.getElementById("score");
@@ -67,6 +66,11 @@
 				this.currIndex = 0;
 				//this.updateScreen();
 
+				this.maxStages = JSON.parse(sessionStorage.getItem("learningPlan")).maxPhishing;
+				if(maxStages <= 0){
+					alert("Your learning plan does not contain this game. Returning to the menu.");
+					window.location.href = "../menu.html";
+				}
 			}
 			
 			changeImage(str){
@@ -183,36 +187,13 @@
 							doneCount++;
 						}
 					}
-					if(this.checkDone()){
-						for(let i = 0;i<this.emails.length;i++){
-							this.alreadyDone[i]=false;
-							//resets game
-						}
-						var newIndex = Math.floor(Math.random()*this.gameBank.length);
-						while(newIndex==this.currIndex || this.alreadyDone[newIndex]==true){
-							newIndex = Math.floor(Math.random()*this.gameBank.length);
-						}
-						this.currIndex=newIndex;
 
-						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
-						this.goButton.innerText = "Next level";
-						this.goButton.onclick = () => this.nextQuestion();
-					}else{
-						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
-						this.goButton.innerText = "Next level";
-						this.goButton.onclick = () => this.nextQuestion();
-					}
+					this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
+					this.goButton.innerText = "Next level";
+					this.goButton.onclick = () => this.nextQuestion();
 					this.goButton.innerText = "Next level";
 					this.goButton.onclick = () => this.nextQuestion();
 				}
-			}
-			checkDone(){
-				for(var i = 0;i<this.alreadyDone.length;i++){
-					if(!this.alreadyDone.length[i]){
-						return false;
-					}
-				}
-				return true;
 			}
 			
 			async getQuestionBank(){
@@ -255,7 +236,7 @@
 						this.emails.push(new email(data.imagebase64, ans, data.count));
 						this.questionBank.pop();
 					}
-					this.currIndex = Math.floor(Math.random()*this.emails.length);
+					this.currIndex = 0;
 					this.updateScreen();
 				} catch (error) {
 					console.error("Error fetching question bank:", error);
@@ -328,12 +309,15 @@
 				//var len = this.questionBank.length;
 				//while(this.alreadyDone[this.currIndex]){
 				this.alreadyDone[this.currIndex] = true;
-				
-				var newIndex = Math.floor(Math.random()*this.emails.length);
-				while(newIndex==this.currIndex || this.alreadyDone[newIndex]==true){
-					newIndex = Math.floor(Math.random()*this.emails.length);
+
+				//If the player has finished the game, tell them and go back to the menu
+				if(this.maxScore/7 >= this.alreadyDone.length || this.maxScore/7 >= this.maxStages){
+					alert("Good job! You've completed the phishing game! Returning to the menu.");
+					window.location.href = "../menu.html";
+					return;
 				}
-				this.currIndex=newIndex;
+				
+				this.currIndex += 1;
 				for(var i = 0;i<7;i++){
 					//clears player's current answer array
 					this.playerAns[i] = null;

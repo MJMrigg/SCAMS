@@ -10,8 +10,18 @@
             sessionStorage.setItem("currentScore",JSON.stringify(0)); //User's score for this run
             sessionStorage.setItem("level1Stage",JSON.stringify(0)); //User's stage on smishing level(0 is the tutorial)
             sessionStorage.setItem("highScore",JSON.stringify(0)); //User's highest score
-            sessionStorage.setItem("permissionsLevelStage",JSON.stringify(0)); //User's stage on permissions level(-1 is the tutorial)
-            
+            sessionStorage.setItem("permissionsLevelStage",JSON.stringify(0)); //User's stage on permissions level(0 is the tutorial)
+            sessionStorage.setItem("pin",JSON.stringify(null)); //The pin for the user's current learning plan
+            sessionStorage.setItem("learningPlan",JSON.stringify({ //The learning plan of the user(By default, all stages are enabled)
+                maxVishingCall: 4,
+                maxVishingVoiceMail: 26,
+                maxSmishing: 50,
+                maxPhishing: 39,
+                maxPermissions: 11,
+                firewallNinja: true,
+                maxJuice: 1
+            }));
+
             //Take the user to the homepage
             window.location.href = "Client/home.html";
         </script>

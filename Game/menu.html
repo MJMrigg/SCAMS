@@ -97,6 +97,35 @@
                     alert(Error+" Please try again.");
                 }
             }
+
+            //Setup the page
+            function pageSetup(){
+                //Add the score to the page
+                addCurrentScore();
+
+                //Hide the buttons not in the player's learning plan
+                var learningPlan = JSON.parse(sessionStorage.getItem("learningPlan"));
+                //If any of the max stages are 0 or false, hide the button, as they're not part of the learning plan
+                if(learningPlan.maxVishingCall == 0 && learningPlan.maxVishingVoiceMail == 0){
+                    document.getElementById("vishing").style.display = "none";
+                }
+                if(learningPlan.maxSmishing == 0){
+                    document.getElementById("smishing").style.display = "none";
+                }
+                if(learningPlan.maxPhishing == 0){
+                    document.getElementById("phishing").style.display = "none";
+                }
+                if(learningPlan.maxPermissions == 0){
+                    document.getElementById("permissions").style.display = "none";
+                }
+                if(!learningPlan.firewallNinja){
+                    document.getElementById("firewall").style.display = "none";
+                }
+                if(learningPlan.maxJuice == 0){
+                    document.getElementById("juice").style.display = "none";
+                }
+            }
+
             //Add the current score to the screen
             function addCurrentScore(){
                 var currentScore = JSON.parse(sessionStorage.getItem("currentScore"));
@@ -135,15 +164,15 @@
 		<div class="menu w-75 h-50" style="height: 420px;">
             <h1 style="font-family: 'Times New Roman', Times, serif; font-weight: bold;">Level Select</h1>
             <h4 style="font-family: 'Times New Roman', Times, serif; font-weight: bold; font-size: 1.1rem;" id="currentScore"></h4>
-            <button class="selection" onclick="window.location.href = 'VishingLevel/VishingTut.html'" style="width: 180px; height:50px;font-family: 'Tahoma';font-weight: normal;font-size: 0.9rem;">Vishing Level</button>
+            <button id="vishing" class="selection" onclick="window.location.href = 'VishingLevel/VishingTut.html'" style="width: 180px; height:50px;font-family: 'Tahoma';font-weight: normal;font-size: 0.9rem;">Vishing Level</button>
 
-            <button class="selection" onclick="window.location.href = 'PermissionsLevel/PermissionsLevel.html'" style="width: 180px; height:50px;font-family: 'Tahoma';font-weight: normal;font-size: 0.9rem;">App Permissions Level</button><br>
-            <button class="selection" onclick="startSmishingLevel()" style="width: 180px; height:50px;font-family: 'Tahoma';font-weight: normal;font-size: 0.9rem;">Smishing Level</button>
+            <button id="permissions" class="selection" onclick="window.location.href = 'PermissionsLevel/PermissionsLevel.html'" style="width: 180px; height:50px;font-family: 'Tahoma';font-weight: normal;font-size: 0.9rem;">App Permissions Level</button><br>
+            <button id="smishing" class="selection" onclick="startSmishingLevel()" style="width: 180px; height:50px;font-family: 'Tahoma';font-weight: normal;font-size: 0.9rem;">Smishing Level</button>
 
-			<button class="selection" onclick="window.location.href = 'FirewallNinja/FirewallNinja.html'" style="width: 180px; height:50px;font-family: 'Tahoma';font-weight: normal;font-size: 0.9rem;">Firewall Ninja Level</button><br>
-            <button class="selection" onclick="window.location.href = 'PhishingLevel/PhishingMenu.html'" style="width: 180px; height:50px;font-family: 'Tahoma';font-weight: normal;font-size: 0.9rem;">Phishing Level</button>
+			<button id="firewall" class="selection" onclick="window.location.href = 'FirewallNinja/FirewallNinja.html'" style="width: 180px; height:50px;font-family: 'Tahoma';font-weight: normal;font-size: 0.9rem;">Firewall Ninja Level</button><br>
+            <button id="phishing" class="selection" onclick="window.location.href = 'PhishingLevel/PhishingMenu.html'" style="width: 180px; height:50px;font-family: 'Tahoma';font-weight: normal;font-size: 0.9rem;">Phishing Level</button>
                         
-            <button class="selection" onclick="window.location.href = 'JuiceJLevel.html'" style="width: 180px; height:50px;font-family: 'Tahoma';font-weight: normal;font-size: 0.9rem;">Juice Jacking Level</button><br>
+            <button id="juice" class="selection" onclick="window.location.href = 'JuiceJLevel.html'" style="width: 180px; height:50px;font-family: 'Tahoma';font-weight: normal;font-size: 0.9rem;">Juice Jacking Level</button><br>
             <!--
             <button class="selection" onclick="window.location.href = 'CommonAttackLevel/CommonAttackTut.html'" style="width: 180px; height:50px;font-family: 'Tahoma';font-weight: normal;font-size: 0.9rem;">Common Attack Level</button><br>
         -->
@@ -153,7 +182,7 @@
             </center>
         </div>
         <script>
-            addCurrentScore()
+            pageSetup()
         </script>
     </body>
 </html>

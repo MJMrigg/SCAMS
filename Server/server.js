@@ -6,6 +6,7 @@ import path from 'path';
 import nodemailer from 'nodemailer';
 import {internalIpV4} from "internal-ip";
 
+//____ Creating the Server _________________________________________________________________________________________
 //Create an express application to handle communications between the front end and back end
 const app = express();
 //Allow the app to pass json and urlencoded data into the mongo functions
@@ -23,6 +24,10 @@ app.get("/", (request, response) => {
 //Mongo information
 //const uri = "mongodb+srv://SSEconnection:RememberThis@cluster0.3jlg2.mongodb.net/"; //Old database
 const uri = "mongodb+srv://evanhambre:R0SEBID26@cluster0.zlbvlpq.mongodb.net/";
+
+
+// ______ Account management ______________________________________________________________________________
+
 
 //Create an account via a post request based on the parameters in the request and send the account data back via a response
 app.post("/createAccount", async(request, response) => {
@@ -58,7 +63,8 @@ app.post("/createAccount", async(request, response) => {
       smishingLevelStage: data.smishingLevelStage,
       smishingResponses: data.smishingResponses,
       highScore: 0,
-      scores: []
+      scores: [],
+      learningPlan: null
     };
     if(data.firstScore > 0){ //If the player already had a score, add it to the scores array
       document.scores.push(data.firstScore);
@@ -75,6 +81,7 @@ app.post("/createAccount", async(request, response) => {
 
   } catch (err) {
     console.error(`[Error] ${err}`);
+    response.status(500).send({Error: "Error, something went wrong."});
   } finally {
     //Close Mongo
     await client.close();
@@ -93,7 +100,7 @@ app.post("/login", async(request, response) =>{
     var dataBase = "SSE_MobileSecurityGame";
     var dbCollection = "UserAccounts"
     const db = client.db(dataBase);
-    const collection = db.collection(dbCollection);
+    var collection = db.collection(dbCollection);
 
     //Create document to be sent to mongo
     var document = {
@@ -121,8 +128,24 @@ app.post("/login", async(request, response) =>{
         permissionsLevelStage: result[0].permissionsLevelStage,
         permissionsLevelResponses: result[0].permissionsLevelResponses,
         smishingLevelStage: result[0].smishingLevelStage,
-        smishingResponses: result[0].smishingResponses
+        smishingResponses: result[0].smishingResponses,
+        pin: result[0].learningPlan
       };
+      //Use the pin to get the user's learning plan
+      if(document.pin != null){
+        dbCollection = "LearningPlans";
+        collection = db.collection(dbCollection);
+        result = await collection.find({pin: {$eq: document.pin}}).toArray();
+        document.learningPlan = {
+          maxVishingCall: result[0].maxVishingCall,
+          maxVishingVoiceMail: result[0].maxVishingVoiceMail,
+          maxSmishing: result[0].maxSmishing,
+          maxPhishing: result[0].maxPhishing,
+          maxPermissions: result[0].maxPermissions,
+          firewallNinja: result[0].firewallNinja,
+          maxJuice: result[0].maxJuice
+        };
+      }
     }
     document.rtt = rtt; //Add sever-database request rtt to document
     //Return the document
@@ -130,6 +153,7 @@ app.post("/login", async(request, response) =>{
 
   }catch(err){
     console.error(`[Error] ${err}`);
+    response.status(500).send({Error: "Error, something went wrong."});
   }finally{
     //Close Mongo
     await client.close();
@@ -180,6 +204,7 @@ app.post("/update", async(request,response) =>{
     response.status(200).json(document);
   }catch(err){
     console.error(`[Error] ${err}`);
+    response.status(500).send({Error: "Error, something went wrong."});
   }finally{
     //Close Mongo
     await client.close();
@@ -220,6 +245,7 @@ app.post("/checkUsername",async(request,response)=>{
     response.status(200).json(document);
   }catch(err){
     console.error(`[Error] ${err}`);
+    response.status(500).send({Error: "Error, something went wrong."});
   }finally{
     //Close Mongo
     await client.close();
@@ -260,6 +286,7 @@ app.post("/checkEmail",async(request,response)=>{
     response.status(200).json(document);
   }catch(err){
     console.error(`[Error] ${err}`);
+    response.status(500).send({Error: "Error, something went wrong."});
   }finally{
     //Close Mongo
     await client.close();
@@ -297,6 +324,7 @@ app.post("/getScoreBoard", async(request,response) =>{
     response.status(200).json(document);
   }catch(err){
     console.error(`[Error] ${err}`);
+    response.status(500).send({Error: "Error, something went wrong."});
   }finally{
     //Close Mongo
     await client.close();
@@ -352,11 +380,12 @@ app.post("/forgot", async(request, response) => {
     response.status(200).json(document);
   }catch(err){
     console.error(`[Error] ${err}`);
+    response.status(500).send({Error: "Error, something went wrong."});
   }
 });
 
 
-//for the question banks
+// ____ For the question banks __________________________________________________________________________
 
 
 //Vishing voicemail level question bank
@@ -381,6 +410,7 @@ app.post("/getVishing", async(request,response) =>{
 	response.status(200).json(questions);
   }catch(err){
     console.error(`[Error] ${err}`);
+    response.status(500).send({Error: "Error, something went wrong."});
   }finally{
     //Close Mongo
     await client.close();
@@ -409,6 +439,7 @@ app.post("/getVishingCall", async(request,response) =>{
 	response.status(200).json(questions);
   }catch(err){
     console.error(`[Error] ${err}`);
+    response.status(500).send({Error: "Error, something went wrong."});
   }finally{
     //Close Mongo
     await client.close();
@@ -436,6 +467,7 @@ app.post("/getPhishing", async(request,response) =>{
 	response.status(200).json(questions);
   }catch(err){
     console.error(`[Error] ${err}`);
+    response.status(500).send({Error: "Error, something went wrong."});
   }finally{
     //Close Mongo
     await client.close();
@@ -468,6 +500,7 @@ app.post("/getSmishingAll", async(request, response) => {
     response.status(200).json(document);
   }catch(err){
     console.error(`[Error] ${err}`);
+    response.status(500).send({Error: "Error, something went wrong."});
   }
 });
 
@@ -499,9 +532,286 @@ app.get("/getAllPermissions", async(request, response) => {
     response.status(200).send(document);
   }catch(err){
     console.error(`[Error]: ${err}`);
+    response.status(500).send({Error: "Error, something went wrong."});
   }
 });
 
+
+// ______ For learning plans _____________________________________________________________________________
+
+
+app.post("/createPlan", async(request, response) => {
+  //Get user data
+  var data = request.body;
+
+  //Connect to mongodv
+  const client = new MongoClient(uri);
+  await client.connect();
+
+  //Try to query mongo
+  try{
+    //Connect to the proper database and collection
+    var database = "SSE_MobileSecurityGame";
+    var dbCollection = "LearningPlans";
+    const db = client.db(database);
+    var collection = db.collection(dbCollection);
+
+    //Create the primary key
+    var result = await collection.find({$max:"plan_id"}); //Get the maximum plan_id in the database
+    //Assume there are no plans in the database
+    var newPlanId = 0;
+    if(result[0] != undefined) //If there are, add one to the plan id
+      newPlanId = result.plan_id + 1;
+    
+    //Create the plan's pin by adding enough random characters to the plan_id so that it becomes 5 characters long
+    //(I doubt we'll ever make more then 100 learning plans)
+    var pin = String(newPlanId);
+    var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+    var originalLength = pin.length;
+    for(var i = 0; i < (5-originalLength); i++){
+      pin += characters[Math.floor(Math.random() * characters.length)];
+    }
+
+    //Use the newly created pin and data from the frontend to create the new learning plan
+    var document = {
+      plan_id: newPlanId,
+      pin: pin,
+      admin: data.admin,
+      maxVishingCall: data.maxVishingCall,
+      maxVishingVoiceMail: data.maxVishingVoiceMail,
+      maxSmishing: data.maxSmishing,
+      maxPhishing: data.maxPhishing,
+      maxPermissions: data.maxPermissions,
+      firewallNinja: data.firewallNinja,
+      maxJuice: data.maxJuice
+    }
+    result = await collection.insertOne(document);
+    if(!result.acknowledged){
+      throw "Error, could not create new learning plan";
+      return; 
+    }
+
+    //Assign the creator of the learning plan the learning plan 
+    dbCollection = "UserAccounts";
+    collection = db.collection(dbCollection);
+    result = await collection.updateOne(
+      {user_id: {$eq: data.admin}},
+      {$set: {learningPlan: pin}}
+    );
+
+    //Place the newly formed pin into a document
+    document = {
+      pin: pin
+    };
+
+    //Return the document
+    response.status(200).send(document);
+  }catch(err){
+    console.error(`${err}`);
+    response.status(500).send({Error: "Error, something went wrong."});
+  }
+});
+
+app.post("/editPlan", async(request, response) => {
+  //Get user data
+  var data = request.body;
+
+  //Connect to mongodb
+  const client = new MongoClient(uri);
+  await client.connect();
+
+  //Query mongo
+  try{
+    //Connect to the proper database and collection
+    var database = "SSE_MobileSecurityGame";
+    var dbcollection = "LearningPlans";
+    const db = client.db(database);
+    const collection = db.collection(dbcollection);
+
+    //Edit the learning plan that has the pin and admin from the data
+    var result = await collection.updateOne(
+      {pin: {$eq: data.pin}, admin: {$eq: data.admin}},
+      {
+        $set: {
+          maxVishingCall: data.maxVishingCall,
+          maxVishingVoiceMail: data.maxVishingVoiceMail,
+          maxSmishing: data.maxSmishing,
+          maxPhishing: data.maxPhishing,
+          maxPermissions: data.maxPermissions,
+          firewallNinja: data.firewallNinja,
+          maxJuice: data.maxJuice
+        }
+      }
+    );
+
+    //Assume the query worked
+    var document = {result: 1}; 
+
+    //If the result didn't have any matches, it means that either the pin was invalid or the user modifying it was not the admin.
+    //Assume it's the latter. Tell the user that they're not the admin
+    if(result.matchedCount <= 0){
+      document.result = 0; //Update the response
+    }
+
+    //Return the docuemnt
+    response.status(200).send(document);
+  }catch(err){
+    console.error(`${err}`);
+    response.status(500).send({Error: "Error, something went wrong."});
+  }
+});
+
+app.delete("/deletePlan", async(request, response) => {
+  //Get data from the API request
+  var data = request.body;
+
+  //Connect to mongodb
+  const client = new MongoClient(uri);
+  await client.connect();
+
+  try{
+    //Connect to the databaes and proper database
+    var database = "SSE_MobileSecurityGame";
+    var dbcollection = "LearningPlans";
+    const db = client.db(database);
+    var collection = db.collection(dbcollection);
+
+    //Delete the learning plan
+    var result = await collection.deleteOne(
+      {admin: {$eq: data.admin}, pin: {$eq: data.pin}}
+    );
+
+    //Assume the query worked
+    var document = {result: 1}; 
+
+    //If the result didn't have any matches, it means that either the pin was invalid or the user modifying it was not the admin.
+    //Assume it's the latter. Tell the user that they're not the admin
+    if(result.deletedCount <= 0){
+      document.result = 0; //Update the response
+      response.status(200).send(document);
+      return;
+    }
+
+    //Switch to the user accounts collection
+    dbcollection = "UserAccounts";
+    collection = db.collection(dbcollection);
+
+    //Remove the learning plan from all user accounts
+    result = await collection.updateMany(
+      {learningPlan: data.pin},
+      {$set: {learningPlan: null}}
+    );
+
+    //Send the sucessful result to the user
+    response.status(200).send(document);
+  }catch(err){
+    console.error(err);
+    response.status(500).send({Error: "Error, something went wrong."});
+  }
+});
+
+app.post("/enroll", async(request, response) => {
+  //Get request data
+  var data = request.body;
+
+  //Connect to mongo
+  var client = new MongoClient(uri);
+  await client.connect();
+
+  //Query mongo
+  try{
+    //Connect to the database
+    var database = "SSE_MobileSecurityGame";
+    var dbCollection = "LearningPlans";
+
+    //Check if the pin sent is a valid pin
+    const db = client.db(database);
+    var collection = db.collection(dbCollection);
+    var result = await collection.find({pin: {$eq: data.pin}}).toArray();
+    
+    //If the result is undefined, it means that the pin wasn't a valid pin
+    var document = {};
+    var learningPlan = result[0];
+    if(learningPlan == undefined){
+      document.result = 0;
+      response.status(200).send(document);
+      return;
+    }
+
+    //If the pin was valid, assign the user that learning plan
+    dbCollection = "UserAccounts";
+    collection = db.collection(dbCollection);;
+    result = await collection.updateOne(
+      {user_id: {$eq: data.user_id}},
+      {$set: {learningPlan: data.pin}}
+    );
+
+    //Return the document
+    document = {
+      result: 1,
+      learningPlan: {
+        maxVishingCall: learningPlan.maxVishingCall,
+        maxVishingVoiceMail: learningPlan.maxVishingVoiceMail,
+        maxSmishing: learningPlan.maxSmishing,
+        maxPhishing: learningPlan.maxPhishing,
+        maxPermissions: learningPlan.maxPermissions,
+        firewallNinja: learningPlan.firewallNinja,
+        maxJuice: learningPlan.maxJuice
+      },
+    };
+    response.status(200).send(document);
+  }catch(err){
+    console.error(err);
+    response.status(500).send({Error: "Error, something went wrong."});
+  }
+});
+
+app.post("/unenroll", async(request,response) => {
+  //Get data from the API request
+  var data = request.body;
+
+  //Connect to mongo
+  var client = new MongoClient(uri);
+  await client.connect();
+
+  //Query mongo
+  try{
+    //Connect to the proper collection
+    var database = "SSE_MobileSecurityGame";
+    var dbCollection = "LearningPlans";
+    const db = client.db(database);
+    var collection = db.collection(dbCollection);
+
+    //Check to make sure the creator of the learning plan isn't unenrolling from their own plan
+    var result = await collection.find(
+      {pin: {$eq: data.pin}, admin: {$eq: data.user_id}}
+    ).toArray();
+
+    //The creator of learning plans can not unenroll from their own plan
+    var document = {result: 1};
+    if(result[0] != undefined){
+      document.result = 0;
+      response.status(200).send(document);
+      return;
+    }
+
+    //Unenroll the user from the learning plan by setting their plan to null
+    dbCollection = "UserAccounts";
+    collection = db.collection(dbCollection);
+    var result = await collection.updateOne(
+      {user_id: {$eq: data.user_id}},
+      {$set: {learningPlan: null}}
+    );
+
+    //Return success
+    response.status(200).send(document);
+  }catch(err){
+    console.error(err);
+    response.status(500).send({Error: "Error, something went wrong."});
+  }
+});
+
+// ____ Start the server __________________________________________________________________________________
 //Begin the server on port 3000
 app.listen(3000, async() => {
   console.log("Server is listening at localhost:3000");

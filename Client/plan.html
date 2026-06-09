@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale:1.0'">
+        <script>
+            //Default max values of levels
+            const maxCalls = "04";
+            const maxVoiceMails = "26";
+            const maxSmishing = "50";
+            const maxPhishing = "39";
+            const maxApp = "11";
+            const maxJuice = "02";
+
+            //Set up the page
+            function pageSetup(){
+                //These buttons are always hidden on page setup
+                document.getElementById("save").style.display = "none";
+
+                //Get the current learning plan
+                var pin = JSON.parse(sessionStorage.getItem("pin"));
+
+                //Check if the user has a learning plan or not
+                if(pin == null){
+                    //If it's null, it means they're not enrolled in one. If they aren't, set up the page to create one.
+                    document.getElementById("title").innerText = "Create Learning Plan";
+                    document.getElementById("description").innerText = "Select which levels you want to be playable and at what stage they should stop at.";
+                    document.getElementById("pin").innerText = "Once the plan is created, you will be given a pin that players will use to enroll in your learning plan.";
+
+                    //By default, all levels are playable
+                    var playables = document.querySelectorAll('input[type="checkbox"]');
+                    for (var i = 0; i < playables.length; i++) {
+                        playables[i].checked = true;
+                    }
+
+                    //By default, all levels can be played to their max stage
+                    var stages = document.querySelectorAll('input[type="number"]');
+                    var maxStages = [maxCalls, maxVoiceMails, maxSmishing, maxPhishing, maxApp, maxJuice];
+                    for(var i = 0; i < stages.length; i++){
+                        stages[i].value = Number(maxStages[i]);
+                        document.getElementById("level"+i).innerHTML = "/"+maxStages[i];
+                    }
+
+                    //Hide all the buttons that we don't need
+                    document.getElementById("edit").style.display = "none";
+                    document.getElementById("unenroll").style.display = "none";
+                    document.getElementById("delete").style.display = "none";
+                }else{
+                    //If it isn't null, it means they are enrolled in one. Get its information and place it on the screen
+                    document.getElementById("title").innerText = "My Learning Plan";
+                    document.getElementById("description").innerText = "Share this pin with people so they join your learning plan.";
+                    document.getElementById("pin").innerText = "Pin: "+pin;
+
+                    //Get the learning plan from session storage
+                    var learningPlan = JSON.parse(sessionStorage.getItem("learningPlan"));
+                    
+                    //Use the learning plan to determine which levels are playable
+                    var playables = document.querySelectorAll('input[type="checkbox"]');
+                    var levelNames = ["maxVishingCall", "maxVishingVoiceMail", "maxSmishing", "maxPhishing", "maxPermissions", "firewallNinja", "maxJuice"];
+                    for(let i = 0; i < playables.length; i++){
+                        //If the max stage of a level is 0, it means it's not playable. Uncheck the checkmark to show that
+                        if(Number(learningPlan[levelNames[i]]) <= 0){
+                            playables[i].checked = false;
+                        }else{
+                            //If it's not 0, check it to show that it is playable
+                            playables[i].checked = true;
+                        }
+                        //Disable the checkmark, since only the learning plan admin can edit the learning plan
+                        playables[i].disabled = true;
+                    }
+
+                    //Use the learning plan to determine if the level's max stage
+                    var stages = document.querySelectorAll('input[type="number"]');
+                    var maxStages = [maxCalls, maxVoiceMails, maxSmishing, maxPhishing, maxApp, maxJuice];
+                    for(let i = 0; i < stages.length; i++){
+                        stages[i].value = learningPlan[levelNames[i]];
+                        document.getElementById("level"+i).innerHTML = "/"+maxStages[i];
+                        //Disable the number input, since only the learning plan admin can edit the learning plan
+                        stages[i].disabled = true;
+                    }
+
+                    //Hide any buttons that need to be hidden
+                    document.getElementById("cancel").style.display = "none";
+                    document.getElementById("create").style.display = "none";
+                }
+            }
+
+            //Create a new learning plan or save a currently existing plan
+            async function createPlan(newPlan){
+                //Get the values of all checkboxes and numbers
+                var playables = document.querySelectorAll('input[type="checkbox"]');
+                var stages = document.querySelectorAll('input[type="number"]');
+
+                //Make sure the user didn't enter a number higher then the max stage
+                var maxStages = [maxCalls, maxVoiceMails, maxSmishing, maxPhishing, maxApp, maxJuice];
+                var levelNames = ["Vishing Calls", "Vishing Voicemails", "Smishing", "Phishing", "App Permissions"];
+                for(let i = 0; i < stages.length; i++){
+                    if(stages[i].value <= Number(maxStages[i])){
+                        continue;
+                    }
+                    alert("Error: "+stages[i]+" is higher then the max stage of "+maxStages[i]+" for "+levelNames[i]+".");
+                    return;
+                }
+                
+
+                //Begin craft the API request data to contain all information the user inputted
+                var data = {
+                    admin: JSON.parse(sessionStorage.getItem("userId")),
+                    maxVishingCall: Number(playables[0].checked ? stages[0].value : 0),
+                    maxVishingVoiceMail: Number(playables[1].checked ? stages[1].value : 0),
+                    maxSmishing: Number(playables[2].checked ? stages[2].value : 0),
+                    maxPhishing: Number(playables[3].checked ? stages[3].value : 0),
+                    maxPermissions: Number(playables[4].checked ? stages[4].value : 0),
+                    firewallNinja: Boolean(playables[5].checked),
+                    maxJuice: Number(playables[5].checked ? 1 : 0)
+                }
+
+                //Check if this is a new plan or a currently existing plan
+                if(newPlan){
+                    //If this is a new plan, send the new plan data to the backend and await the result
+                    try{
+                        //Send the query via API request
+                        var query = await fetch("/createPlan",{
+                            method:"POST",
+                            headers:{
+                                'content-type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        });
+                        var response = await query.json();
+
+                        //Set the learning plan in session storage
+                        sessionStorage.setItem("pin",JSON.stringify(response.pin));
+                        delete data.admin;
+                        sessionStorage.setItem("learningPlan",JSON.stringify(data));
+                        alert("Success! Your learning plan has been created! Taking you to your learning plan's page...");
+
+                        //"Take" the user to their learning plan by refeshing the screen
+                        //I know we're just refreshing the page, but it's more satisfying for the user this way
+                        location.reload();
+                    }catch(err){
+                        console.error("Error:"+err);
+                        alert("Error, could not create learning plan. Please try again.");
+                        return;
+                    }
+                }else{
+                    //If this is a currently existing plan, add the pin to the data so that it knows that plan to edit
+                    data.pin = JSON.parse(sessionStorage.getItem("pin"));
+                    
+                    //Send the new plan to the backend
+                    try{
+                        var query = await fetch("/editPlan",{
+                            method: "POST",
+                            headers: {
+                                "content-type": "application/json"
+                            },
+                            body: JSON.stringify(data)
+                        });
+                        var response = await query.json();
+
+                        //If the response was a 0, it means the user didn't have admin to edit the learning plan
+                        if(response.result == 0){
+                            alert("Error, only the creator of the learning plan can edit it. Contact the creator if you wish to edit your learning plan.");
+                            return;
+                        }
+
+                        //Set the learning plan in session storage
+                        delete data.pin;
+                        delete data.admin;
+                        sessionStorage.setItem("learningPlan",JSON.stringify(data));
+                        alert("Success! Your learning plan has been update! Taking you to your new learning plan's page...");
+
+                        //"Take" the user to their learning plan by refeshing the screen
+                        //I know we're just refreshing the page, but it's more satisfying for the user this way
+                        location.reload();
+                    }catch(err){
+                        console.error("Error:"+err);
+                        alert("Error, could not save changes. Please try again.");
+                        return;
+                    }
+                }
+            }
+
+            //Enable editing for the plan
+            function editPlan(){
+                //Enable editing for the checkboxes
+                var playables = document.querySelectorAll('input[type="checkbox"]');
+                for(let i = 0; i < playables.length; i++){
+                    playables[i].disabled = false;
+                }
+
+                //Enable editing for the number inputs
+                var stages = document.querySelectorAll('input[type="number"]');
+                for(let i = 0; i < stages.length; i++){
+                    stages[i].disabled = false;
+                }
+
+                //Update the buttons on the UI
+                document.getElementById("save").style.display = "inline";
+                document.getElementById("edit").style.display = "none";
+                document.getElementById("cancel").style.display = "inline";
+                document.getElementById("unenroll").style.display = "none";
+            }
+
+            //Delete the plan
+            async function deletePlan(){
+                try{
+                    //Send the delete request to the backend
+                    var data = {
+                        admin: JSON.parse(sessionStorage.getItem("userId")),
+                        pin: JSON.parse(sessionStorage.getItem("pin"))
+                    }
+                    var query = await fetch("/deletePlan", {
+                        method: "DELETE",
+                        headers: {
+                            'content-type':'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    var response = await query.json();
+
+                    //If the user is not admin, they can not delete the plan
+                    if(response.result == 0){
+                        alert("Error, only the creator of a learning plan can delete the plan.");
+                        return;
+                    }
+
+                    //Restore the user's learning plan to the default
+                    sessionStorage.setItem("pin",JSON.stringify(null));
+                    sessionStorage.setItem("learningPlan",JSON.stringify({ //The learning plan of the user(By default, all stages are enabled)
+                        maxVishingCall: 26,
+                        maxVishingVoiceMail: 4,
+                        maxSmishing: 50,
+                        maxPhishing: 40,
+                        maxPermissions: 11,
+                        firewallNinja: true,
+                        maxJuice: 1
+                    }));
+                    alert("Your learning plan was successfully deleted. Returning to your profile.");
+                    window.location.href = "profile.html";
+                }catch(err){
+                    alert("Error, something went wrong. Please try again.");
+                    console.error(err);
+                }
+            }
+
+            //Unenroll from a learning plan
+            async function unenroll(){
+                try{
+                    //Send unenroll request to backend
+                    var query = await fetch("/unenroll",{
+                        method: "POST",
+                        headers:{
+                            "content-type":"application/json"
+                        },
+                        body: JSON.stringify({
+                            user_id: JSON.parse(sessionStorage.getItem("userId")),
+                            pin: JSON.parse(sessionStorage.getItem("pin"))
+                        })
+                    });
+                    var response = await query.json();
+                    
+                    //Check to make sure this wasn't the admin of the plan trying to unenroll from their own plan
+                    if(response.result == 0){
+                        alert("Error, you are the creator of this learning plan. You can not unenroll from your own plan.");
+                        return;
+                    }
+
+                    //Update the learning plan information in session storage
+                    sessionStorage.setItem("pin",JSON.stringify(null));
+                    sessionStorage.setItem("learningPlan",JSON.stringify({ //The learning plan of the user(By default, all stages are enabled)
+                        maxVishingCall: 26,
+                        maxVishingVoiceMail: 4,
+                        maxSmishing: 50,
+                        maxPhishing: 40,
+                        maxPermissions: 11,
+                        firewallNinja: true,
+                        maxJuice: 1
+                    }));
+
+                    //Go to the profile now that the user is no longer in a learning plan
+                    alert("You have been sucessfully unenrolled from your learning plan. Returning to your profile....");
+                    window.location.href = "profile.html";
+                }catch(err){
+                    console.error(err);
+                }
+            }
+        </script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="../styles.css">
+        <style>
+            div.level{
+                margin-top: 0px;
+                margin-bottom: 0px;
+            }
+            h3{
+                margin: 0px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="menu" style="height: 75dvh;">
+            <h1 id="title">View Learning Plan</h1>
+            <p id="description">Share this pin with people so they join your learning plan.</p>
+            <p id="pin" style="margin: 0px;">Pin: </p>
+            <div id="plans" class="flexBox">
+                <div id="names" class = "column">
+                    <div><u>Level</u></div>
+                    <div class="level">Vishing Calls</div>
+                    <div class="level">Vishing Voicemails</div>
+                    <div class="level">Smishing</div>
+                    <div class="level">Phishing</div>
+                    <div class="level">App Permissions</div>
+                    <div class="level">Firewall Ninja</div>
+                    <div class="level">Juice Jacking</div>
+                </div>
+                <div id="enabled" class = "column" style="text-align: center">
+                    <div class="checkTitle"><u>Playable?</u></div>
+                    <div><input class="check" type="checkbox"></div>
+                    <div><input class="check" type="checkbox"></div>
+                    <div><input class="check" type="checkbox"></div>
+                    <div><input class="check" type="checkbox"></div>
+                    <div><input class="check" type="checkbox"></div>
+                    <div><input class="check" type="checkbox"></div>
+                    <div><input class="check" type="checkbox"></div>
+                </div>
+                <div id="max" class = "column">
+                    <div><u>Max Stage</u></div>
+                    <div class="number-box"><input class="number" type="number"><h3 id="level0"></h3></div>
+                    <div class="number-box"><input class="number" type="number"><h3 id="level1"></h3></div>
+                    <div class="number-box"><input class="number" type="number"><h3 id="level2"></h3></div>
+                    <div class="number-box"><input class="number" type="number"><h3 id="level3"></h3></div>
+                    <div class="number-box"><input class="number" type="number"><h3 id="level4"></h3></div>
+                    <!--<div class="number-box"><input class="number" type="number"><h3 id="level5"></h3></div>-->
+                </div>
+            </div><br>
+            <button id="edit" class="submit" onclick="editPlan()">Edit Plan</button>
+            <button id="save" class="submit" onclick="createPlan(false)">Save Changes</button>
+            <button id="delete" class="submit" onclick="deletePlan()">Delete Plan</button>
+            <button id="create" class="submit" onclick="createPlan(true)">Create Plan</button>
+            <br>
+            <button id="unenroll" class="submit" onclick="unenroll()">Unenroll from Plan</button>
+            <button id="cancel" class="submit" onclick="window.location.href='profile.html'">Cancel</button>
+            <button class="submit" onclick="window.location.href='profile.html'">Back</button>
+        </div>
+        <script>
+            pageSetup();
+        </script>
+    </body>
+</html>

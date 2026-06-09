@@ -110,7 +110,7 @@
 							}
 						}
 					}
-					if(nextIndex == this.calls.length){
+					if(nextIndex >= this.calls.length || nextIndex >= JSON.parse(sessionStorage.getItem("learningPlan")).maxVishingCall){
 						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
 						this.goButton.innerText = "You finished all the levels!";
 						this.goButton.onclick = "";

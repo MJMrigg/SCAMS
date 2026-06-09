@@ -37,6 +37,20 @@
                 if(sessionStorage.getItem("permissionsLevelResponses") == null){ //User's previous responses on permissions level
                     sessionStorage.setItem("permissionsLevelResponses",JSON.stringify({}));
                 }
+                if(sessionStorage.getItem("pin") == null){
+                    sessionStorage.setItem("pin",JSON.stringify(null)); //The pin for the user's current learning plan
+                }
+                if(sessionStorage.getItem("learningPlan") == null){
+                    sessionStorage.setItem("learningPlan",JSON.stringify({ //The learning plan of the user(By default, all stages are enabled)
+                        maxVishingCall: 4,
+                        maxVishingVoiceMail: 26,
+                        maxSmishing: 50,
+                        maxPhishing: 39,
+                        maxPermissions: 11,
+                        firewallNinja: true,
+                        maxJuice: 1
+                    }));
+                }
             }
             //Take the user to their profile if they are logged in
             function viewProfile(){

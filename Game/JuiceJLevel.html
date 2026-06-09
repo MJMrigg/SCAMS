@@ -80,6 +80,12 @@
     </div>
 
     <script>
+        //Make sure the juice jacking level is part of the learning plan
+        if(JSON.parse(sessionStorage.getItem("learningPlan")).maxJuice <= 0){
+            alert("Error, this game is not part of your learning plan. Returning to menu.");
+            window.location.href = "../menu.html";
+        }
+
         let score = 0;
         const firstQuestion = {
             scenario: "Your phone is at 5% battery charge and you are stuck at a train station with no personal charger.",

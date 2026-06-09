@@ -178,6 +178,12 @@ class main{
         }
         this.objectCounter = 0; //There are no objects on the screen
         this.stage = JSON.parse(sessionStorage.getItem("level1Stage"))+1; //Get the stage from session storage
+        this.maxStages = JSON.parse(sessionStorage.getItem("learningPlan")).maxSmishing; //Get max stage in learning plan
+        //Check if this game is in the learning plan
+        if(this.stage >= this.maxStages){
+            alert("This game is not in your learning plan. Returning to the menu.");
+            window.location.href = "../menu.html";
+        }
         this.currentQuestion = this.stage; //Set the current question the user is currently on to the current stage
         this.init(); //Get the all the questions and setup the first stage
     }
@@ -209,7 +215,7 @@ class main{
         }
         //Update the stage number or handle if this is the tutorial
         if(this.stage > 0){ //If this is an actual level
-            document.getElementById("stage").innerText = "Message "+this.stage+"/50";
+            document.getElementById("stage").innerText = "Message "+this.stage+"/"+this.maxStages;
             document.getElementById("score").innerText = "Current Score: "+JSON.parse(sessionStorage.getItem("currentScore"));
             this.tutorial = false;
             canvas.style.backgroundImage = "url('srcimgs/stage"+this.stage+".png')"; //Set background image
@@ -492,7 +498,7 @@ class main{
         sessionStorage.setItem("currentScore", JSON.stringify(currentScore));
 
         //If that was the final stage, send them back the menu
-        if(this.stage == 50){
+        if(this.stage >= this.maxStages){
             //Reset the stage number and responses so that they can play the game again.
             sessionStorage.setItem("level1Stage", JSON.stringify(0));
             sessionStorage.setItem("level1Responses", JSON.stringify({}));

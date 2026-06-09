@@ -9,6 +9,13 @@
     <script>
         class main{
             constructor(){
+                //Make sure this game is part of the learning plan
+                if(!JSON.parse(sessionStorage.getItem("learningPlan")).firewallNinja){
+                    alert("This game is not part of your learning plan. Returning to menu.");
+                    window.location.href = "../menu.html";
+                    return;
+                }
+
                 this.score = 0; //The player's starts at score is 0
                 this.totalScore = 0; //The player's total score of all games
                 this.lives = 10; //The player starts with 10 lives

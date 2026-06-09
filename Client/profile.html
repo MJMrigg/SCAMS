@@ -22,10 +22,52 @@
                     sessionStorage.removeItem("userData");
                     sessionStorage.removeItem("highScore");
                     sessionStorage.removeItem("scores");
+                    //Change the learning plan to the default one
+                    sessionStorage.setItem("pin",JSON.stringify(null));
+                    sessionStorage.setItem("learningPlan",JSON.stringify({
+                        maxVishingCall: 26,
+                        maxVishingVoiceMail: 4,
+                        maxSmishing: 50,
+                        maxPhishing: 40,
+                        maxPermissions: 52,
+                        firewallNinja: true,
+                        maxJuice: 1
+                    }))
                     //Mark the user as logged out
                     sessionStorage.setItem("loggedIn",JSON.stringify(false)); 
                 }
                 window.location.href = "home.html";
+            }
+            //View, create, or join a learning plan
+            function learningPlan(option){
+                var pin = JSON.parse(sessionStorage.getItem("pin"))
+                switch(option){
+                    case 0: //User looks at their learning plan
+                        //If the user is not enrolled in a learning plan, don't take them to a learning plan
+                        if(pin == null){
+                            alert("You are not enrolled in a learning plan.");
+                            return;
+                        }
+                        window.location.href = "plan.html";
+                        break;
+                    case 1: //User creates a learning plan
+                        //If the user is enrolled in a learning plan already, don't let them create a new one
+                        if(pin != null){
+                            alert("You can not create a learning plan while being enrolled in one.");
+                            return;
+                        }
+                        window.location.href = "plan.html";
+                        break;
+                    case 2: //User wants to choose a learning plan
+                        if(pin != null){
+                            alert("You can not choose a learning plan while being enrolled in one.");
+                            return;
+                        }
+                        window.location.href = "choose.html";
+                        break;
+                    default:
+                        console.log("Error, invalid learning plan "+option);
+                }
             }
         </script>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -33,7 +75,7 @@
         <link rel="stylesheet" href="../styles.css">
     </head>
     <body>
-        <div class="menu">
+        <div class="profileMenu">
             <h1>Your Profile</h1>
             <!--Only a form for the aesthetic of form style. No inputs here.-->
             <div class="form">
@@ -41,8 +83,12 @@
                 <p id="email"></p>
                 <p id="highScore"></p>
                 <p id="scores"></p>
-                <button class="function" onclick="window.location.href = 'edit.html'">Edit</button><br>
-                <button class="function" onclick="returnHome(true)">Logout</button>
+                <button class="function" onclick="learningPlan(0)">My Learning Plan</button>
+                <button class="function" onclick="learningPlan(1)">Create Learning Plan</button>
+                <button class="function" onclick="learningPlan(2)">Choose Learning Plan</button><br>
+
+                <button class="function" onclick="window.location.href = 'edit.html'">Edit Profile</button>
+                <button class="function" onclick="returnHome(true)">Logout</button><br>
                 <button class="function" onclick="returnHome(false)">Return Home</button>
             </div>
         </div>

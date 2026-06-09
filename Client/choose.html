@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale:1.0'">
+        <script>
+            //Enroll in a learning plan
+            async function enroll(){
+                //Get the pin the user inputted
+                var pin = document.getElementById("pin").value;
+
+                //Send the pin to the backend via API request
+                var data = {
+                    pin: pin,
+                    user_id: JSON.parse(sessionStorage.getItem("userId"))
+                };
+                var query = await fetch("/enroll", {
+                    method: "POST",
+                    headers: {
+                        "content-type": "application/JSON"
+                    },
+                    body: JSON.stringify(data)
+                });
+                var response = await query.json();
+
+                //If the result is 0, the pin was invalid
+                if(response.result == 0){
+                    alert("Error, invalid pin.");
+                    return;
+                }
+
+                //Change the pin and learning plan in session storage
+                sessionStorage.setItem("pin", JSON.stringify(pin));
+                sessionStorage.setItem("learningPlan", JSON.stringify(response.learningPlan));
+
+                //Go to the plan's page
+                alert("You have been successfully enrolled into your learning plan! Taking you to the plan's page....");
+                window.location.href = "plan.html";
+            }
+        </script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="../styles.css">
+    </head>
+    <body>
+        <div class="menu">
+            <h1>Join Learning Plan</h1>
+            <p>Enter the pin of your learning plan below:</p>
+            <form>
+                <input type="text" id="pin">
+                <br><br>
+                <button class="selection" onclick="enroll()" type="button">Submit</button>
+                <button class="selection" type="button" onclick="window.location.href='profile.html'">Back</button>
+            </form>
+        </div>
+    </body>
+</html>

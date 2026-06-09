@@ -68,6 +68,12 @@
                         if(JSON.parse(sessionStorage.getItem("Level1Responses")) == null && Level1Responses != undefined){
                             sessionStorage.setItem("Level1Responses", JSON.stringify(Level1Responses));
                         }
+                        //Set the learning plan
+                        var pin = response.pin;
+                        if(pin != null){
+                            sessionStorage.setItem("learningPlan", JSON.stringify(response.learningPlan));
+                            sessionStorage.setItem("pin",JSON.stringify(pin));
+                        }
                         alert("Sucessfully logged in! Welcome back "+response.username+"!");
                         window.location.href = "home.html";
                     }

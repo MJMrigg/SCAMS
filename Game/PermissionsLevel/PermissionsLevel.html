@@ -12,6 +12,12 @@
       constructor(){
         // Get the apps to display based on the stage
         this.stage = JSON.parse(sessionStorage.getItem("permissionsLevelStage"));
+        this.maxStages = JSON.parse(sessionStorage.getItem("learningPlan")).maxPermissions;
+        if(this.maxStages <= 0){
+          alert("Error, this game is not part of your learning plan. Returning to menu.");
+          window.location.href = "../menu.html";
+          return;
+        }
         this.currentStage = this.stage;
         this.allApps = []; //All of the apps(questions)
         //Keep track of the player's responses
@@ -155,7 +161,7 @@
       }
       // Get stage from session storage and then use that number to advance to the next stage
       nextStage(){
-        if(this.stage >= 11){ // If this was the final stage, take the player back to the menu
+        if(this.stage >= this.maxStages){ // If this was the final stage, take the player back to the menu
           sessionStorage.setItem("permissionsLevelStage",JSON.stringify(0));
           alert("You completed the app permissions level! Returning to the menu.");
           window.location.href = "../menu.html";

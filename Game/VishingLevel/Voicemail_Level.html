@@ -73,7 +73,7 @@
 				}
 
 
-				this.mailCurrentIndex = Math.floor(Math.random()*this.mail.length);
+				this.mailCurrentIndex = 0;
 				this.currentVoiceMail = this.mail[this.mailCurrentIndex];
 				this.transcript.innerText = this.currentVoiceMail.transcript;
 				this.updateScreen();
@@ -133,7 +133,7 @@
 							}
 						}*/
 					}
-					if(this.checkDone()){//nextIndex == this.mail.length
+					if(nextIndex >= this.mail.length || nextIndex >= JSON.parse(sessionStorage.getItem("learningPlan")).maxVishingVoiceMail){//nextIndex == this.mail.length
 						this.score.innerText = "Your score: " + this.correctAnsNum + "/" + this.maxScore;
 						this.goButton.innerText = "You finished all the levels!";
 						this.goButton.onclick = "";
@@ -148,19 +148,6 @@
 						this.goButton.onclick = () => this.goNextLevel();
 					}
 				}
-			}
-
-			checkDone(){
-				console.log(this.alreadyDone.length);
-				console.log("AlreadyDone array: " + this.alreadyDone);
-				for(var i = 0;i<this.alreadyDone.length;i++){
-					if(!this.alreadyDone[i]){
-						console.log("returns false from checkDone: " + i);
-						return false;
-					}
-				}
-				console.log("returns true from checkDone");
-				return true;
 			}
 			
 			checkAllAns(){
@@ -202,14 +189,15 @@
 			}
 			
 			goNextLevel(){
+				if(this.gameFinish){
+					window.location.href = "Vishing.html";
+					return;
+				}
 				//console.log("Successful?");
 
 				//this.alreadyDone[this.mailCurrentIndex] = true;
 
-				//this.mailCurrentIndex+= 1;
-				while(this.alreadyDone[this.mailCurrentIndex]){
-					this.mailCurrentIndex = Math.floor(Math.random()*this.mail.length);
-				}
+				this.mailCurrentIndex += 1;
 
 				//this.maxScore +=3;
 				this.currentVoiceMail = this.mail[this.mailCurrentIndex];

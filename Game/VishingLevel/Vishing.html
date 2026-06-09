@@ -9,6 +9,24 @@
 					this.txt = document.getElementById("info");
 					this.txt.innerText = 'Vishing can come in many forms. Pick one to start to learn how to identify them!';
 					//document.appendChild(txt);
+
+					//Check the learning plan
+					var learningPlan = JSON.parse(sessionStorage.getItem("learningPlan"));
+					var maxCalls = learningPlan.maxVishingCall;
+					var maxVoiceMails = learningPlan.maxVishingVoiceMail;
+					//If both levels aren't part of the learning plan, return to the menu
+					if(maxCalls == 0 && maxVoiceMails == 0){
+						alert("Error, this game isn't part of your learning plan. Returning to the menu.");
+						window.location.href = "../menu.html";
+					}
+
+					//Remove any buttons that aren't part of the learning plan
+					if(maxCalls == 0){
+						document.getElementById("calls").style.display = "none";
+					}
+					if(maxVoiceMails == 0){
+						document.getElementById("voiceMails").style.display = "none";
+					}
 				}
 			}
 		</SCRIPT>
@@ -16,14 +34,14 @@
 	</HEAD>
 	<BODY>
 	    <div class="menu" style="height: auto">
-			<h1>Vishing Tutorial</h1>
+			<h1>Vishing Game</h1>
 
 			<h3 id = "info" style = "height:100px">
 			</h3>
 			<center>
 				<div class="flexPhishing">
-					<BUTTON class = "selection" onclick = "window.location.href = 'Call_Intro.html'" style = "font-size:18px;">Call Transcripts</BUTTON>
-					<BUTTON class = "selection" onclick = "window.location.href = 'Voicemail_Intro.html'" style = "font-size:18px">Voicemails</BUTTON>
+					<BUTTON id="calls" class = "selection" onclick = "window.location.href = 'Call_Intro.html'" style = "font-size:18px;">Call Transcripts</BUTTON>
+					<BUTTON id="voiceMails" class = "selection" onclick = "window.location.href = 'Voicemail_Intro.html'" style = "font-size:18px">Voicemails</BUTTON>
 				</div>
 				<div class="flexPhishing">
 					<BUTTON class = "selection" onclick = "window.location.href = '../menu.html'">Return to Level Screen</BUTTON>

@@ -20,10 +20,36 @@
     div.flexForBadPackets{
         flex-direction: row;
     }
+    div.profileMenu{
+        height: 55%;
+    }
+    input.number{
+        width: 50px;
+        height: 22px;
+        font-size: 22px;
+    }
+    input.check{
+        width: 22px;
+        height: 22px;
+    }
+    div.number-box{
+        margin-top: 8px;
+        margin-bottom: 9px;
+        height: 22px;
+    }
+    div.checkTitle{
+        margin-bottom: 5px;
+    }
 }
 /*Devices with a width smaller than 600px*/
 @media screen and (max-width: 600px){
     div.column{
+        font-size: 1.5vh;
+    }
+    p{
+        font-size: 1.5vh;
+    }
+    h3{
         font-size: 1.5vh;
     }
     canvas.forSmishing{
@@ -47,10 +73,60 @@
         object-position: 0 0;
         object-fit: cover;
     }
+    div.profileMenu{
+        height: 81%;
+    }
+    input.number{
+        width: 23px;
+        height: 1.5vh;
+        font-size: 1.5vh;
+        border-color: black;
+        border-radius: 20%;
+    }
+    input.check{
+        width: 1.5vh;
+        height: 1.5vh;
+        margin: 0px;
+    }
+    div.number-box{
+        margin-top: 5px;
+        margin-bottom: 0px;
+        height: 1.5vh;
+    }
+    div.checkTitle{
+        margin-bottom: 0px;
+    }
+}
+div.checkTitle{
+    display: "inline"
+}
+div.number-box{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+input.number{
+    padding: 0px;
+}
+input.check{
+    margin: 0px;
 }
 div.menu{
     width: 85%;
-    height: 50%;
+    height: 55%;
+    text-align: center;
+    border: 10px solid black;
+    margin: auto;
+    float: center;
+    background-color: white;
+    padding-bottom: 10px;
+    padding-right: 10px;
+    padding-left: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+div.profileMenu{
+    width: 85%;
     text-align: center;
     border: 10px solid black;
     margin: auto;
@@ -230,6 +306,7 @@ div.flexBox{
     justify-content: center;
     width: 100%;
     float: center;
+    margin: 0px;
 }
 b{
     color: black;
