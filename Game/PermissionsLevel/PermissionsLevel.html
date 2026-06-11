@@ -56,14 +56,14 @@
         for(var i = 0; i < this.selectedApps.length; i++){ //For each selected app
           const div = document.createElement("div"); // div to contain app
           div.className = "app-container";
-          div.innerHTML = `<img src="${this.selectedApps[i].image}" width="70" height="70"></img>
+          div.innerHTML = `<img src="srcimgs/${this.selectedApps[i].image}" width="70" height="70"></img>
           <h1 style='display:inline;'>${this.selectedApps[i].name}</h1>
             ${this.checkbox("camera", this.selectedApps[i].correctPermissions.camera, i)}
             ${this.checkbox("location", this.selectedApps[i].correctPermissions.location, i)}
             ${this.checkbox("microphone", this.selectedApps[i].correctPermissions.microphone, i)}
             ${this.checkbox("photos", this.selectedApps[i].correctPermissions.photos, i)}
             ${this.checkbox("contacts", this.selectedApps[i].correctPermissions.contacts, i)}
-          <p>Credits to <a href=${this.selectedApps[i].link}>${this.selectedApps[i].creator}</a> for this image.</p>`;
+          <p>Credits to <a target="_blank" href=${this.selectedApps[i].link}>${this.selectedApps[i].creator}</a> for this image.</p>`;
           appsContainer.appendChild(div);
         }
         // Remove next stage button
