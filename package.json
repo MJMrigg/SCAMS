@@ -1,11 +1,11 @@
 {
   "name": "desktop",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "description": "Server to host SCAMS",
   "license": "ISC",
   "author": "Matthew Rigg",
   "type": "module",
-  "main": "Client/home.html",
+  "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
