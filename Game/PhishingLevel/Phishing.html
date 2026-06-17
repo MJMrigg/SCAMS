@@ -67,7 +67,7 @@
 				//this.updateScreen();
 
 				this.maxStages = JSON.parse(sessionStorage.getItem("learningPlan")).maxPhishing;
-				if(maxStages <= 0){
+				if(this.maxStages <= 0){
 					alert("Your learning plan does not contain this game. Returning to the menu.");
 					window.location.href = "../menu.html";
 				}
