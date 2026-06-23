@@ -54,6 +54,7 @@
 				this.ansResult = document.getElementById("results");
 				this.score = document.getElementById("score");
 				this.goButton = document.getElementById("confirm");
+				this.credits = document.getElementById("credits");
 
 
 
@@ -233,7 +234,7 @@
 						var ans = [data.senderAdd, data.emailSubject, data.emailBody, data.susLink, data.spellingErrors, data.soundsOff, data.pdfIncluded];
 						//var ans = [data.senderAdd, data.emailSubject, data.emailBody, data.spellingErrors, data.soundsOff, data.pdfIncluded];
 						
-						this.emails.push(new email(data.imagebase64, ans, data.count));
+						this.emails.push(new email(data.imagebase64, ans, data.count, data.credit));
 						this.questionBank.pop();
 					}
 					this.currIndex = 0;
@@ -376,6 +377,7 @@
 				/*for(var i = 0; i<this.playerAns.length;i++){
 					this.playerAns[i]=null;
 				}*/
+				this.credits.innerText = "Credits: "+ this.emails[this.currIndex].credit;
 				console.log("Current object number: "+this.emails[this.currIndex].count);
 				for(var i = 0; i<this.playerAns.length;i++){
 					this.playerAns[i]=null;
@@ -401,6 +403,7 @@
 			<b>Task: Select Any Suspicious Parts of the Email!</b>
 		</div>
 		<img id="emailPic" src = "" alt = "Loading image! Please wait." width = "100%" height="50%"/><br>
+		<div id="credits" style="height: auto;"><br></div>
 		<div id = "emailAd" for = "emailAd" style = "border: 1px solid #000;">
 			<center><b>Weird Sender's Email Address</b><br>
 			<input type = "radio" id = "emailAdT" name = "emailAdd" onClick = "m.changeVal(0,1)">

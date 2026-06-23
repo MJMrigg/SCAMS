@@ -1,11 +1,12 @@
 class email{
-    constructor(img, ans, num){
+    constructor(img, ans, num, credit){
         //this.imgUrl = '';
         this.imgUrl = img;
         this.done = false;
         //this.corAns = [null, null, null, false, false, null];
         this.corAns = ans;
         this.count = num;
+        this.credit = credit;
     }
     checkCorrect(index, value){
 		if(value == this.corAns[index]){
