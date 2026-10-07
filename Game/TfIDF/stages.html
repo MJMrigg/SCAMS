@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+    <meta name="viewport" content="width=device-width, initial-scale:1.0'"> 
+    <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="../../styles.css">
+        <style>
+            div.tfIdf{
+                text-align: left;
+                border: 1px solid black;
+                width: 40vw;
+                margin: 2px;
+                padding: 4px;
+                overflow-y: auto;
+                min-height: 0;
+            }
+            p{
+                margin-bottom: 0px;
+            }
+            input.number{
+                width: 40px;
+            }
+            table{
+                margin: auto;
+                color: black;
+                font-family: 'Times New Roman', Times, serif; 
+                font-weight: bold;
+                border: 1px solid black;
+            }
+            th{
+                padding: 4px;
+                border: 1px solid black;
+            }
+            td{
+                padding: 4px;
+                font-weight: normal;
+                border: 1px solid black;
+            }
+        </style>
+        <script>
+            var questions = [
+                {
+                    query: "dog",
+                    documents: [
+                        "I am a cat person.",
+                        "I am also a dog person",
+                        "I will adopt a cat.",
+                        "Should I adopt a dog?",
+                        "What if I adopt both?"
+                    ]
+                },
+                {
+                    query: "steak",
+                    documents: [
+                        "I like to eat at steak and shake.",
+                        "When I get there, I order a ribeye.",
+                        "Ribeyes are my favorite steak.",
+                        "I wish I could eat steak every day.",
+                        "Alas, steak is very expensive."
+                    ]
+                },
+                {
+                    query: "bottle",
+                    documents: [
+                        "Studies say to drink lots of water.",
+                        "The best way to drink water is in a bottle.",
+                        "Especially if the bottle is reusable.",
+                        "If the bottle is reusable, you can wash it and use it again.",
+                        "Water bottles are good for the environment."
+                    ]
+                }
+            ];
+            var currentQuestion = 0; //Current question the player is on
+            var score = 0; //Total score for this question
+            var totalScore = 0; //Total score for the level
+            var part; //Which part of the question they are on
+            var tfScores = [];
+            var idfScore = 0;
+            var tfIdfScores = [];
+
+            //Get the questions
+            async function getQuestions(){
+                //Get questions from backend
+
+                //Set up initial information
+                currentQuestion = 0;
+                score = 0;
+                totalScore = 0;
+                part = 0;
+
+                //Set up the page with the initial question
+                setUp();
+            }
+
+            //Set up the page
+            function setUp(){
+                //Place initial information on the screen
+                document.getElementById("totalScore").innerText = "Total Score: "+totalScore;
+                document.getElementById("score").innerText = "Current Score: "+score;
+
+                //Get question information
+                var documents = questions[currentQuestion].documents;
+                var query = questions[currentQuestion].query;
+
+                //Set up step 1, query count in document
+                var docs = document.getElementById("docs");
+                var newDiv = document.createElement("p");
+                newDiv.className = "queryCount";
+                newDiv.innerText = "Query: "+query;
+                docs.appendChild(newDiv);
+                var queryCount = document.getElementById("queryCount");
+                for(var i = 0; i < documents.length; i++){
+                    //Place documents on the left side of the page
+                    newDiv = document.createElement("p");
+                    newDiv.className = "tfIdf";
+                    newDiv.innerText = `${i+1}.) ${documents[i]}`;
+                    docs.appendChild(newDiv);
+
+                    //Place their query count calculations on the right
+                    newDiv = document.createElement("p");
+                    newDiv.className = "tfIdf";
+                    newDiv.innerText = `How many times does the word \"${query}\" appear in document ${i+1}?`;
+                    queryCount.appendChild(newDiv);
+
+                    newDiv = document.createElement("input");
+                    newDiv.className = "number";
+                    newDiv.type = "number";
+                    newDiv.style = "display: inline";
+                    newDiv.id = "count"+i;
+                    queryCount.appendChild(newDiv);
+
+                    newDiv = document.createElement("p");
+                    newDiv.className = "tfIdf";
+                    newDiv.style = "display: inline";
+                    newDiv.innerText = ` out of `;
+                    queryCount.appendChild(newDiv);
+
+                    newDiv = document.createElement("input");
+                    newDiv.className = "number";
+                    newDiv.type = "number";
+                    newDiv.id = "total"+i;
+                    queryCount.appendChild(newDiv);
+
+                    newDiv = document.createElement("p");
+                    newDiv.className = "tfIdf";
+                    newDiv.style = "display: inline";
+                    newDiv.innerText = ` total words.`;
+                    queryCount.appendChild(newDiv);
+                }
+            }
+            
+            //Submit the results for a part of a question
+            function submit(){
+                //Handle the results of the question depending on which part the player is on
+                var docs = questions[currentQuestion].documents;
+                var query = questions[currentQuestion].query;
+                switch(part){
+                    case 0: //Counting query occurrence in document
+                        //Go through each document and see if the player got the count and total for each one correct
+                        //Count is number of times query is in document and total is total word count of document
+                        var queryResult = document.getElementById("queryResult"); //Div where the results will be placed
+                        var table = document.getElementById("table");
+                        queryResult.innerHTML = '';
+                        for(var i = 0; i < docs.length; i++){
+                            //Get the player count and total to the document's actual count and total
+                            var countDiv = document.getElementById("count"+i);
+                            var totalDiv = document.getElementById("total"+i)
+                            var playerCount = Number(countDiv.innerText);
+                            var playerTotal = Number(totalDiv.innerText);
+                            var words = docs[i].replace(/[.?!,()]/g, '').split(' ');
+                            var actualCount = words.filter(word => word === query).length;
+                            var actualTotal = words.length;
+                            
+                            //Place if the player got the counts correct or incorrect on the screen
+                            var newDiv = document.createElement("p");
+                            newDiv.className = "tfIdf";
+                            if(playerCount == actualCount){
+                                newDiv.style.color = "green";
+                                newDiv.innerText = `Correct! +1 points!`;
+                                score += 1;
+                            }else{
+                                newDiv.style.color = "red";
+                                newDiv.innerText = `Incorrect. -1 points.`;
+                                score = Math.max(score-1, 0);
+                            }
+                            newDiv.innerText += ` The query is in document ${i+1} ${actualCount} times.`
+                            queryResult.appendChild(newDiv);
+                            newDiv = document.createElement("p");
+                            newDiv.className = "tfIdf";
+                            if(playerTotal == actualTotal){
+                                newDiv.style.color = "green";
+                                newDiv.innerText = `Correct! +1 points!`;
+                                score += 1;
+                            }else{
+                                newDiv.style.color = "red";
+                                newDiv.innerText = `Incorrect. -1 points.`; 
+                                score = Math.max(score-1, 0);
+                            }
+                            newDiv.innerText += ` Document ${i+1} has ${actualTotal} words.`
+                            queryResult.appendChild(newDiv);
+
+                            //Disable the inputs
+                            countDiv.disabled = true;
+                            totalDiv.disabled = true;
+
+                            //Place the answers in the table
+                            var row = document.createElement("tr");
+                            newDiv = document.createElement("td");
+                            newDiv.id = "doc"+i;
+                            newDiv.innerText = `${i+1}`;
+                            row.appendChild(newDiv);
+                            newDiv = document.createElement("td");
+                            newDiv.id = "queryCount"+i;
+                            newDiv.innerText = actualCount;
+                            row.appendChild(newDiv);
+                            newDiv = document.createElement("td");
+                            newDiv.id = "wordTotal"+i;
+                            newDiv.innerText = actualTotal;
+                            row.appendChild(newDiv);
+                            newDiv = document.createElement("td");
+                            newDiv.id = "tf"+i;
+                            row.appendChild(newDiv);
+                            newDiv = document.createElement("td");
+                            newDiv.id = "tfidf"+i;
+                            row.appendChild(newDiv);
+                            table.appendChild(row);
+                        }
+                        //Reveal the correct answers and update the UI
+                        queryResult.style.display = "block";
+                        queryResult.innerHTML += "<p class='tfidf'>Press Next to continue.</p>";
+                        document.getElementById("score").innerText = `Current Score: ${score}`;
+                        document.getElementById("submit").innerText = "Next";
+                        part += 1;
+                        break;
+                    case 1:
+                        document.getElementById("queryResult").remove();
+                        document.getElementById("results").style.display = "block";
+                        part += 1;
+                        break;
+                    case 2:
+                        
+                        break;
+                    default:
+                        console.error("Error, invalid part of stage");
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <div class="menu" style="height: 96vh; display: flex; flex-direction: column; align-items: center;">
+            <h1>TfIdf</h1>
+            <p id="totalScore" class="tfIdf">Total Score: </p>
+            <p id="score" class="tfIdf">Current Score: </p>
+            <div class="flexPhishing" style="min-height: 0;">
+                <div class="tfIdf">
+                    <h2>Documents</h2>
+                    <div id="docs"></div>
+                    <div id="results" style="display: none;">
+                        <table>
+                            <tbody id="table">
+                                <tr>
+                                    <th>Document</th>
+                                    <th>Count of Query</th>
+                                    <th>Total Words</th>
+                                    <th>Tf Score</th>
+                                    <th>Tf-Idf Score</th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tfIdf">
+                    <h2>Tf-Idf Calculations</h2>
+                    <div id="queryCount">
+                        <h3>Step 1: How many times query occurs in each document</h3>
+                    </div>
+                    <div id="queryResult" style="display: none;"></div>
+                    <div id="tf" style="display: none;"></div>
+                    <div id="tfResult" style="display: none;"></div>
+                </div>
+            </div>
+            <button id="submit" class="forSmishing" onclick="submit()">Submit</button>
+            <button class="forSmishing" onclick="window.location.href='../menu.html'">Save and Quit</button>
+        </div>
+        <script>
+            getQuestions();
+        </script>
+    </body>
+</html>

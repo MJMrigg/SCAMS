@@ -1,10 +1,10 @@
 import express from "express";
 //DO NOT UNDER ANY CIRCUMSTANCES REMOVE THE BRACKETS!!! BAD THINGS WILL HAPPEN!!!
-import {MongoClient} from "mongodb";
-import {fileURLToPath} from 'url';
+import { MongoClient } from "mongodb";
+import { fileURLToPath } from 'url';
 import path from 'path';
 import nodemailer from 'nodemailer';
-import {internalIpV4} from "internal-ip";
+import { internalIpV4 } from "internal-ip";
 
 //____ Creating the Server _________________________________________________________________________________________
 //Create an express application to handle communications between the front end and back end

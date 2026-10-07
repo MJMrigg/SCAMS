@@ -113,7 +113,7 @@ input.check{
 }
 div.menu{
     width: 85%;
-    height: 55%;
+    height: 60vh;
     text-align: center;
     border: 10px solid black;
     margin: auto;
