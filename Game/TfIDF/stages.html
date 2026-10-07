@@ -75,6 +75,8 @@
             var score = 0; //Total score for this question
             var totalScore = 0; //Total score for the level
             var part; //Which part of the question they are on
+            var queryCounts = [];
+            var wordCounts = [];
             var tfScores = [];
             var idfScore = 0;
             var tfIdfScores = [];
@@ -102,6 +104,13 @@
                 //Get question information
                 var documents = questions[currentQuestion].documents;
                 var query = questions[currentQuestion].query;
+
+                //Set up stage information
+                queryCounts = [];
+                wordCounts = [];
+                tfScores = [];
+                idfScore = 0;
+                tfIdfScores = [];
 
                 //Set up step 1, query count in document
                 var docs = document.getElementById("docs");
@@ -200,6 +209,11 @@
                             newDiv.innerText += ` Document ${i+1} has ${actualTotal} words.`
                             queryResult.appendChild(newDiv);
 
+                            //Store the actual query count and total
+                            queryCounts[i] = actualCount;
+                            wordCounts[i] = actualTotal;
+                            tfScores[i] = actualCount / actualTotal;
+
                             //Disable the inputs
                             countDiv.disabled = true;
                             totalDiv.disabled = true;
@@ -226,20 +240,35 @@
                             row.appendChild(newDiv);
                             table.appendChild(row);
                         }
+
                         //Reveal the correct answers and update the UI
                         queryResult.style.display = "block";
                         queryResult.innerHTML += "<p class='tfidf'>Press Next to continue.</p>";
                         document.getElementById("score").innerText = `Current Score: ${score}`;
                         document.getElementById("submit").innerText = "Next";
+
+                        //Premptively calculate the idf score and tfidf scores of each document
+                        var idfScore = queryCounts.filter(count => count >= 1).length / wordCounts.length;
+                        console.log(idfScore);
+                        for(var i = 0; i < docs.length; i++){
+                            tfIdfScores[i] = idfScore * tfScores[i];
+                        }
+
                         part += 1;
                         break;
                     case 1:
+                        //Remove divs from previous part and reveal divs for new part
                         document.getElementById("queryResult").remove();
                         document.getElementById("results").style.display = "block";
+                        document.getElementById("queryCount").remove();
+                        document.getElementById("tf").style.display = "block";
+
+
+
                         part += 1;
                         break;
                     case 2:
-                        
+                        part += 1;
                         break;
                     default:
                         console.error("Error, invalid part of stage");
@@ -276,7 +305,9 @@
                         <h3>Step 1: How many times query occurs in each document</h3>
                     </div>
                     <div id="queryResult" style="display: none;"></div>
-                    <div id="tf" style="display: none;"></div>
+                    <div id="tf" style="display: none;">
+                        <h3>Step 2: Calculte Tf Scores for each document</h3>
+                    </div>
                     <div id="tfResult" style="display: none;"></div>
                 </div>
             </div>
