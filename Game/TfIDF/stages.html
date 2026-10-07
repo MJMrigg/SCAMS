@@ -20,6 +20,7 @@
             }
             input.number{
                 width: 40px;
+                display: "inline";
             }
             table{
                 margin: auto;
@@ -79,7 +80,6 @@
             var wordCounts = [];
             var tfScores = [];
             var idfScore = 0;
-            var tfIdfScores = [];
 
             //Get the questions
             async function getQuestions(){
@@ -110,7 +110,6 @@
                 wordCounts = [];
                 tfScores = [];
                 idfScore = 0;
-                tfIdfScores = [];
 
                 //Set up step 1, query count in document
                 var docs = document.getElementById("docs");
@@ -118,7 +117,7 @@
                 newDiv.className = "queryCount";
                 newDiv.innerText = "Query: "+query;
                 docs.appendChild(newDiv);
-                var queryCount = document.getElementById("queryCount");
+                var queryCount = document.getElementById("queryCountInput");
                 for(var i = 0; i < documents.length; i++){
                     //Place documents on the left side of the page
                     newDiv = document.createElement("p");
@@ -135,13 +134,13 @@
                     newDiv = document.createElement("input");
                     newDiv.className = "number";
                     newDiv.type = "number";
-                    newDiv.style = "display: inline";
+                    newDiv.style.display = "inline";
                     newDiv.id = "count"+i;
                     queryCount.appendChild(newDiv);
 
                     newDiv = document.createElement("p");
                     newDiv.className = "tfIdf";
-                    newDiv.style = "display: inline";
+                    newDiv.style.display = "inline";
                     newDiv.innerText = ` out of `;
                     queryCount.appendChild(newDiv);
 
@@ -153,7 +152,7 @@
 
                     newDiv = document.createElement("p");
                     newDiv.className = "tfIdf";
-                    newDiv.style = "display: inline";
+                    newDiv.style.display = "inline";
                     newDiv.innerText = ` total words.`;
                     queryCount.appendChild(newDiv);
                 }
@@ -161,11 +160,54 @@
             
             //Submit the results for a part of a question
             function submit(){
+                //Update the score on the screen, since the last part may have changed the score
+                document.getElementById("score").innerText = `Current Score: ${score}`;
+
                 //Handle the results of the question depending on which part the player is on
                 var docs = questions[currentQuestion].documents;
                 var query = questions[currentQuestion].query;
                 switch(part){
-                    case 0: //Counting query occurrence in document
+                    case -1:
+                        //Remove children from all divs that previously showed score and document information
+                        document.getElementById("docs").innerHTML = '';
+                        document.getElementById("queryCountInput").innerHTML  = '';
+                        document.getElementById("tfScores").innerHTML = '';
+                        document.getElementById("tfResult").innerHTML = '';
+                        document.getElementById("idfCalc").innerHTML = '';
+                        document.getElementById("tfIdfScores").innerHTML = '';
+
+                        //Hide all the divs that are currently visible
+                        document.getElementById("results").style.display = "none";
+                        document.getElementById("queryResult").style.display = "none";
+                        document.getElementById("tf").style.display = "none";
+                        document.getElementById("tfResult").style.display = "none";
+                        document.getElementById("idf").style.display = "none";
+                        document.getElementById("tfidf").style.display = "none";
+
+                        //Reveal what should be revealed
+                        document.getElementById("queryCount").style.display = "block";
+
+                        //Reset the table
+                        document.getElementById("table").innerHtml = `
+                            <tr>
+                                <th>Document</th>
+                                <th>Count of Query</th>
+                                <th>Total Words</th>
+                                <th>Tf Score</th>
+                            </tr>
+                        `;
+
+                        //Reset all of the inputs
+                        var inputs = document.querySelectorAll('input[type="number"]');
+                        for(var i = 0; i < inputs.length; i++){
+                            inputs[i].value = null;
+                        }
+
+                        //Move on to the next question and set up the UI for that question
+                        currentQuestion += 1;
+                        setUp();
+                        break;
+                    case 0: //Grade if the player input the right query count word count for documents
                         //Go through each document and see if the player got the count and total for each one correct
                         //Count is number of times query is in document and total is total word count of document
                         var queryResult = document.getElementById("queryResult"); //Div where the results will be placed
@@ -175,8 +217,8 @@
                             //Get the player count and total to the document's actual count and total
                             var countDiv = document.getElementById("count"+i);
                             var totalDiv = document.getElementById("total"+i)
-                            var playerCount = Number(countDiv.innerText);
-                            var playerTotal = Number(totalDiv.innerText);
+                            var playerCount = countDiv.value;
+                            var playerTotal = totalDiv.value
                             var words = docs[i].replace(/[.?!,()]/g, '').split(' ');
                             var actualCount = words.filter(word => word === query).length;
                             var actualTotal = words.length;
@@ -235,44 +277,240 @@
                             newDiv = document.createElement("td");
                             newDiv.id = "tf"+i;
                             row.appendChild(newDiv);
-                            newDiv = document.createElement("td");
+                            /*newDiv = document.createElement("td");
                             newDiv.id = "tfidf"+i;
-                            row.appendChild(newDiv);
+                            row.appendChild(newDiv);*/
                             table.appendChild(row);
                         }
 
                         //Reveal the correct answers and update the UI
                         queryResult.style.display = "block";
                         queryResult.innerHTML += "<p class='tfidf'>Press Next to continue.</p>";
-                        document.getElementById("score").innerText = `Current Score: ${score}`;
                         document.getElementById("submit").innerText = "Next";
 
-                        //Premptively calculate the idf score and tfidf scores of each document
-                        var idfScore = queryCounts.filter(count => count >= 1).length / wordCounts.length;
-                        console.log(idfScore);
-                        for(var i = 0; i < docs.length; i++){
-                            tfIdfScores[i] = idfScore * tfScores[i];
-                        }
+                        //Premptively calculate the idf score
+                        idfScore = queryCounts.filter(count => count >= 1).length / wordCounts.length;
 
-                        part += 1;
                         break;
-                    case 1:
-                        //Remove divs from previous part and reveal divs for new part
-                        document.getElementById("queryResult").remove();
-                        document.getElementById("results").style.display = "block";
-                        document.getElementById("queryCount").remove();
+                    case 1: //Hide the grades for word count and query count, reveal tf score calculation inputs
+                        //Hide divs from previous part
+                        document.getElementById("queryCount").style.display = "none";
+                        document.getElementById("queryResult").style.display = "none";
+
+                        //Reveal divs for new part
+                        document.getElementById("results").style.display = "block"; //Reveal the div that has the table
                         document.getElementById("tf").style.display = "block";
 
+                        //Add the tfscore calcuations for each document to the screen
+                        var tfDiv = document.getElementById("tfScores");
+                        for(var i = 0; i < docs.length; i++){
+                            var newDiv = document.createElement("p");
+                            newDiv.className = "tfidf";
+                            newDiv.innerText = `Document ${i+1} contained the word "${query}" ${queryCounts[i]} times and has ${wordCounts[i]} words. Therefore, it's tf scores is `;
+                            tfDiv.appendChild(newDiv);
 
+                            newDiv = document.createElement("input");
+                            newDiv.className = "number";
+                            newDiv.type = "number";
+                            newDiv.style.display = "inline";
+                            newDiv.id = "tfTop"+i;
+                            tfDiv.appendChild(newDiv);
 
-                        part += 1;
+                            newDiv = document.createElement("p");
+                            newDiv.className = "tfidf"
+                            newDiv.style.display = "inline";
+                            newDiv.innerText = ' / ';
+                            tfDiv.appendChild(newDiv);
+
+                            newDiv = document.createElement("input");
+                            newDiv.className = "number";
+                            newDiv.type = "number";
+                            newDiv.style.display = "inline";
+                            newDiv.id = "tfBottom"+i;
+                            tfDiv.appendChild(newDiv);
+                        }
+                        document.getElementById("submit").innerText = "Submit";
+
                         break;
-                    case 2:
-                        part += 1;
+                    case 2: //Grade the inputted tf scores
+                        //Check if the player's tf score calculations are correct
+                        var tfResults = document.getElementById("tfResult");
+                        for(var i = 0; i < docs.length; i++){
+                            //Get player's input and disable input divs
+                            var topDiv = document.getElementById("tfTop"+i);
+                            var bottomDiv = document.getElementById("tfBottom"+i);
+                            var topValue = topDiv.value;
+                            var bottomValue = bottomDiv.value;
+                            topDiv.disabled = true;
+                            bottomDiv.disabled = true;
+                            var tfScore = topValue / bottomValue;
+
+                            //Check if correct
+                            var newDiv = document.createElement("p");
+                            newDiv.className = "tfidf";
+                            if(tfScore == tfScores[i]){
+                                newDiv.style.color = "green";
+                                newDiv.innerText = "Correct! +1 points! ";
+                                score += 1;
+                            }else{
+                                newDiv.style.color = "red";
+                                newDiv.innerText = "Incorrect. -1 points. ";
+                                score = Math.max(score - 1, 0);
+                            }
+                            var tfScoreString = String(tfScores[i]);
+                            if(tfScoreString.length > 4){
+                                tfScoreString = tfScoreString.slice(0,4);
+                                tfScores[i] = Number(tfScoreString);
+                            }
+                            newDiv.innerText += `The Tf Score for document ${i+1} is ${queryCounts[i]} / ${wordCounts[i]} = ${tfScoreString}`;
+                            tfResults.appendChild(newDiv);
+                        }
+                        //Reveal the correct answers
+                        tfResults.style.display = "block";
+                        tfResults.innerHTML += "<p class='tfidf'>Press Next to continue.</p>";
+                        document.getElementById("submit").innerText = "Next";
+
                         break;
+                    case 3: //Hide the tf score grades and reveal idf input
+                        //Hide divs from previous part
+                        document.getElementById("tf").style.display = "none";
+                        document.getElementById("tfResult").style.display = "none";
+
+                        //Add the documents containing the query count and total document count to the screen
+                        var containsQueryCount = queryCounts.filter(count => count >= 1).length;
+                        document.getElementById("idfCalc").innerText = `${containsQueryCount} out of the ${wordCounts.length} documents contain the word "${query}"`;
+
+                        //Add the tf scores to the table
+                        for(var i = 0; i < docs.length; i++){
+                            document.getElementById("tf"+i).innerText = tfScores[i];
+                        }
+
+                        //Reveal the idf score calculation div and update submit button
+                        document.getElementById("idf").style.display = "block";
+                        document.getElementById("submit").innerText = "Submit";
+
+                        break;
+                    case 4: //Grade the idf input
+                        //Get player inputs and disabled input divs
+                        var topDiv = document.getElementById("idftop");
+                        var bottomDiv = document.getElementById("idfbottom");
+                        var topNumber = topDiv.value;
+                        var bottomNumber = bottomDiv.value;
+                        topDiv.disabled = true;
+                        bottomDiv.disabled = true;
+
+                        //Check if the player inputs are correct
+                        var correctTop = idfScore * docs.length;
+                        var correctBottom = docs.length;
+                        var newDiv = document.createElement("p");
+                        newDiv.className = "tfidf";
+                        if(idfScore == (topNumber / bottomNumber)){
+                            newDiv.style.color = "green";
+                            newDiv.innerText = "Correct! +1 points! ";
+                            scores += 1;
+                        }else{
+                            newDiv.style.color = "red";
+                            newDiv.innerText = "Incorrect. -1 points. ";
+                            score = Math.max(score - 1, 0);
+                        }
+
+                        //Convert idf score to two decimal places to make it more user friendly
+                        var idfString = String(idfScore);
+                        if(idfString.length > 4){
+                            idfScore = Number(idfString.slice(0,4));
+                        }
+                        newDiv.innerText += `The Idf score for the corpus of documents is ${correctTop} / ${correctBottom} = ${idfScore}`;
+                        
+                        //Update UI with the result
+                        var idfDiv = document.getElementById("idf");
+                        idfDiv.appendChild(newDiv);
+                        idfDiv.innerHTML += "<p class='tfidf'>Press Next to continue.</p>";
+                        document.getElementById("submit").innerText = "Next";
+                        break;
+                    case 5: //Remove all idf score grades and reveal the tf-idf score inputs
+                        //Hide the idf score calculation divs
+                        document.getElementById("idf").style.display = "none";
+                        
+                        //Add the idf score to the screen
+                        var idfResult = document.getElementById("idfScore");
+                        idfResult.innerText = `Idf Score: ${idfScore}`;
+                        idfResult.style.display = "block";
+
+                        //Update submit button
+                        document.getElementById("submit").innerText = "Submit";
+
+                        //Add the part where players must input the tf-idf scores
+                        var tfidfScores = document.getElementById("tfIdfScores");
+                        for(var i = 0; i < docs.length; i++){
+                            var newDiv = document.createElement("p");
+                            newDiv.className = "tfidf";
+                            newDiv.innerText = `The Tf Score for document ${i+1} is ${tfScores[i]} and the Idf Score for the corpus is ${idfScore}. Therfore, the Tf-Idf Score for document ${i+1} is `;
+                            tfidfScores.appendChild(newDiv);
+
+                            newDiv = document.createElement("input");
+                            newDiv.type = "number";
+                            newDiv.className = "number";
+                            newDiv.id = "playerTf"+i;
+                            tfidfScores.appendChild(newDiv);
+
+                            newDiv = document.createElement("p");
+                            newDiv.className = "tfidf";
+                            newDiv.style.display = "inline";
+                            newDiv.innerText = " x ";
+                            tfidfScores.appendChild(newDiv);
+
+                            newDiv = document.createElement("input");
+                            newDiv.type = "number";
+                            newDiv.className = "number";
+                            newDiv.id = "playerIdf"+i;
+                            tfidfScores.appendChild(newDiv);
+                        }
+                        document.getElementById("tfidf").style.display = "block";
+
+                        break;
+                    case 6: //Grade tf-idf scores
+                        //Go through the tf-idf scores and see if the player got any of them right.
+                        var tfidfScores = document.getElementById("tfidf");
+                        for(var i = 0; i < docs.length; i++){
+                            //Get player inputs and disable them
+                            var tfScore = document.getElementById("playerTf"+i);
+                            var idf = document.getElementById("playerIdf"+i);
+                            var playerTf = tfScore.value;
+                            var playerIdf = idf.value;
+                            tfScore.disabled = true;
+                            idf.disabled = true;
+
+                            //Check if the player inputted the correct values for the tfidf calculation
+                            var newDiv = document.createElement("p");
+                            newDiv.className = "tfidf";
+                            if((playerTf * playerIdf) == (tfScores[i] * idfScore)){
+                                newDiv.style.color = "green";
+                                newDiv.innerText = "Correct! +1 point! ";
+                                score += 1;
+                            }else{
+                                newDiv.style.color = "red";
+                                newDiv.innerText = "Inccorect. -1 point. ";
+                                score = Math.max(score - 1, 0);
+                            }
+
+                            //Display the tfidf score with only two decimal places
+                            tfidfScore = String(tfScores[i]*idfScore);
+                            if(tfidfScore.length > 4){
+                                tfidfScore = tfidfScore.slice(0,4);
+                            }
+                            newDiv.innerText += `The Tf-Idf score for document ${i+1} is ${tfScores[i]} x ${idfScore} = ${tfidfScore}`;
+                            tfidfScores.appendChild(newDiv);
+                        }
+
+                        //Update the submit button
+                        document.getElementById("submit").innerText = "Next Stage";
+                        part = -1;
+                        return;
                     default:
                         console.error("Error, invalid part of stage");
+                        return;
                 }
+                part += 1;
             }
         </script>
     </head>
@@ -293,22 +531,38 @@
                                     <th>Count of Query</th>
                                     <th>Total Words</th>
                                     <th>Tf Score</th>
-                                    <th>Tf-Idf Score</th>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+                    <p id="idfScore" class="tfidf"></p>
                 </div>
                 <div class="tfIdf">
                     <h2>Tf-Idf Calculations</h2>
                     <div id="queryCount">
                         <h3>Step 1: How many times query occurs in each document</h3>
+                        <div id="queryCountInput"></div>
                     </div>
                     <div id="queryResult" style="display: none;"></div>
                     <div id="tf" style="display: none;">
                         <h3>Step 2: Calculte Tf Scores for each document</h3>
+                        <p id="tfhint">Tf Score = Query count in document / Total Words in document</p><br>
+                        <div id="tfScores"></div>
                     </div>
                     <div id="tfResult" style="display: none;"></div>
+                    <div id="idf" style="display: none">
+                        <h3>Step 3: Calculate Idf Score of document corpus</h3>
+                        <p id="idfhint" class="tfidf">Idf Score = Count of documents containing query / Count of documents</p>
+                        <p id="idfCalc" class="tfidf"></p>
+                        <input id="idftop" class="number" type="number">
+                        <p class="tfidf" style="display: inline;"> / </p>
+                        <input id="idfbottom" class="number" type="number">
+                    </div>
+                    <div id="tfidf" style="display: none;">
+                        <h3>Step 4: Calculate Tf-Idf Scores for each document</h3>
+                        <p id="tfidfhint" class="tfidf">Tf-Idf Score = Tf Score for that document x Idf Score for whole corpus</p>
+                        <div id="tfIdfScores"></div>
+                    </div>
                 </div>
             </div>
             <button id="submit" class="forSmishing" onclick="submit()">Submit</button>
