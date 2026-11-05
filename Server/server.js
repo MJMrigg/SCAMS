@@ -361,7 +361,7 @@ app.post("/forgot", async(request, response) => {
         service: "gmail",
         auth: {
           user: "cybereducationgame@gmail.com",
-          pass: "zejv ocaw bgac inhb"
+          pass: "nowe jgwj bnad svti"
           //www.youtube.com/watch?v=fF-07yFTq5o
           //2FA must be on for this to work
         },
