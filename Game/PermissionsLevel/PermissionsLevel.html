@@ -242,6 +242,12 @@
   </script>
 </head>
 <body id="body">
+  <script>
+		if(!JSON.parse(sessionStorage.getItem("consent"))){
+			alert("Error, you did not agree to SCAMS consent");
+			window.location.href = "/";
+		}
+	</script>
   <div class="menu" style="height: auto">
     <div id="title"></div>
   </div><br>

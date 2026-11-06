@@ -161,6 +161,12 @@
         </style>
     </head>
     <body>
+        <script>
+            if(!JSON.parse(sessionStorage.getItem("consent"))){
+                alert("Error, you did not agree to SCAMS consent");
+                window.location.href = "/";
+            }
+        </script>
 		<div class="menu w-75 h-50" style="height: 420px;">
             <h1 style="font-family: 'Times New Roman', Times, serif; font-weight: bold;">Level Select</h1>
             <h4 style="font-family: 'Times New Roman', Times, serif; font-weight: bold; font-size: 1.1rem;" id="currentScore"></h4>

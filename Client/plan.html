@@ -299,6 +299,12 @@
         </style>
     </head>
     <body>
+        <script>
+            if(!JSON.parse(sessionStorage.getItem("consent"))){
+                alert("Error, you did not agree to SCAMS consent");
+                window.location.href = "/";
+            }
+        </script>
         <div class="menu" style="height: 75dvh;">
             <h1 id="title">View Learning Plan</h1>
             <p id="description">Share this pin with people so they join your learning plan.</p>

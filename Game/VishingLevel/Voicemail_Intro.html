@@ -18,6 +18,12 @@
     <link rel="stylesheet" href="../../styles.css">
 	</HEAD>
 	<BODY>
+		<SCRIPT>
+            if(!JSON.parse(sessionStorage.getItem("consent"))){
+                alert("Error, you did not agree to SCAMS consent");
+                window.location.href = "/";
+            }
+        </SCRIPT>
 	    <div class="menu" style="height: auto">
 			<h1>Scam Voicemails</h1>
 			<h3 id = "info" style = "height:auto"></h3>

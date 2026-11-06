@@ -18,7 +18,7 @@ app.use(express.static(path.join(directory, "..")));
 
 //Begin the program at the home file
 app.get("/", (request, response) => {
-  response.status(200).sendFile(path.join(directory, "../Client/home.html"));
+  response.status(200).sendFile(path.join(directory, "index.html"));
 });
 
 //Mongo information

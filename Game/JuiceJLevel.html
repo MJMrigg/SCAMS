@@ -41,6 +41,12 @@
     </style>
 </head>
 <body>
+    <script>
+        if(!JSON.parse(sessionStorage.getItem("consent"))){
+            alert("Error, you did not agree to SCAMS consent");
+            window.location.href = "/";
+        }
+    </script>
     <div class="main-container">
 
     <div class="question-container">

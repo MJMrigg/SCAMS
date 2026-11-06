@@ -75,6 +75,12 @@
         <link rel="stylesheet" href="../styles.css">
     </head>
     <body>
+        <script>
+            if(!JSON.parse(sessionStorage.getItem("consent"))){
+                alert("Error, you did not agree to SCAMS consent");
+                window.location.href = "/";
+            }
+        </script>
         <div class="profileMenu">
             <h1>Your Profile</h1>
             <!--Only a form for the aesthetic of form style. No inputs here.-->

@@ -54,6 +54,12 @@
         <link rel="stylesheet" href="../styles.css">
     </head>
     <body>
+        <script>
+            if(!JSON.parse(sessionStorage.getItem("consent"))){
+                alert("Error, you did not agree to SCAMS consent");
+                window.location.href = "/";
+            }
+        </script>
         <div class="menu"><br><br>
             <h1>Enter your Account Email below</h1>
             <p>Your username and password will be sent to your account email.</p>

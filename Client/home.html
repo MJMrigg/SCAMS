@@ -71,6 +71,12 @@
 
     </head>
     <body>
+        <script>
+            if(!JSON.parse(sessionStorage.getItem("consent"))){
+                alert("Error, you did not agree to SCAMS consent");
+                window.location.href = "/";
+            }
+        </script>
         <div class="menu">
             <h1>SoCial Engineering Attack SiMulatorS<br>(SCAMS)</h1>
             <button class="selection" style="font-family: 'Tahoma';" onclick="window.location.href = '../Game/menu.html'">Play</button><br>

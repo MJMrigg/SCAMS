@@ -103,6 +103,12 @@
         <link rel="stylesheet" href="../styles.css">
     </head>
     <body>
+        <script>
+            if(!JSON.parse(sessionStorage.getItem("consent"))){
+                alert("Error, you did not agree to SCAMS consent");
+                window.location.href = "/";
+            }
+        </script>
         <div class="menu">
             <h1>Edit Your Profile</h1>
             <div class="form">

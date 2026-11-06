@@ -515,6 +515,12 @@
         </script>
     </head>
     <body>
+        <script>
+            if(!JSON.parse(sessionStorage.getItem("consent"))){
+                alert("Error, you did not agree to SCAMS consent");
+                window.location.href = "/";
+            }
+        </script>
         <div class="menu" style="height: 96vh; display: flex; flex-direction: column; align-items: center;">
             <h1>TfIdf</h1>
             <p id="totalScore" class="tfIdf">Total Score: </p>

@@ -208,6 +208,12 @@
 		</SCRIPT>
 	</HEAD>
 	<BODY>
+		<SCRIPT>
+            if(!JSON.parse(sessionStorage.getItem("consent"))){
+                alert("Error, you did not agree to SCAMS consent");
+                window.location.href = "/";
+            }
+        </SCRIPT>
 		<center>
 		<div class = "forVishing">
 			<div style = "border: 1px solid #000;">

@@ -6,6 +6,12 @@
 	<link rel="stylesheet" href="../../styles.css">
 </head>
 <body>
+	<script>
+		if(!JSON.parse(sessionStorage.getItem("consent"))){
+			alert("Error, you did not agree to SCAMS consent");
+			window.location.href = "/";
+		}
+	</script>
 	<div class = "menu" style="height: 380px;">
 		<h1>Welcome to the Phishing Level!</h1>
 		<h3>You'll learn about how to properly identify possible scam emails here!</h3>

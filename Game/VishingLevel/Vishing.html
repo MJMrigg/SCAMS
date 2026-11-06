@@ -33,6 +33,12 @@
 		<link rel="stylesheet" href="../../styles.css">
 	</HEAD>
 	<BODY>
+		<SCRIPT>
+            if(!JSON.parse(sessionStorage.getItem("consent"))){
+                alert("Error, you did not agree to SCAMS consent");
+                window.location.href = "/";
+            }
+        </SCRIPT>
 	    <div class="menu" style="height: auto">
 			<h1>Vishing Game</h1>
 
