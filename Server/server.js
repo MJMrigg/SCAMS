@@ -368,7 +368,7 @@ app.post("/forgot", async(request, response) => {
       });
       //Create email information
       const mailOptions = {
-        from: 'riggmatthew25@gmail.com',
+        from: 'cybereducationgame@gmail.com',
         to: result[0].email,
         subject: 'SCAMS User Information Request',
         text: 'Hello '+result[0].username+"!\n\nWe were recently made aware that you requested your account information. You will find that information below:\n\nUsername: "+result[0].username+"\nPassword: "+result[0].password+"\n\nIf you did not request this information, it may mean that your account has been compromised. We suggest you login and change your information right away, as well as respond to this email so that we can know about any issues we may have in our security system.\n\nHave a great day!\n\n-SCAMS"
@@ -588,7 +588,6 @@ app.post("/createPlan", async(request, response) => {
     result = await collection.insertOne(document);
     if(!result.acknowledged){
       throw "Error, could not create new learning plan";
-      return; 
     }
 
     //Assign the creator of the learning plan the learning plan 
@@ -689,7 +688,6 @@ app.delete("/deletePlan", async(request, response) => {
     if(result.deletedCount <= 0){
       document.result = 0; //Update the response
       response.status(200).send(document);
-      return;
     }
 
     //Switch to the user accounts collection
@@ -735,7 +733,6 @@ app.post("/enroll", async(request, response) => {
     if(learningPlan == undefined){
       document.result = 0;
       response.status(200).send(document);
-      return;
     }
 
     //If the pin was valid, assign the user that learning plan
@@ -792,7 +789,6 @@ app.post("/unenroll", async(request,response) => {
     if(result[0] != undefined){
       document.result = 0;
       response.status(200).send(document);
-      return;
     }
 
     //Unenroll the user from the learning plan by setting their plan to null
