@@ -2,8 +2,16 @@
 <html lang="en">
     <head>
         <script>
-            //The user has not yet given consent
-            sessionStorage.setItem("consent",JSON.stringify(false));
+            //See if the user already gave consent
+            var consent = JSON.parse(sessionStorage.getItem("consent"));
+            var homePath = 'Client/home.html';
+            if(consent != undefined && consent != null && consent == true){
+                //Take them straight to home if they already gave consent
+                window.location.href = homePath;
+            }else{
+                //The user has not yet given consent
+                sessionStorage.setItem("consent",JSON.stringify(false));
+            }
 
             function agree(){
                 //Variables that will likely be needed to be accessed by the entire program are stored in session storage
@@ -29,11 +37,12 @@
                 }));
 
                 //Take the user to the homepage
-                window.location.href = "Client/home.html";
+                window.location.href = homePath;
             }
 
             function disagree(){
-                alert("Agreement is required to play the game. If you do not agree, close this tab.");
+                alert("Agreement is required to play the game.");
+                window.history.back();
             }
         </script>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
