@@ -164,11 +164,8 @@
 
             //Embed userId in url and navigate to SCAMS+
             function goToScamsPlus(module){
-                var link = 'https://scams-plus-195003776313.us-east1.run.app/Module_' + module + '.html';
-                //var link = 'http://localhost:9000/Module_' + module + '.html';
-                if(JSON.parse(sessionStorage.getItem("loggedIn"))){
-                    link += '?scams='+true;
-                }
+                var link = 'https://scams-plus-195003776313.us-east1.run.app/Module_' + module + '.html?scams='+true;;
+                //var link = 'http://localhost:9000/Module_' + module + '.html?scams='+true;
                 window.location.href = link;
             }
         </script>
