@@ -104,7 +104,8 @@
                 //Check if the user came from SCAMS+. If yes, add their SCAMS+ score to SCAMS
                 var params = new URLSearchParams(window.location.search);
                 var val = params.get("val");
-                if(val != undefined && val != null){ //User came from SCAMS+
+                //User came from SCAMS+
+                if(val != undefined && val != null && (document.referrer == "http://localhost:9000/" || document.referrer == "https://scams-plus-195003776313.us-east1.run.app/")){
                     var currentScore = JSON.parse(sessionStorage.getItem("currentScore"));
                     //Add new score to session storage
                     sessionStorage.setItem("currentScore",JSON.parse(currentScore + (val / 99)));
